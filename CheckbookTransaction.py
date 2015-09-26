@@ -14,7 +14,7 @@ import locale
 locale.setlocale(config.LOCALE, '') # set the locale for printing the amount
 
 # the Keys used for the Transaction and printing the transaction
-KEYS = ["Date", "Trans", "Category", "Desc", "Amount", "Num"]
+KEYS = ["Date", "Trans", "Desc", "Amount", "Num"]
 
 class CheckbookTransaction:
     """This class represents a Checkbook Transaction
