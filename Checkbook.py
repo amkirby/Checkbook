@@ -77,13 +77,13 @@ class Checkbook:
     def _genTotalLinePrint(self):
         string = PC.VLINE_CHAR
         # format total: text
-        formatString = '{:>' + str(sum(PC.SIZELIST[:-2])) + '}'
+        formatString = '{:>' + str(sum(PC.SIZELIST[:-2]) + 4) + '}'
         string += formatString.format("Total : ")
         # format amount
-        formatString = '{:>' + str(sum(PC.SIZELIST[-2:]) - len(PC.SIZELIST)) + '}'
+        formatString = '{:^' + str((PC.SIZELIST[-2])) + '}'
         string += formatString.format(locale.currency(self.getTotal(), grouping=config.THOUSAND_SEP))
         # format final bar
-        formatString = '{:>' + str(sum(PC.SIZELIST[-1:]) + len(PC.SIZELIST) - 1) + '}'
+        formatString = '{:>' + str((PC.SIZELIST[-1]) + 2) + '}'
         string += formatString.format(PC.VLINE_CHAR)
         return (string)
 

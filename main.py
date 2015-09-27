@@ -27,6 +27,10 @@ if __name__ == "__main__":
             cbt = CBT.CheckbookTransaction()
             for key in CBT.KEYS:
                 if key != "Num":
+                    if key == "Category":
+                        print("Categories to choose:")
+                        for cat in config.CATEGORIES:
+                            print("  " + cat)
                     val = input(key + " : ")
                     cbt.setValue(key, val)
             checkbook.addSingleTrans(cbt)
