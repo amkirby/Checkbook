@@ -34,6 +34,20 @@ if __name__ == "__main__":
                     val = input(key + " : ")
                     cbt.setValue(key, val)
             checkbook.addSingleTrans(cbt)
+        elif(val == commands.EDIT_COMMAND):
+            editTrans = int(input("Which transaction do you want to edit? : "))
+            trans = checkbook.findTransaction(editTrans)
+            for key in CBT.KEYS:
+                if key != "Num":
+                    if key == "Category":
+                        print("Categories to choose:")
+                        for cat in config.CATEGORIES:
+                            print("  " + cat)
+                    val = input(key + " (" + str(trans.getValue(key)) + ")" + " : ")
+                    if(val.strip() != ""):
+                        trans.setValue(key, val)
+
+
         print(checkbook)
 
         val = input("What would you like to do? : ")

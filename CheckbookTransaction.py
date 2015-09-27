@@ -54,6 +54,9 @@ class CheckbookTransaction:
     def getAmount(self):
         return self.data.get("Amount")
 
+    def getValue(self, key):
+        return self.data.get(key)
+
     def setValue(self, key, value):
         insertVal = value
         if(key == "Date"):

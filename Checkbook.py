@@ -74,6 +74,9 @@ class Checkbook:
             total += elem.getAmount()
         return total
 
+    def findTransaction(self, inTrans):
+        return self.checkRegister[inTrans - 1]
+
     def _genTotalLinePrint(self):
         string = PC.VLINE_CHAR
         # format total: text

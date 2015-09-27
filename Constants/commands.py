@@ -9,6 +9,7 @@ HELP_COMMAND  = "help"          # prints the help
 ADD_COMMAND   = "add"           # adds a transaction
 PRINT_COMMAND = "print"         # prints the checkbook
 SAVE_COMMAND  = "save"          # saves the checkbook
+EDIT_COMMAND = "edit"           # edit a transaction
 
 EXIT_LIST = ["Quit", "quit", "Exit", "exit", "q"] # the commands that exit the program
 # displays when the help command is executed
