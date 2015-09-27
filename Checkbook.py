@@ -68,6 +68,21 @@ class Checkbook:
                 returnList.append(elem)
         return (returnList)
 
+    def getCategory(self, cat):
+        returnList = []
+        for elem in self.checkRegister:
+            if(elem.getDictionary().get("Category") == cat):
+                returnList.append(elem)
+        return (returnList)
+
+    def getTotalForTrans(self, trans):
+        transList = self.getTransactionType(trans)
+        total = 0.0
+        for elem in transList:
+            total += elem.getAmount()
+        return total
+        
+
     def getTotal(self):
         total = 0.0
         for elem in self.checkRegister:

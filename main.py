@@ -9,6 +9,7 @@ from Constants import commands
 from Constants import config
 import Checkbook as CB
 import CheckbookTransaction as CBT
+import checkbookReport as CR
 checkbook = CB.Checkbook()
 checkbook.load(config.FILE_NAME)
 
@@ -46,6 +47,9 @@ if __name__ == "__main__":
                     val = input(key + " (" + str(trans.getValue(key)) + ")" + " : ")
                     if(val.strip() != ""):
                         trans.setValue(key, val)
+        elif(val == commands.REPORT_COMMAND):
+            cr = CR.CheckbookReport(checkbook)
+            cr.genReport()
 
 
         print(checkbook)
