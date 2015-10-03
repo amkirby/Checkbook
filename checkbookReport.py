@@ -7,6 +7,7 @@
 
 
 from Constants import config
+import locale
 
 class CheckbookReport:
 
@@ -16,13 +17,15 @@ class CheckbookReport:
     def genReport(self):
         transTotal = abs(self.checkbook.getTotalForTrans("Debit"))
         print("*" * 15 + " REPORT " + "*" * 15)
-        for cat in config.CATEGORIES:
+        print("Debit Total : ", transTotal)
+        for cat in config.DEBIT_CATEGORIES:
             currentCatList = self.checkbook.getCategory(cat)
             total = 0
             print(cat)
             for cbt in currentCatList:
                 total += abs(cbt.getAmount())
-            print("  " + "{:.2%}".format(total / transTotal))
+            print("  " + "{:.2%}".format(total / transTotal),
+                  "(" + locale.currency(total, grouping=config.THOUSAND_SEP) + ")")
             
 
         
