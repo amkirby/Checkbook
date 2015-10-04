@@ -31,6 +31,7 @@ class Checkbook:
         self.checkRegister.append(cbt)
 
     def addSingleTrans(self, cbt):
+        """Adds a CheckbookTransaction to the register"""
         self.checkRegister.append(cbt)
 
     def load(self, fileName):
@@ -49,7 +50,7 @@ class Checkbook:
         
 
     def save(self):
-        """Saves the checkbook"""
+        """Saves the checkbook in XML format"""
         root = ET.Element('Transactions')
         for elem in self.checkRegister:
             currTrans = ET.SubElement(root, "Transaction")
@@ -62,6 +63,7 @@ class Checkbook:
         tree.write(config.FILE_NAME, xml_declaration=True)
 
     def getTransactionType(self, transType):
+        """Gets all transactions with the specified trans type"""
         returnList = []
         for elem in self.checkRegister:
             if(elem.getDictionary().get("Trans") == transType):
@@ -69,6 +71,7 @@ class Checkbook:
         return (returnList)
 
     def getCategory(self, cat):
+        """Gets all transactions with the specified category"""
         returnList = []
         for elem in self.checkRegister:
             if(elem.getDictionary().get("Category") == cat):
@@ -76,23 +79,26 @@ class Checkbook:
         return (returnList)
 
     def getTotalForTrans(self, trans):
+        """Get the total amount for the specified trans type"""
         transList = self.getTransactionType(trans)
         total = 0.0
         for elem in transList:
             total += elem.getAmount()
         return total
-        
 
     def getTotal(self):
+        """Gets the total for the register"""
         total = 0.0
         for elem in self.checkRegister:
             total += elem.getAmount()
         return total
 
     def findTransaction(self, inTrans):
+        """Gets the specified transaction number from the register"""
         return self.checkRegister[inTrans - 1]
 
     def _genTotalLinePrint(self):
+        """creates the total line at the bottom of the register"""
         string = PC.VLINE_CHAR
         # format total: text
         formatString = '{:>' + str(sum(PC.SIZELIST[:-2]) + 4) + '}'
@@ -106,6 +112,7 @@ class Checkbook:
         return (string)
 
     def _genHeaderPrint(self):
+        """Creates the header line at the top of the register"""
         header = ROW_SEP
         header += PC.VLINE_CHAR
         for i in range(len(CT.KEYS)):
@@ -115,6 +122,7 @@ class Checkbook:
         return (header)
 
     def _genTransPrint(self):
+        """Creates the print for each transaction in the register"""
         string = ''
         for elem in self.checkRegister:
             string += str(elem)

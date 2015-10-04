@@ -12,9 +12,11 @@ import locale
 class CheckbookReport:
 
     def __init__(self, cb):
+        """Initializes the report with the specified checkbook"""
         self.checkbook = cb
 
     def genReport(self):
+        """Generates an Expense report for all Debit transactions"""
         transTotal = abs(self.checkbook.getTotalForTrans("Debit"))
         print("*" * 15 + " REPORT " + "*" * 15)
         print("Debit Total : ", transTotal)

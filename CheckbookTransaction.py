@@ -25,20 +25,8 @@ class CheckbookTransaction:
     """
     _UID = 1 # The current transaction number
     
-    # def __init__(self, date, transType, desc, amount):
-    #     """Initializes the Checkbook Transaction
-    #     Paramaters:
-    #         date (string)      : the date the transaction occurred (converted to datetime)
-    #         transType (string) : the trans type, either Credit or Debit
-    #         desc (string)      : a description for the transaction
-    #         amount (string)    : the amount of the transaction (converted to float)
-    #     """
-    #     # TODO: make more generic
-    #     self.data = {KEYS[0]: datetime.strptime(date, config.DATE_FORMAT), KEYS[1]: transType, KEYS[2]: desc,
-    #                  KEYS[3]: float(amount), KEYS[4]: CheckbookTransaction._UID}
-    #     CheckbookTransaction._UID += 1
-
     def __init__(self):
+        """Creates an empty transaction with the next available UID"""
         self.data = dict()
         for elem in KEYS:
             self.data[elem] = None
@@ -46,18 +34,23 @@ class CheckbookTransaction:
         CheckbookTransaction._UID += 1
         
     def getItems(self):
+        """Gets the key, value of the transaction"""
         return dict.items(self.data)
 
     def getDictionary(self):
+        """Gets the data as a dictionary"""
         return self.data
 
     def getAmount(self):
+        """Gets the amount of the transaction"""
         return self.data.get("Amount")
 
     def getValue(self, key):
+        """Gets the value of the specified key"""
         return self.data.get(key)
 
     def setValue(self, key, value):
+        """Sets the specified key with the specified value"""
         insertVal = value
         if(key == "Date"):
             insertVal = datetime.strptime(value, config.DATE_FORMAT).date()
