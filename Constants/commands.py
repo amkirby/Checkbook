@@ -12,6 +12,7 @@ SAVE_COMMAND  = "save"          # saves the checkbook
 EDIT_COMMAND = "edit"           # edit a transaction
 REPORT_COMMAND = "report"       # generate a report
 LOAD_COMMAND = "load"           # load an XML file
+SAVE_COMMAND = "save"           # save an XML file
 
 EXIT_LIST = ["Quit", "quit", "Exit", "exit", "q"] # the commands that exit the program
 # displays when the help command is executed

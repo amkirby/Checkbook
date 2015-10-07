@@ -12,6 +12,15 @@ import CheckbookTransaction as CBT
 import checkbookReport as CR
 checkbook = CB.Checkbook()
 checkbook.load(config.FILE_NAME)
+cbEdited = False
+
+def _doSave():
+    """Saves the checkbook"""
+    save = input("Would you like to save? (y or n) ")
+    if(save.lower() == "y"):
+        checkbook.save()
+        print("save successful!")
+    
 
 if __name__ == "__main__":
     print("Welcome to your checkbook!")
@@ -24,6 +33,7 @@ if __name__ == "__main__":
         elif(val == commands.PRINT_COMMAND):
             print(checkbook)
         elif(val == commands.ADD_COMMAND):
+            cbEdited = True
             print("Enter your transaction")
             cbt = CBT.CheckbookTransaction()
             for key in CBT.KEYS:
@@ -36,6 +46,7 @@ if __name__ == "__main__":
                     cbt.setValue(key, val)
             checkbook.addSingleTrans(cbt)
         elif(val == commands.EDIT_COMMAND):
+            cbEdited = True
             editTrans = int(input("Which transaction do you want to edit? : "))
             trans = checkbook.findTransaction(editTrans)
             for key in CBT.KEYS:
@@ -51,18 +62,20 @@ if __name__ == "__main__":
             cr = CR.CheckbookReport(checkbook)
             cr.genReport()
         elif(val == commands.LOAD_COMMAND):
+            if(cbEdited):
+                _doSave()
+                
             fileName = input("Enter an XML file to load : ")
             checkbook = CB.Checkbook()
             checkbook.load(fileName)
-
+        elif(val == commands.SAVE_COMMAND):
+            if(cbEdited):
+                _doSave()
 
         print(checkbook)
 
         val = input("What would you like to do? : ")
 
     # Save prompt
-    save = input("Would you like to save? (y or n) ")
-    if(save.lower() == "y"):
-        checkbook.save()
-        print("save successful!")
-    
+    if(cbEdited):
+        _doSave()
