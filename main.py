@@ -64,6 +64,7 @@ if __name__ == "__main__":
         elif(val == commands.LOAD_COMMAND):
             if(cbEdited):
                 _doSave()
+                cbEdited = False
                 
             fileName = input("Enter an XML file to load : ")
             checkbook = CB.Checkbook()

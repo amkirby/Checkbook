@@ -22,6 +22,7 @@ class Checkbook:
     def __init__(self):
         """Initializes an empty check register"""
         self.checkRegister = []
+        self.fileName = config.FILE_NAME
 
     def add(self, cbtList):
         """Adds the specified list to the checkbook"""
@@ -44,6 +45,7 @@ class Checkbook:
                 for child in list(elem):
                     cbt.setValue(child.tag, child.text)
                 self.checkRegister.append(cbt)
+            self.fileName = fileName
         except FileNotFoundError:
             print("The file " + fileName + " was not found.",
                   "The default file will be used when saving.")
@@ -61,7 +63,7 @@ class Checkbook:
                     value = datetime.strftime(value, config.DATE_FORMAT)
                 transElem.text = str(value)
         tree = ET.ElementTree(root)
-        tree.write(config.FILE_NAME, xml_declaration=True)
+        tree.write(self.fileName, xml_declaration=True)
 
     def getTransactionType(self, transType):
         """Gets all transactions with the specified trans type"""
