@@ -50,6 +50,10 @@ if __name__ == "__main__":
         elif(val == commands.REPORT_COMMAND):
             cr = CR.CheckbookReport(checkbook)
             cr.genReport()
+        elif(val == commands.LOAD_COMMAND):
+            fileName = input("Enter an XML file to load : ")
+            checkbook = CB.Checkbook()
+            checkbook.load(fileName)
 
 
         print(checkbook)

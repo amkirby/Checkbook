@@ -45,7 +45,8 @@ class Checkbook:
                     cbt.setValue(child.tag, child.text)
                 self.checkRegister.append(cbt)
         except FileNotFoundError:
-            print("A new file will be created when you save")
+            print("The file " + fileName + " was not found.",
+                  "The default file will be used when saving.")
         
         
 
