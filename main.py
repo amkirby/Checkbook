@@ -59,8 +59,16 @@ if __name__ == "__main__":
                     if(val.strip() != ""):
                         trans.setValue(key, val)
         elif(val == commands.REPORT_COMMAND):
+            print("Report Types:")
+            for elem in CR.REPORT_TYPES:
+                print("  ", elem)
+            repType = input("Enter desired report : ")
             cr = CR.CheckbookReport(checkbook)
-            cr.genReport()
+            if(repType == "Monthly"):
+                month = int(input("Enter desired month as a number : "))
+                cr.genMonthlyReport(month)
+            elif(repType == "Total"):
+                cr.genReport()
         elif(val == commands.LOAD_COMMAND):
             if(cbEdited):
                 _doSave()

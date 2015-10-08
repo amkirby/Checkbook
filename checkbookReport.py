@@ -9,6 +9,8 @@
 from Constants import config
 import locale
 
+REPORT_TYPES = ["Monthly", "Total"]
+
 class CheckbookReport:
 
     def __init__(self, cb):
