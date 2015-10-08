@@ -81,6 +81,15 @@ class Checkbook:
                 returnList.append(elem)
         return (returnList)
 
+    def getMonth(self, findMonth):
+        """Gets all transactions with the specified month"""
+        returnList = []
+        for elem in self.checkRegister:
+            date = elem.getDictionary().get("Date")
+            if(date.month == findMonth):
+                returnList.append(elem)
+        return (returnList)
+
     def getTotalForTrans(self, trans):
         """Get the total amount for the specified trans type"""
         transList = self.getTransactionType(trans)
@@ -88,6 +97,14 @@ class Checkbook:
         for elem in transList:
             total += elem.getAmount()
         return total
+
+    def getTotalForTransMonth(self, trans, month):
+        monthList = self.getMonth(month)
+        total = 0.0
+        for elem in monthList:
+            if elem.getValue("Trans") == trans:
+                total += elem.getAmount()
+        return (total)
 
     def getTotal(self):
         """Gets the total for the register"""

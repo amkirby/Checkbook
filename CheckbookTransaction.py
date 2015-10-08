@@ -49,6 +49,9 @@ class CheckbookTransaction:
         """Gets the value of the specified key"""
         return self.data.get(key)
 
+    def getDate(self):
+        return self.data.get("Date")
+
     def setValue(self, key, value):
         """Sets the specified key with the specified value"""
         insertVal = value
