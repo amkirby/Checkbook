@@ -18,6 +18,7 @@ class CheckbookReport:
     def genReport(self):
         """Generates an Expense report for all Debit transactions"""
         transTotal = abs(self.checkbook.getTotalForTrans("Debit"))
+        catTotal = 0.0
         print("*" * 15 + " REPORT " + "*" * 15)
         print("Debit Total : ", locale.currency(transTotal, grouping=config.THOUSAND_SEP))
         for cat in config.DEBIT_CATEGORIES:
@@ -26,8 +27,11 @@ class CheckbookReport:
             print(cat)
             for cbt in currentCatList:
                 total += abs(cbt.getAmount())
+            catTotal += total
             print("  " + "{:.2%}".format(total / transTotal),
                   "(" + locale.currency(total, grouping=config.THOUSAND_SEP) + ")")
+        print("\nSavings :", str(locale.currency(abs(self.checkbook.getTotal()) - catTotal,
+                                               grouping=config.THOUSAND_SEP)))
 
     def genMonthlyReport(self, month):
         """Generates an Expense report for all Debit transactions for the specified month
@@ -35,6 +39,7 @@ class CheckbookReport:
             month : an integer representing the month used to generate the report
         """
         transTotal = abs(self.checkbook.getTotalForTransMonth("Debit", month))
+        catTotal = 0.0
         print("*" * 15 + " MONTHLY REPORT " + "*" * 15)
         print("Debit Total : ", locale.currency(transTotal, grouping=config.THOUSAND_SEP))
         for cat in config.DEBIT_CATEGORIES:
@@ -45,6 +50,9 @@ class CheckbookReport:
                 date = cbt.getDate().month
                 if date == month:
                     total += abs(cbt.getAmount())
+            catTotal += total
             print("  " + "{:.2%}".format(total / transTotal),
                   "(" + locale.currency(total, grouping=config.THOUSAND_SEP) + ")")
+        print("\nSavings :", str(locale.currency(abs(self.checkbook.getMonthTotal(month)) - catTotal,
+                                               grouping=config.THOUSAND_SEP)))
                     

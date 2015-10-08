@@ -113,6 +113,13 @@ class Checkbook:
             total += elem.getAmount()
         return total
 
+    def getMonthTotal(self, month):
+        monthList = self.getMonth(month)
+        total = 0.0
+        for elem in monthList:
+            total += elem.getAmount()
+        return (total)
+
     def findTransaction(self, inTrans):
         """Gets the specified transaction number from the register"""
         return self.checkRegister[inTrans - 1]
