@@ -43,7 +43,7 @@ if __name__ == "__main__":
                         for cat in config.CATEGORIES:
                             print("  " + cat)
                     val = input(key + " : ")
-                    cbt.setValue(key, val)
+                    cbt.setValue(key, val.capitalize())
             checkbook.addSingleTrans(cbt)
         elif(val == commands.EDIT_COMMAND):
             cbEdited = True
@@ -57,17 +57,17 @@ if __name__ == "__main__":
                             print("  " + cat)
                     val = input(key + " (" + str(trans.getValue(key)) + ")" + " : ")
                     if(val.strip() != ""):
-                        trans.setValue(key, val)
+                        trans.setValue(key, val.capitalize())
         elif(val == commands.REPORT_COMMAND):
             print("Report Types:")
             for elem in CR.REPORT_TYPES:
                 print("  ", elem)
             repType = input("Enter desired report : ")
             cr = CR.CheckbookReport(checkbook)
-            if(repType == "Monthly"):
+            if(repType.capitalize() == "Monthly"):
                 month = int(input("Enter desired month as a number : "))
                 cr.genMonthlyReport(month)
-            elif(repType == "Total"):
+            elif(repType.capitalize() == "Total"):
                 cr.genReport()
         elif(val == commands.LOAD_COMMAND):
             if(cbEdited):
