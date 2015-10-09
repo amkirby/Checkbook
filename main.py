@@ -25,7 +25,7 @@ def _doSave():
 if __name__ == "__main__":
     print("Welcome to your checkbook!")
     print(checkbook)
-    val = input("What would you like to do? : ")
+    val = input("What would you like to do? : ").lower()
 
     while(val not in commands.EXIT_LIST):
         if(val == commands.HELP_COMMAND):

@@ -12,13 +12,29 @@ SAVE_COMMAND  = "save"          # saves the checkbook
 EDIT_COMMAND = "edit"           # edit a transaction
 REPORT_COMMAND = "report"       # generate a report
 LOAD_COMMAND = "load"           # load an XML file
-SAVE_COMMAND = "save"           # save an XML file
 
 EXIT_LIST = ["Quit", "quit", "Exit", "exit", "q"] # the commands that exit the program
+helpHeadersFormat = "{:*^35}"
+topHelpHeader = helpHeadersFormat.format(" HELP ")
+botHelpHeader = helpHeadersFormat.format(" END HELP ")
 # displays when the help command is executed
-HELP_TEXT ="""\
+EXIT_HELP = """
 How to exit:
     Quit/quit
     Exit/exit
     q
 """
+COMMAND_HELP = """
+Commands:
+    help   : Prints this help
+    add    : Add a transaction to the checkbook
+    print  : Print the checkbook 
+    save   : Save the checkbook
+    edit   : Edit a transaction
+    report : Generate a report about the transactions
+"""
+HELP_TEXT = ("""
+{}
+""" + EXIT_HELP + COMMAND_HELP + """
+{}
+""").format(topHelpHeader, botHelpHeader)
