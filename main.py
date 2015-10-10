@@ -42,5 +42,5 @@ if __name__ == "__main__":
         val = input("What would you like to do? : ").lower().strip()
 
     # Save prompt
-    if(checkbook.isEdited()):
+    if(commProcessor.checkbook.isEdited()):
         commProcessor.processSaveCommand()
