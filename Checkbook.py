@@ -23,6 +23,7 @@ class Checkbook:
         """Initializes an empty check register"""
         self.checkRegister = []
         self.fileName = config.FILE_NAME
+        self.edited = False
 
     def add(self, cbtList):
         """Adds the specified list to the checkbook"""
@@ -30,10 +31,12 @@ class Checkbook:
         for i in range(len(cbtList)):
             cbt.setValue(CT.KEYS[i], cbtList[i])
         self.checkRegister.append(cbt)
+        self.edited = True
 
     def addSingleTrans(self, cbt):
         """Adds a CheckbookTransaction to the register"""
         self.checkRegister.append(cbt)
+        self.edited = True
 
     def load(self, fileName):
         """Tries to load the specified file name into the check register"""
@@ -64,6 +67,15 @@ class Checkbook:
                 transElem.text = str(value)
         tree = ET.ElementTree(root)
         tree.write(self.fileName, xml_declaration=True)
+        self.edited = False
+
+    def isEdited(self):
+        """Returns if the checkbook has been edited"""
+        return (self.edited)
+
+    def setEdited(self, edit):
+        """Sets the edited status to the specified value"""
+        self.edited = edit
 
     def getTransactionType(self, transType):
         """Gets all transactions with the specified trans type"""
