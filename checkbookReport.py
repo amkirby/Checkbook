@@ -14,7 +14,10 @@ headerFormat = "{:*^40}"
 class CheckbookReport:
 
     def __init__(self, cb):
-        """Initializes the report with the specified checkbook"""
+        """Initializes the report with the specified checkbook
+        Parameter:
+            cb (Checkbook) : the checkbook to operate on
+        """
         self.checkbook = cb
 
     def genReport(self):

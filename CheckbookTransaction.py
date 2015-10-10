@@ -46,14 +46,22 @@ class CheckbookTransaction:
         return self.data.get("Amount")
 
     def getValue(self, key):
-        """Gets the value of the specified key"""
+        """Gets the value of the specified key
+        Parameter:
+            key (string) : the key to gather
+        """
         return self.data.get(key)
 
     def getDate(self):
+        """Get the value of the Date key"""
         return self.data.get("Date")
 
     def setValue(self, key, value):
-        """Sets the specified key with the specified value"""
+        """Sets the specified key with the specified value
+        Parameters:
+            key (string)   : the key to set
+            value (string) : the value to set with key
+        """
         insertVal = value
         if(key == "Date"):
             insertVal = datetime.strptime(value, config.DATE_FORMAT).date()

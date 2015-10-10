@@ -26,7 +26,11 @@ class Checkbook:
         self.edited = False
 
     def add(self, cbtList):
-        """Adds the specified list to the checkbook"""
+        """Adds the specified list to the checkbook
+        Parameter:
+            cbtList (list) : contains values in the order of the CBT.KEYS that
+                             are used to create a transaction
+        """
         cbt = CT.CheckbookTransaction()
         for i in range(len(cbtList)):
             cbt.setValue(CT.KEYS[i], cbtList[i])
@@ -34,12 +38,18 @@ class Checkbook:
         self.edited = True
 
     def addSingleTrans(self, cbt):
-        """Adds a CheckbookTransaction to the register"""
+        """Adds a CheckbookTransaction to the register
+        Parameter:
+             cbt (CheckbookTransaction) : the CBT to be added to the checkbook
+        """
         self.checkRegister.append(cbt)
         self.edited = True
 
     def load(self, fileName):
-        """Tries to load the specified file name into the check register"""
+        """Tries to load the specified file name into the check register
+        Parameter:
+            fileName (string) : the file to load into the checkbook
+        """
         self.fileName = fileName
         try:
             root = ET.parse(fileName)
@@ -74,11 +84,17 @@ class Checkbook:
         return (self.edited)
 
     def setEdited(self, edit):
-        """Sets the edited status to the specified value"""
+        """Sets the edited status to the specified value
+        Parameter:
+            edit (boolean) : the state to set if the checkbook is edited
+        """
         self.edited = edit
 
     def getTransactionType(self, transType):
-        """Gets all transactions with the specified trans type"""
+        """Gets all transactions with the specified trans type
+        Parameter:
+            transType (string) : the transaction type to gather
+        """
         returnList = []
         for elem in self.checkRegister:
             if(elem.getDictionary().get("Trans") == transType):
@@ -86,7 +102,10 @@ class Checkbook:
         return (returnList)
 
     def getCategory(self, cat):
-        """Gets all transactions with the specified category"""
+        """Gets all transactions with the specified category
+        Parameter:
+            cat (string) : the category to gather
+        """
         returnList = []
         for elem in self.checkRegister:
             if(elem.getDictionary().get("Category") == cat):
@@ -94,7 +113,10 @@ class Checkbook:
         return (returnList)
 
     def getMonth(self, findMonth):
-        """Gets all transactions with the specified month"""
+        """Gets all transactions with the specified month
+        Parameter:
+            findMonth (int) : the integer value for the month to gather
+        """
         returnList = []
         for elem in self.checkRegister:
             date = elem.getDictionary().get("Date")
@@ -103,7 +125,10 @@ class Checkbook:
         return (returnList)
 
     def getTotalForTrans(self, trans):
-        """Get the total amount for the specified trans type"""
+        """Get the total amount for the specified trans type
+        Parameter:
+            trans (string) : the transaction type that is totaled
+        """
         transList = self.getTransactionType(trans)
         total = 0.0
         for elem in transList:
@@ -111,6 +136,11 @@ class Checkbook:
         return total
 
     def getTotalForTransMonth(self, trans, month):
+        """Get the total for the specified transaction in the specified month
+        Parameters:
+            trans (string) : the transaction type to total
+            month (int)    : the month to total the trans type
+        """
         monthList = self.getMonth(month)
         total = 0.0
         for elem in monthList:
@@ -126,6 +156,10 @@ class Checkbook:
         return total
 
     def getMonthTotal(self, month):
+        """Gets the total for the specified month
+        Parameter:
+            month (int) : the month to total
+        """
         monthList = self.getMonth(month)
         total = 0.0
         for elem in monthList:
@@ -133,7 +167,10 @@ class Checkbook:
         return (total)
 
     def findTransaction(self, inTrans):
-        """Gets the specified transaction number from the register"""
+        """Gets the specified transaction number from the register
+        Parameter:
+            inTrans (int) : the transaction to gather
+        """
         return self.checkRegister[inTrans - 1]
 
     def _genTotalLinePrint(self):

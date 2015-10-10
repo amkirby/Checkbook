@@ -17,7 +17,10 @@ class CommandProcessor:
         checkbook (Checkbook) : the current checkbook the user is using
     """
     def __init__(self, checkbook):
-        """Initializes the checkbook that will be used for the operations"""
+        """Initializes the checkbook that will be used for the operations
+        Parameter:
+            checkbook (Checkbook) : the checkbook to operate on
+        """
         self.checkbook = checkbook
 
     def _doSave(self):
