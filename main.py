@@ -19,7 +19,7 @@ commProcessor = CP.CommandProcessor(checkbook)
 if __name__ == "__main__":
     print("Welcome to your checkbook!")
     commProcessor.processPrintCommand()
-    val = input("What would you like to do? : ").lower()
+    val = input("What would you like to do? : ").lower().strip()
 
     while(val not in commands.EXIT_LIST):
         if(val == commands.HELP_COMMAND):
@@ -39,7 +39,7 @@ if __name__ == "__main__":
             
         commProcessor.processPrintCommand()
 
-        val = input("What would you like to do? : ").lower()
+        val = input("What would you like to do? : ").lower().strip()
 
     # Save prompt
     if(checkbook.isEdited()):
