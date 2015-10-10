@@ -40,6 +40,7 @@ class Checkbook:
 
     def load(self, fileName):
         """Tries to load the specified file name into the check register"""
+        self.fileName = fileName
         try:
             root = ET.parse(fileName)
             treeIter = root.iter("Transaction")
@@ -48,10 +49,9 @@ class Checkbook:
                 for child in list(elem):
                     cbt.setValue(child.tag, child.text)
                 self.checkRegister.append(cbt)
-            self.fileName = fileName
         except FileNotFoundError:
             print("The file " + fileName + " was not found.",
-                  "The default file will be used when saving.")
+                  "This file will be used when saving.")
         
         
 
