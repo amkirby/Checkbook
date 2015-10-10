@@ -10,7 +10,7 @@ from Constants import config
 import locale
 
 REPORT_TYPES = ["Monthly", "Total"]
-
+headerFormat = "{:*^40}"
 class CheckbookReport:
 
     def __init__(self, cb):
@@ -21,8 +21,8 @@ class CheckbookReport:
         """Generates an Expense report for all Debit transactions"""
         transTotal = abs(self.checkbook.getTotalForTrans("Debit"))
         catTotal = 0.0
-        print("*" * 15 + " REPORT " + "*" * 15)
-        print("Debit Total : ", locale.currency(transTotal, grouping=config.THOUSAND_SEP))
+        print("\n" + headerFormat.format(" REPORT "))
+        print("\nDebit Total : ", locale.currency(transTotal, grouping=config.THOUSAND_SEP) + "\n")
         for cat in config.DEBIT_CATEGORIES:
             currentCatList = self.checkbook.getCategory(cat)
             total = 0
@@ -34,6 +34,7 @@ class CheckbookReport:
                   "(" + locale.currency(total, grouping=config.THOUSAND_SEP) + ")")
         print("\nSavings :", str(locale.currency(abs(self.checkbook.getTotal()) - catTotal,
                                                grouping=config.THOUSAND_SEP)))
+        print("\n" + headerFormat.format(" END REPORT "))
 
     def genMonthlyReport(self, month):
         """Generates an Expense report for all Debit transactions for the specified month
@@ -42,8 +43,8 @@ class CheckbookReport:
         """
         transTotal = abs(self.checkbook.getTotalForTransMonth("Debit", month))
         catTotal = 0.0
-        print("*" * 15 + " MONTHLY REPORT " + "*" * 15)
-        print("Debit Total : ", locale.currency(transTotal, grouping=config.THOUSAND_SEP))
+        print("\n" + headerFormat.format(" MONTHLY REPORT "))
+        print("\nDebit Total : ", locale.currency(transTotal, grouping=config.THOUSAND_SEP) + "\n")
         for cat in config.DEBIT_CATEGORIES:
             currentCatList = self.checkbook.getCategory(cat)
             total = 0
@@ -58,3 +59,4 @@ class CheckbookReport:
         print("\nSavings :", str(locale.currency(abs(self.checkbook.getMonthTotal(month)) - catTotal,
                                                grouping=config.THOUSAND_SEP)))
                     
+        print("\n" + headerFormat.format(" END REPORT "))
