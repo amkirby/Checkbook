@@ -16,6 +16,6 @@ COMMAND_SEP = ","               # the separator used to split the CLI
                                 # input
 LOCALE = locale.LC_ALL          # the local to use for currency print
 FILE_NAME = "myXML.xml"
-DEBIT_CATEGORIES = ["Groceries", "Gas", "Bills"]
-CREDIT_CATEGORIES = ["Paycheck"]
+DEBIT_CATEGORIES = ["Groceries", "Gas", "Bills", "Entertainment", "Vape", "Lunch", "Other"]
+CREDIT_CATEGORIES = ["Paycheck", "Savings"]
 CATEGORIES = DEBIT_CATEGORIES + CREDIT_CATEGORIES # Categories to choose for transactions
