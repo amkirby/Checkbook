@@ -11,6 +11,7 @@ import Checkbook as CB
 import CheckbookTransaction as CBT
 import checkbookReport as CR
 import CommandProcessor as CP
+import CLIProcessingFunctions as CPF
 
 checkbook = CB.Checkbook()
 checkbook.load(config.FILE_NAME)
@@ -23,24 +24,24 @@ if __name__ == "__main__":
 
     while(val not in commands.EXIT_LIST):
         if(val == commands.HELP_COMMAND):
-            commProcessor.processHelpCommand()
+            commProcessor.processCommand(CPF.processHelpCommand)
         elif(val == commands.PRINT_COMMAND):
-            commProcessor.processPrintCommand()
+            commProcessor.processCommand(CPF.processPrintCommand)
         elif(val == commands.ADD_COMMAND):
-            commProcessor.processAddCommand()
+            commProcessor.processCommand(CPF.processAddCommand)
         elif(val == commands.EDIT_COMMAND):
-            commProcessor.processEditCommand()
+            commProcessor.processCommand(CPF.processEditCommand)
         elif(val == commands.REPORT_COMMAND):
-            commProcessor.processReportCommand()
+            commProcessor.processCommand(CPF.processReportCommand)
         elif(val == commands.LOAD_COMMAND):
-            commProcessor.processLoadCommand()
+            commProcessor.processCommand(CPF.processLoadCommand)
         elif(val == commands.SAVE_COMMAND):
-            commProcessor.processSaveCommand()
+            commProcessor.processCommand(CPF.processSaveCommand)
             
-        commProcessor.processPrintCommand()
+        commProcessor.processCommand(CPF.processPrintCommand)
 
         val = input("What would you like to do? : ").lower().strip()
 
     # Save prompt
     if(commProcessor.checkbook.isEdited()):
-        commProcessor.processSaveCommand()
+        commProcessor.processCommand(CPF.processSaveCommand)

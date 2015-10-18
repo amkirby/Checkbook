@@ -63,7 +63,9 @@ class Checkbook:
             print("The file " + fileName + " was not found.",
                   "This file will be used when saving.")
         
-        
+    def clear(self):
+        """Clears the checkbook"""
+        del self.checkRegister[:]
 
     def save(self):
         """Saves the checkbook in XML format"""

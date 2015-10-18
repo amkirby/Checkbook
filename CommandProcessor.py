@@ -12,7 +12,10 @@ from Constants import config
 from Constants import commands
 
 class CommandProcessor:
-    """A class to process commands entered by the user
+    """A class to process commands entered by the user. A function should be
+    passed to each method to do the actual processing.
+    ****NOTE: Each passed function is expected to take a Checkbook object as a parameter.
+    ****NOTE: The separate methods remain to facilitate inheritance if desired.
     Attributes:
         checkbook (Checkbook) : the current checkbook the user is using
     """
@@ -22,6 +25,14 @@ class CommandProcessor:
             checkbook (Checkbook) : the checkbook to operate on
         """
         self.checkbook = checkbook
+
+    def processCommand(self, function):
+        """Performs the effects of the specified function on the checkbook
+        Parameter:
+            function (function) : A function that takes a checkbook and performs
+                                  some action
+        """
+        function(self.checkbook)
 
     def _doSave(self):
         """Saves the checkbook"""
