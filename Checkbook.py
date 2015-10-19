@@ -5,7 +5,7 @@
 # Purpose : A class that represents a checkbook
 #********************************************************************
 
-import CheckbookTransaction as CT
+import CheckbookTransaction as CBT
 import xml.etree.ElementTree as ET
 from Constants import printConstants as PC
 from Constants import config
@@ -31,9 +31,9 @@ class Checkbook:
             cbtList (list) : contains values in the order of the CBT.KEYS that
                              are used to create a transaction
         """
-        cbt = CT.CheckbookTransaction()
+        cbt = CBT.CheckbookTransaction()
         for i in range(len(cbtList)):
-            cbt.setValue(CT.KEYS[i], cbtList[i])
+            cbt.setValue(CBT.KEYS[i], cbtList[i])
         self.checkRegister.append(cbt)
         self.edited = True
 
@@ -55,7 +55,7 @@ class Checkbook:
             root = ET.parse(fileName)
             treeIter = root.iter("Transaction")
             for elem in treeIter:
-                cbt = CT.CheckbookTransaction()
+                cbt = CBT.CheckbookTransaction()
                 for child in list(elem):
                     cbt.setValue(child.tag, child.text)
                 self.checkRegister.append(cbt)
@@ -66,6 +66,7 @@ class Checkbook:
     def clear(self):
         """Clears the checkbook"""
         del self.checkRegister[:]
+        CBT.CheckbookTransaction.resetUID()
 
     def save(self):
         """Saves the checkbook in XML format"""
@@ -193,10 +194,10 @@ class Checkbook:
         """Creates the header line at the top of the register"""
         header = ROW_SEP
         header += PC.VLINE_CHAR
-        for i in range(len(CT.KEYS)):
+        for i in range(len(CBT.KEYS)):
             headerLength = PC.SIZELIST[i]
             formatString = '{:^' + str(headerLength) + '}'
-            header += formatString.format(CT.KEYS[i]) + PC.VLINE_CHAR
+            header += formatString.format(CBT.KEYS[i]) + PC.VLINE_CHAR
         return (header)
 
     def _genTransPrint(self):

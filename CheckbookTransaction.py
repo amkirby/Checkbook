@@ -69,6 +69,11 @@ class CheckbookTransaction:
             insertVal = float(value)
         self.data[key] = insertVal
 
+    @classmethod
+    def resetUID(cls):
+        """A class method that resets the _UID"""
+        cls._UID = 1
+
     def __str__(self):
         """A string representation of a Checkbook Transaction"""
         string = PC.VLINE_CHAR
