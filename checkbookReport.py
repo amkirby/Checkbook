@@ -11,6 +11,7 @@ import locale
 
 REPORT_TYPES = ["Monthly", "Total"]
 headerFormat = "{:*^40}"
+
 class CheckbookReport:
 
     def __init__(self, cb):
@@ -67,3 +68,9 @@ class CheckbookReport:
                                                grouping=config.THOUSAND_SEP)))
                     
         print("\n" + headerFormat.format(" END REPORT "))
+
+    # A dictionary used to more generically call the methods for this class
+    dispatcher = {
+        REPORT_TYPES[0] : genMonthlyReport,
+        REPORT_TYPES[1] : genReport
+    }

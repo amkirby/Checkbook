@@ -3,8 +3,6 @@ from Constants import config
 import Checkbook as CB
 import CheckbookTransaction as CBT
 import checkbookReport as CR
-import CommandProcessor as CP
-import CLIProcessingFunctions as CPF
 
 def _doSave(checkbook):
     """Saves the checkbook"""
@@ -44,16 +42,18 @@ def processEditCommand(checkbook):
 
 def processReportCommand(checkbook):
     """Generate a report"""
+    formatString = "{:<8}"
     print("Report Types:")
-    for elem in CR.REPORT_TYPES:
-        print("  ", elem)
-    repType = input("Enter desired report : ")
+    for i in range(len(CR.REPORT_TYPES)):
+        print(formatString.format(CR.REPORT_TYPES[i]), ":", i)
+    repType = int(input("Enter desired report number : "))
     cr = CR.CheckbookReport(checkbook)
-    if(repType.capitalize() == "Monthly"):
+    repMethod = CR.CheckbookReport.dispatcher[CR.REPORT_TYPES[repType]]
+    if(repType == 0):
         month = int(input("Enter desired month as a number : "))
-        cr.genMonthlyReport(month)
-    elif(repType.capitalize() == "Total"):
-        cr.genReport()
+        repMethod(cr, month)
+    else:
+        repMethod(cr)
 
 def processLoadCommand(checkbook):
     """Load another checkbook"""

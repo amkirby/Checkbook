@@ -35,10 +35,9 @@ if __name__ == "__main__":
             commProcessor.processCommand(CPF.processReportCommand)
         elif(val == commands.LOAD_COMMAND):
             commProcessor.processCommand(CPF.processLoadCommand)
+            commProcessor.processCommand(CPF.processPrintCommand)
         elif(val == commands.SAVE_COMMAND):
             commProcessor.processCommand(CPF.processSaveCommand)
-            
-        commProcessor.processCommand(CPF.processPrintCommand)
 
         val = input("What would you like to do? : ").lower().strip()
 
