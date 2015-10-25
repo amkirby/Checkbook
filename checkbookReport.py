@@ -25,7 +25,9 @@ class CheckbookReport:
         transTotal = abs(self.checkbook.getTotalForTrans("Debit"))
         catTotal = 0.0
         print("\n" + headerFormat.format(" REPORT "))
-        print("\nDebit Total : ", locale.currency(transTotal, grouping=config.THOUSAND_SEP) + "\n")
+        print("\nDebit Total : ", locale.currency(transTotal, grouping=config.THOUSAND_SEP) + "")
+        print("Pay Total   : ", locale.currency(self.checkbook.getTotalForCat("Paycheck"),
+                                                grouping=config.THOUSAND_SEP) + "\n")
         for cat in config.DEBIT_CATEGORIES:
             currentCatList = self.checkbook.getCategory(cat)
             total = 0
@@ -35,7 +37,7 @@ class CheckbookReport:
             catTotal += total
             print("  " + "{:.2%}".format(total / transTotal),
                   "(" + locale.currency(total, grouping=config.THOUSAND_SEP) + ")")
-        print("\nSavings :", str(locale.currency(abs(self.checkbook.getTotal()) - catTotal,
+        print("\nSavings :", str(locale.currency(self.checkbook.getTotalForCat("Paycheck") - catTotal,
                                                grouping=config.THOUSAND_SEP)))
         print("\n" + headerFormat.format(" END REPORT "))
 
@@ -47,7 +49,9 @@ class CheckbookReport:
         transTotal = abs(self.checkbook.getTotalForTransMonth("Debit", month))
         catTotal = 0.0
         print("\n" + headerFormat.format(" MONTHLY REPORT "))
-        print("\nDebit Total : ", locale.currency(transTotal, grouping=config.THOUSAND_SEP) + "\n")
+        print("\nDebit Total : ", locale.currency(transTotal, grouping=config.THOUSAND_SEP) + "")
+        print("Pay Total   : ", locale.currency(self.checkbook.getTotalForCatMonth("Paycheck", month),
+                                                grouping=config.THOUSAND_SEP) + "\n")
         for cat in config.DEBIT_CATEGORIES:
             currentCatList = self.checkbook.getCategory(cat)
             total = 0
@@ -59,7 +63,7 @@ class CheckbookReport:
             catTotal += total
             print("  " + "{:.2%}".format(total / transTotal),
                   "(" + locale.currency(total, grouping=config.THOUSAND_SEP) + ")")
-        print("\nSavings :", str(locale.currency(abs(self.checkbook.getMonthTotal(month)) - catTotal,
+        print("\nSavings :", str(locale.currency(self.checkbook.getTotalForCatMonth("Paycheck", month) - catTotal,
                                                grouping=config.THOUSAND_SEP)))
                     
         print("\n" + headerFormat.format(" END REPORT "))

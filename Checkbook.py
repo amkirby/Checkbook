@@ -151,6 +151,30 @@ class Checkbook:
                 total += elem.getAmount()
         return (total)
 
+    def getTotalForCat(self, category):
+        """Get the total for the specified category
+        Parameter:
+            category (string) : The category to total
+        """
+        catList = self.getCategory(category)
+        total = 0.0
+        for elem in catList:
+            total += elem.getAmount()
+        return total
+
+    def getTotalForCatMonth(self, cat, month):
+        """Get the total for the specified transaction in the specified month
+        Parameters:
+            cat (string) : the category to total
+            month (int)  : the month to total the trans type
+        """
+        monthList = self.getMonth(month)
+        total = 0.0
+        for elem in monthList:
+            if elem.getValue("Category") == cat:
+                total += elem.getAmount()
+        return (total)
+
     def getTotal(self):
         """Gets the total for the register"""
         total = 0.0
