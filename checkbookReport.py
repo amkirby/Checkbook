@@ -24,23 +24,26 @@ class CheckbookReport:
     def genReport(self):
         """Generates an Expense report for all Debit transactions"""
         transTotal = abs(self.checkbook.getTotalForTrans("Debit"))
-        catTotal = 0.0
-        print("\n" + headerFormat.format(" REPORT "))
-        print("\nDebit Total : ", locale.currency(transTotal, grouping=config.THOUSAND_SEP) + "")
-        print("Pay Total   : ", locale.currency(self.checkbook.getTotalForCat("Paycheck"),
-                                                grouping=config.THOUSAND_SEP) + "\n")
+        payTotal = self.checkbook.getTotalForCat("Paycheck")
+        formatString = "{:<15}"
+        print("\n" + headerFormat.format(" REPORT ") + "\n")
+        print(formatString.format("Pay Total   :"),
+              locale.currency(payTotal, grouping=config.THOUSAND_SEP))
+        print(formatString.format("Debit Total :"),
+              locale.currency(transTotal, grouping=config.THOUSAND_SEP))
+        print(formatString.format("Savings     :"),
+              locale.currency(payTotal - transTotal, grouping=config.THOUSAND_SEP))
+        print() # add extra space before printing categories
         for cat in config.DEBIT_CATEGORIES:
             currentCatList = self.checkbook.getCategory(cat)
             total = 0
             print(cat)
             for cbt in currentCatList:
                 total += abs(cbt.getAmount())
-            catTotal += total
+
             print("  " + "{:.2%}".format(total / transTotal),
                   "(" + locale.currency(total, grouping=config.THOUSAND_SEP) + ")")
-        print("\nSavings :", str(locale.currency(self.checkbook.getTotalForCat("Paycheck") - catTotal,
-                                               grouping=config.THOUSAND_SEP)))
-        print("\n" + headerFormat.format(" END REPORT "))
+        print("\n" + headerFormat.format(" END REPORT ") + "\n")
 
     def genMonthlyReport(self, month):
         """Generates an Expense report for all Debit transactions for the specified month
@@ -48,11 +51,17 @@ class CheckbookReport:
             month : an integer representing the month used to generate the report
         """
         transTotal = abs(self.checkbook.getTotalForTransMonth("Debit", month))
-        catTotal = 0.0
-        print("\n" + headerFormat.format(" MONTHLY REPORT "))
-        print("\nDebit Total : ", locale.currency(transTotal, grouping=config.THOUSAND_SEP) + "")
-        print("Pay Total   : ", locale.currency(self.checkbook.getTotalForCatMonth("Paycheck", month),
-                                                grouping=config.THOUSAND_SEP) + "\n")
+        payTotal = self.checkbook.getTotalForCatMonth("Paycheck", month)
+        formatString = "{:<15}"
+        print("\n" + headerFormat.format(" MONTHLY REPORT ") + "\n")
+        print(formatString.format("Pay Total   :"),
+              locale.currency(payTotal, grouping=config.THOUSAND_SEP))
+        print(formatString.format("Debit Total :"),
+              locale.currency(transTotal, grouping=config.THOUSAND_SEP))
+        print(formatString.format("Savings     :"),
+              locale.currency(payTotal - transTotal, grouping=config.THOUSAND_SEP))
+        print() # add extra space before printing categories
+
         for cat in config.DEBIT_CATEGORIES:
             currentCatList = self.checkbook.getCategory(cat)
             total = 0
@@ -61,13 +70,11 @@ class CheckbookReport:
                 date = cbt.getDate().month
                 if date == month:
                     total += abs(cbt.getAmount())
-            catTotal += total
+
             print("  " + "{:.2%}".format(total / transTotal),
                   "(" + locale.currency(total, grouping=config.THOUSAND_SEP) + ")")
-        print("\nSavings :", str(locale.currency(self.checkbook.getTotalForCatMonth("Paycheck", month) - catTotal,
-                                               grouping=config.THOUSAND_SEP)))
                     
-        print("\n" + headerFormat.format(" END REPORT "))
+        print("\n" + headerFormat.format(" END REPORT ") + "\n")
 
     # A dictionary used to more generically call the methods for this class
     dispatcher = {
