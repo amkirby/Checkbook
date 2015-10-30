@@ -25,13 +25,13 @@ class CheckbookReport:
         """Generates an Expense report for all Debit transactions"""
         transTotal = abs(self.checkbook.getTotalForTrans("Debit"))
         payTotal = self.checkbook.getTotalForCat("Paycheck")
-        formatString = "{:<15}"
+        formatString = "{:<12}"
         print("\n" + headerFormat.format(" REPORT ") + "\n")
-        print(formatString.format("Pay Total   :"),
+        print(formatString.format("Pay Total"), ":",
               locale.currency(payTotal, grouping=config.THOUSAND_SEP))
-        print(formatString.format("Debit Total :"),
+        print(formatString.format("Debit Total"), ":",
               locale.currency(transTotal, grouping=config.THOUSAND_SEP))
-        print(formatString.format("Savings     :"),
+        print(formatString.format("Savings"), ":",
               locale.currency(payTotal - transTotal, grouping=config.THOUSAND_SEP))
         print() # add extra space before printing categories
         for cat in config.DEBIT_CATEGORIES:
@@ -52,13 +52,13 @@ class CheckbookReport:
         """
         transTotal = abs(self.checkbook.getTotalForTransMonth("Debit", month))
         payTotal = self.checkbook.getTotalForCatMonth("Paycheck", month)
-        formatString = "{:<15}"
+        formatString = "{:<12}"
         print("\n" + headerFormat.format(" MONTHLY REPORT ") + "\n")
-        print(formatString.format("Pay Total   :"),
+        print(formatString.format("Pay Total"), ":",
               locale.currency(payTotal, grouping=config.THOUSAND_SEP))
-        print(formatString.format("Debit Total :"),
+        print(formatString.format("Debit Total"), ":",
               locale.currency(transTotal, grouping=config.THOUSAND_SEP))
-        print(formatString.format("Savings     :"),
+        print(formatString.format("Savings"), ":",
               locale.currency(payTotal - transTotal, grouping=config.THOUSAND_SEP))
         print() # add extra space before printing categories
 
