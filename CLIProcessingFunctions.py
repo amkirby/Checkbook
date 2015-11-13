@@ -51,9 +51,10 @@ def processReportCommand(checkbook):
     repMethod = CR.CheckbookReport.dispatcher[CR.REPORT_TYPES[repType]]
     if(repType == 0):
         month = int(input("Enter desired month as a number : "))
-        repMethod(cr, month)
+        reportText = repMethod(cr, month)
     else:
-        repMethod(cr)
+        reportText = repMethod(cr)
+    print(reportText)
 
 def processLoadCommand(checkbook):
     """Load another checkbook"""

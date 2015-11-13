@@ -23,58 +23,62 @@ class CheckbookReport:
 
     def genReport(self):
         """Generates an Expense report for all Debit transactions"""
+        returnString = ""
         transTotal = abs(self.checkbook.getTotalForTrans("Debit"))
         payTotal = self.checkbook.getTotalForCat("Paycheck")
         formatString = "{:<12}"
-        print("\n" + headerFormat.format(" REPORT ") + "\n")
-        print(formatString.format("Pay Total"), ":",
-              locale.currency(payTotal, grouping=config.THOUSAND_SEP))
-        print(formatString.format("Debit Total"), ":",
-              locale.currency(transTotal, grouping=config.THOUSAND_SEP))
-        print(formatString.format("Savings"), ":",
-              locale.currency(payTotal - transTotal, grouping=config.THOUSAND_SEP))
-        print() # add extra space before printing categories
+        returnString += "\n" + headerFormat.format(" REPORT ") + "\n"
+        returnString += ("\n" + formatString.format("Pay Total") + ": " + 
+            locale.currency(payTotal, grouping=config.THOUSAND_SEP) + "\n")
+        returnString += (formatString.format("Debit Total") + ": " + 
+            locale.currency(transTotal, grouping=config.THOUSAND_SEP) + "\n")
+        returnString += (formatString.format("Savings") + ": " + 
+            locale.currency(payTotal - transTotal, grouping=config.THOUSAND_SEP) + "\n")
+        returnString +="\n" # add extra space before printing categories
         for cat in config.DEBIT_CATEGORIES:
             currentCatList = self.checkbook.getCategory(cat)
             total = 0
-            print(cat)
+            returnString += cat + "\n"
             for cbt in currentCatList:
                 total += abs(cbt.getAmount())
 
-            print("  " + "{:.2%}".format(total / transTotal),
-                  "(" + locale.currency(total, grouping=config.THOUSAND_SEP) + ")")
-        print("\n" + headerFormat.format(" END REPORT ") + "\n")
+            returnString += ("  " + "{:.2%}".format(total / transTotal) + " (" + 
+                locale.currency(total, grouping=config.THOUSAND_SEP) + ")" + "\n")
+        returnString += "\n" + headerFormat.format(" END REPORT ") + "\n"
+        return returnString
 
     def genMonthlyReport(self, month):
         """Generates an Expense report for all Debit transactions for the specified month
         Parameters:
             month : an integer representing the month used to generate the report
         """
+        returnString = ""
         transTotal = abs(self.checkbook.getTotalForTransMonth("Debit", month))
         payTotal = self.checkbook.getTotalForCatMonth("Paycheck", month)
         formatString = "{:<12}"
-        print("\n" + headerFormat.format(" MONTHLY REPORT ") + "\n")
-        print(formatString.format("Pay Total"), ":",
-              locale.currency(payTotal, grouping=config.THOUSAND_SEP))
-        print(formatString.format("Debit Total"), ":",
-              locale.currency(transTotal, grouping=config.THOUSAND_SEP))
-        print(formatString.format("Savings"), ":",
+        returnString +=("\n" + headerFormat.format(" MONTHLY REPORT ") + "\n")
+        returnString +=("\n" + formatString.format("Pay Total") + ": " + 
+            locale.currency(payTotal, grouping=config.THOUSAND_SEP) + "\n")
+        returnString +=(formatString.format("Debit Total") + ": " +
+              locale.currency(transTotal, grouping=config.THOUSAND_SEP) + "\n")
+        returnString +=(formatString.format("Savings") + ": " +
               locale.currency(payTotal - transTotal, grouping=config.THOUSAND_SEP))
-        print() # add extra space before printing categories
+        returnString +="\n" # add extra space before printing categories
 
         for cat in config.DEBIT_CATEGORIES:
             currentCatList = self.checkbook.getCategory(cat)
             total = 0
-            print (cat)
+            returnString += (cat + "\n")
             for cbt in currentCatList:
                 date = cbt.getDate().month
                 if date == month:
                     total += abs(cbt.getAmount())
 
-            print("  " + "{:.2%}".format(total / transTotal),
-                  "(" + locale.currency(total, grouping=config.THOUSAND_SEP) + ")")
+            returnString +=("  " + "{:.2%}".format(total / transTotal) + 
+                  " (" + locale.currency(total, grouping=config.THOUSAND_SEP) + ")" + "\n")
                     
-        print("\n" + headerFormat.format(" END REPORT ") + "\n")
+        returnString +=("\n" + headerFormat.format(" END REPORT ") + "\n")
+        return returnString
 
     # A dictionary used to more generically call the methods for this class
     dispatcher = {
