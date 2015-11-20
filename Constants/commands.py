@@ -13,6 +13,8 @@ EDIT_COMMAND = "edit"           # edit a transaction
 REPORT_COMMAND = "report"       # generate a report
 LOAD_COMMAND = "load"           # load an XML file
 
+TRANS_TYPES = ["Debit", "Credit"]
+
 EXIT_LIST = ["Quit", "quit", "Exit", "exit", "q"] # the commands that exit the program
 helpHeadersFormat = "{:*^35}"
 topHelpHeader = helpHeadersFormat.format(" HELP ")

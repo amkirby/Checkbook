@@ -11,6 +11,29 @@ def _doSave(checkbook):
         checkbook.save()
         print("save successful!")
 
+def _selectWithNumber(textList, prompt, key, defText = None):
+    """Select a value from the given list by using it's index
+    Parameters:
+        textList (list) : a list of strings to Select
+        prompt (str)    : a header for selection
+        key (str)       : a prompt for input
+        defText (str)   : default text to display
+    Returns:
+        (str) : the chosen value from the given list
+    """
+    maxLen = len(max(textList, key=len))
+    formatString = "{:<" + str(maxLen) + "}"
+    prevText = ""
+    if defText is not None:
+        prevText = "(" + str(defText) + ")"
+
+    for i in range(len(textList)):
+        print("  " + formatString.format(textList[i]), i)
+    val = input(key + prevText + " : ")
+    if val.strip() != "" and val.isdigit():
+        val = textList[int(val)]
+    return val
+
 def processAddCommand(checkbook):
     """Adds a transaction to the checkbook"""
     print("Enter your transaction")
@@ -18,10 +41,12 @@ def processAddCommand(checkbook):
     for key in CBT.KEYS:
         if key != "Num":
             if key == "Category":
-                print("Categories to choose:")
-                for cat in config.CATEGORIES:
-                    print("  " + cat)
-            val = input(key + " : ")
+                val = _selectWithNumber(config.CATEGORIES, "Categories to choose:", key)
+            elif key == "Trans":
+                val = _selectWithNumber(commands.TRANS_TYPES, "Transaction Types:", key)
+            else:
+                val = input(key + " : ")
+
             cbt.setValue(key, val.capitalize())
     checkbook.addSingleTrans(cbt)
 
@@ -32,10 +57,13 @@ def processEditCommand(checkbook):
     for key in CBT.KEYS:
         if key != "Num":
             if key == "Category":
-                print("Categories to choose:")
-                for cat in config.CATEGORIES:
-                    print("  " + cat)
-            val = input(key + " (" + str(trans.getValue(key)) + ")" + " : ")
+                val = _selectWithNumber(config.CATEGORIES, "Categories to choose:", 
+                    key, trans.getValue(key))
+            elif key == "Trans":
+                val = _selectWithNumber(commands.TRANS_TYPES, "Transaction Types:", 
+                    key, trans.getValue(key))
+            else:
+                val = input(key + " (" + str(trans.getValue(key)) + ")" + " : ")
             if(val.strip() != ""):
                 trans.setValue(key, val.capitalize())
                 checkbook.setEdited(True)
