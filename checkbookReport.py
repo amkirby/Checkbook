@@ -25,7 +25,7 @@ class CheckbookReport:
         """Generates an Expense report for all Debit transactions"""
         returnString = ""
         transTotal = abs(self.checkbook.getTotalForTrans("Debit"))
-        payTotal = self.checkbook.getTotalForCat("Paycheck")
+        payTotal = self.checkbook.getTotalForTrans("Credit")
         formatString = "{:<12}"
         returnString += "\n" + headerFormat.format(" REPORT ") + "\n"
         returnString += ("\n" + formatString.format("Pay Total") + ": " + 
@@ -54,7 +54,7 @@ class CheckbookReport:
         """
         returnString = ""
         transTotal = abs(self.checkbook.getTotalForTransMonth("Debit", month))
-        payTotal = self.checkbook.getTotalForCatMonth("Paycheck", month)
+        payTotal = self.checkbook.getTotalForTransMonth("Credit", month)
         formatString = "{:<12}"
         returnString +=("\n" + headerFormat.format(" MONTHLY REPORT ") + "\n")
         returnString +=("\n" + formatString.format("Pay Total") + ": " + 
