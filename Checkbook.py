@@ -62,6 +62,9 @@ class Checkbook:
         except FileNotFoundError:
             print("The file " + fileName + " was not found.",
                   "This file will be used when saving.")
+        except ET.ParseError:
+            print("There was an error parsing " + fileName,
+                  "(possibly empty). This file will be used when saving.")
         
     def clear(self):
         """Clears the checkbook"""
