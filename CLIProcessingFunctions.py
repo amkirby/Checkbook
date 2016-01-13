@@ -30,7 +30,7 @@ def _selectWithNumber(textList, prompt, key, defText = None):
     for i in range(len(textList)):
         print("  " + formatString.format(textList[i]), i)
     val = input(key + prevText + " : ")
-    if val.strip() != "" and val.isdigit():
+    if val.strip() != "" and val.isdigit() and (int(val) >= 0 and int(val) < len(textList)):
         val = textList[int(val)]
     return val
 
