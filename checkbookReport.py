@@ -21,11 +21,9 @@ class CheckbookReport:
         """
         self.checkbook = cb
 
-    def genReport(self):
-        """Generates an Expense report for all Debit transactions"""
+    def genReport(self, month=None):
         returnString = ""
-        transTotal = abs(self.checkbook.getTotalForTrans("Debit"))
-        payTotal = self.checkbook.getTotalForTrans("Credit")
+        transTotal, payTotal = self._getTotalsForReports(month)
         formatString = "{:<12}"
         returnString += "\n" + headerFormat.format(" REPORT ") + "\n"
         returnString += ("\n" + formatString.format("Pay Total") + ": " + 
@@ -39,49 +37,49 @@ class CheckbookReport:
             currentCatList = self.checkbook.getCategory(cat)
             total = 0
             returnString += cat + "\n"
-            for cbt in currentCatList:
-                total += abs(cbt.getAmount())
+            total = self._getCBTTotalForCategory(currentCatList, month)
 
             returnString += ("  " + "{:.2%}".format(total / transTotal) + " (" + 
                 locale.currency(total, grouping=config.THOUSAND_SEP) + ")" + "\n")
         returnString += "\n" + headerFormat.format(" END REPORT ") + "\n"
         return returnString
 
-    def genMonthlyReport(self, month):
-        """Generates an Expense report for all Debit transactions for the specified month
-        Parameters:
-            month : an integer representing the month used to generate the report
+    def _getTotalsForReports(self, month):
+        """Gets the debit total and the credit total for the checkbook.
+        Parameter:
+            month (None | int) : if None, it is a total report, otherwise it is a monthly report
         """
-        returnString = ""
-        transTotal = abs(self.checkbook.getTotalForTransMonth("Debit", month))
-        payTotal = self.checkbook.getTotalForTransMonth("Credit", month)
-        formatString = "{:<12}"
-        returnString +=("\n" + headerFormat.format(" MONTHLY REPORT ") + "\n")
-        returnString +=("\n" + formatString.format("Pay Total") + ": " + 
-            locale.currency(payTotal, grouping=config.THOUSAND_SEP) + "\n")
-        returnString +=(formatString.format("Debit Total") + ": " +
-              locale.currency(transTotal, grouping=config.THOUSAND_SEP) + "\n")
-        returnString +=(formatString.format("Savings") + ": " +
-              locale.currency(payTotal - transTotal, grouping=config.THOUSAND_SEP))
-        returnString +="\n" # add extra space before printing categories
+        if month is None:
+            # ASSERT: this report is a total report
+            transTotal = abs(self.checkbook.getTotalForTrans("Debit"))
+            payTotal = self.checkbook.getTotalForTrans("Credit")
+        else:
+            # ASSERT: this report is a monthly report
+            transTotal = abs(self.checkbook.getTotalForTransMonth("Debit", month))
+            payTotal = self.checkbook.getTotalForTransMonth("Credit", month)
+        return transTotal, payTotal
 
-        for cat in config.DEBIT_CATEGORIES:
-            currentCatList = self.checkbook.getCategory(cat)
-            total = 0
-            returnString += (cat + "\n")
-            for cbt in currentCatList:
+    def _getCBTTotalForCategory(self, cbtList, month):
+        """Gets the total for the given CBT list.
+        Parameters:
+            cbtList (list) : CBTs for a specific category
+            month (None | int) : if None, it is a total report, otherwise it is a monthly report
+        """
+        total = 0
+        for cbt in cbtList:
+            if month is None:
+                # ASSERT: this report is a total report
+                total += abs(cbt.getAmount())
+            else:
+                # ASSERT: this report is a monthly report
                 date = cbt.getDate().month
                 if date == month:
                     total += abs(cbt.getAmount())
 
-            returnString +=("  " + "{:.2%}".format(total / transTotal) + 
-                  " (" + locale.currency(total, grouping=config.THOUSAND_SEP) + ")" + "\n")
-                    
-        returnString +=("\n" + headerFormat.format(" END REPORT ") + "\n")
-        return returnString
+        return total
 
     # A dictionary used to more generically call the methods for this class
     dispatcher = {
-        REPORT_TYPES[0] : genMonthlyReport,
+        REPORT_TYPES[0] : genReport,
         REPORT_TYPES[1] : genReport
     }

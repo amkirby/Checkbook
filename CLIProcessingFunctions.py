@@ -71,6 +71,7 @@ def processEditCommand(checkbook):
 def processReportCommand(checkbook):
     """Generate a report"""
     formatString = "{:<8}"
+    month = None
     print("Report Types:")
     for i in range(len(CR.REPORT_TYPES)):
         print(formatString.format(CR.REPORT_TYPES[i]), ":", i)
@@ -79,9 +80,8 @@ def processReportCommand(checkbook):
     repMethod = CR.CheckbookReport.dispatcher[CR.REPORT_TYPES[repType]]
     if(repType == 0):
         month = int(input("Enter desired month as a number : "))
-        reportText = repMethod(cr, month)
-    else:
-        reportText = repMethod(cr)
+
+    reportText = repMethod(cr, month)
     print(reportText)
 
 def processLoadCommand(checkbook):
