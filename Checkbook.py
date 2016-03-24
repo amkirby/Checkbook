@@ -123,10 +123,14 @@ class Checkbook:
         Parameter:
             findMonth (int) : the integer value for the month to gather
         """
+        month = findMonth
+        if type(month) is not int:
+            month = int(month)
+
         returnList = []
         for elem in self.checkRegister:
             date = elem.getDictionary().get("Date")
-            if(date.month == findMonth):
+            if(date.month == month):
                 returnList.append(elem)
         return (returnList)
 
@@ -261,13 +265,15 @@ class Checkbook:
             key (string) : the key to to get the subset from
             value (int | string) : the value from key to get
         """
-        returnList = []
-        if (key == "Date".lower()):
-            returnList = self.getMonth(int(value))
-        elif (key == "Trans".lower()):
-            returnList = self.getTransactionType(value.capitalize())
-        elif (key == "Category".lower()):
-            returnList = self.getCategory(value.capitalize())
+        func = self.specific_print_functions[key.capitalize()]
+
+        if value.isdigit():
+            funcParam = int(value)
+        else:
+            funcParam = value.capitalize()
+
+        returnList = func(self, funcParam)
+
         return returnList
 
     def __str__(self):
@@ -279,3 +285,8 @@ class Checkbook:
         string +=  ROW_SEP
         return (string)
 
+    specific_print_functions = {
+        "Date" : getMonth,
+        "Trans" : getTransactionType,
+        "Category" : getCategory
+    }
