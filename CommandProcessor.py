@@ -26,13 +26,15 @@ class CommandProcessor:
         """
         self.checkbook = checkbook
 
-    def processCommand(self, function):
+    def processCommand(self, function, *args):
         """Performs the effects of the specified function on the checkbook
         Parameter:
             function (function) : A function that takes a checkbook and performs
                                   some action
+            args (variable args) : optional arguments that can be passed to the specified
+                                   function
         """
-        function(self.checkbook)
+        function(self.checkbook, *args)
 
     def _doSave(self):
         """Saves the checkbook"""

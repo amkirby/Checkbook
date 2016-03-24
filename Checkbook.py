@@ -227,15 +227,49 @@ class Checkbook:
             header += formatString.format(CBT.KEYS[i]) + PC.VLINE_CHAR
         return (header)
 
-    def _genTransPrint(self):
-        """Creates the print for each transaction in the register"""
+    def _genTransPrint(self, printList=None):
+        """Creates the print for each transaction in the register
+        Parameter:
+            printList (list) : the list of CBTs to loop through to generate
+                               the transaction print. If None, loop through 
+                               the whole checkbook
+        """
+        iterList = printList
+        if (iterList is None):
+            iterList = self.checkRegister
+
         string = ''
-        for elem in self.checkRegister:
+        for elem in iterList:
             string += str(elem)
             string += ROW_SEP
         return (string)
         
-        
+    def getSpecificPrint(self, key, value):
+        """Print a subset of the checkbook
+        Parameters:
+            key (string) : the key to to get the subset from
+            value (int | string) : the value from key to get
+        """
+        string = self._genHeaderPrint()
+        string += ROW_SEP
+        string += self._genTransPrint(self._getSpecificList(key, value))
+        return string
+
+    def _getSpecificList(self, key, value):
+        """Gets the subset list based on the given input
+        Parameters:
+            key (string) : the key to to get the subset from
+            value (int | string) : the value from key to get
+        """
+        returnList = []
+        if (key == "Date".lower()):
+            returnList = self.getMonth(int(value))
+        elif (key == "Trans".lower()):
+            returnList = self.getTransactionType(value.capitalize())
+        elif (key == "Category".lower()):
+            returnList = self.getCategory(value.capitalize())
+        return returnList
+
     def __str__(self):
         """A string representation of a checkbook"""
         string = self._genHeaderPrint()

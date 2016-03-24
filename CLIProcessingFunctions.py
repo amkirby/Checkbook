@@ -102,6 +102,19 @@ def processHelpCommand(checkbook):
     """Prints the help text"""
     print(commands.HELP_TEXT)
 
-def processPrintCommand(checkbook):
+def processPrintCommand(checkbook, *args):
     """Prints the checkbook"""
-    print(checkbook)
+    if not args:
+        print(checkbook)
+    elif (len(args) == 2):
+        print(checkbook.getSpecificPrint(*args))
+    else:
+        printHelpText = """
+Usage : print [<key> <value> | <help>]
+Possible keys with their values :
+    Date     : a number to represent the month
+    Trans    : {}
+    Category : {}
+help displays this text
+        """
+        print (printHelpText.format(", ".join(s for s in commands.TRANS_TYPES), ", ".join(s for s in config.CATEGORIES)))

@@ -16,30 +16,40 @@ import CLIProcessingFunctions as CPF
 checkbook = CB.Checkbook()
 checkbook.load(config.FILE_NAME)
 commProcessor = CP.CommandProcessor(checkbook)
+
+def _handle_input():
+    """Gather user input. If the input is empty, make it an empty string.
+    Returns:
+        inputVal (list) : list containing one or more strings
+    """
+    inputVal = input("What would you like to do? : ").lower().strip().split()
+    if len(inputVal) == 0:
+        inputVal = [""]
+
+    return inputVal
                 
 if __name__ == "__main__":
     print("Welcome to your checkbook!")
     commProcessor.processPrintCommand()
-    val = input("What would you like to do? : ").lower().strip()
-
-    while(val not in commands.EXIT_LIST):
-        if(val == commands.HELP_COMMAND):
+    val = _handle_input()
+    while(val[0] not in commands.EXIT_LIST):
+        if(val[0] == commands.HELP_COMMAND):
             commProcessor.processCommand(CPF.processHelpCommand)
-        elif(val == commands.PRINT_COMMAND):
-            commProcessor.processCommand(CPF.processPrintCommand)
-        elif(val == commands.ADD_COMMAND):
+        elif(val[0] == commands.PRINT_COMMAND):
+            commProcessor.processCommand(CPF.processPrintCommand, *val[1:])
+        elif(val[0] == commands.ADD_COMMAND):
             commProcessor.processCommand(CPF.processAddCommand)
-        elif(val == commands.EDIT_COMMAND):
+        elif(val[0] == commands.EDIT_COMMAND):
             commProcessor.processCommand(CPF.processEditCommand)
-        elif(val == commands.REPORT_COMMAND):
+        elif(val[0] == commands.REPORT_COMMAND):
             commProcessor.processCommand(CPF.processReportCommand)
-        elif(val == commands.LOAD_COMMAND):
+        elif(val[0] == commands.LOAD_COMMAND):
             commProcessor.processCommand(CPF.processLoadCommand)
             commProcessor.processCommand(CPF.processPrintCommand)
-        elif(val == commands.SAVE_COMMAND):
+        elif(val[0] == commands.SAVE_COMMAND):
             commProcessor.processCommand(CPF.processSaveCommand)
 
-        val = input("What would you like to do? : ").lower().strip()
+        val = _handle_input()
 
     # Save prompt
     if(commProcessor.checkbook.isEdited()):
