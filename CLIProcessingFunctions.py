@@ -50,9 +50,13 @@ def processAddCommand(checkbook):
             cbt.setValue(key, val.capitalize())
     checkbook.addSingleTrans(cbt)
 
-def processEditCommand(checkbook):
+def processEditCommand(checkbook, *args):
     """Edit a transaction"""
-    editTrans = int(input("Which transaction do you want to edit? : "))
+    if not args:
+        editTrans = int(input("Which transaction do you want to edit? : "))
+    else:
+        editTrans = int(args[0])
+
     trans = checkbook.findTransaction(editTrans)
     for key in CBT.KEYS:
         if key != "Num":

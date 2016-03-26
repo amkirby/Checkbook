@@ -40,7 +40,7 @@ if __name__ == "__main__":
         elif(val[0] == commands.ADD_COMMAND):
             commProcessor.processCommand(CPF.processAddCommand)
         elif(val[0] == commands.EDIT_COMMAND):
-            commProcessor.processCommand(CPF.processEditCommand)
+            commProcessor.processCommand(CPF.processEditCommand, *val[1:])
         elif(val[0] == commands.REPORT_COMMAND):
             commProcessor.processCommand(CPF.processReportCommand)
         elif(val[0] == commands.LOAD_COMMAND):
