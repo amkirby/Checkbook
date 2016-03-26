@@ -88,12 +88,15 @@ def processReportCommand(checkbook):
     reportText = repMethod(cr, month)
     print(reportText)
 
-def processLoadCommand(checkbook):
+def processLoadCommand(checkbook, *args):
     """Load another checkbook"""
     if(checkbook.isEdited()):
         _doSave()
 
-    fileName = input("Enter an XML file to load : ")
+    if not args:
+        fileName = input("Enter an XML file to load : ")
+    else:
+        fileName = args[0]
     checkbook.clear()
     checkbook.load(fileName)
 

@@ -44,7 +44,7 @@ if __name__ == "__main__":
         elif(val[0] == commands.REPORT_COMMAND):
             commProcessor.processCommand(CPF.processReportCommand)
         elif(val[0] == commands.LOAD_COMMAND):
-            commProcessor.processCommand(CPF.processLoadCommand)
+            commProcessor.processCommand(CPF.processLoadCommand, *val[1:])
             commProcessor.processCommand(CPF.processPrintCommand)
         elif(val[0] == commands.SAVE_COMMAND):
             commProcessor.processCommand(CPF.processSaveCommand)
