@@ -5,11 +5,11 @@
 # Purpose: process the commands entered by the user
 #*********************************************************************
 
+from Constants import config
+from Constants import commands
 import Checkbook as CB
 import CheckbookTransaction as CBT
 import checkbookReport as CR
-from Constants import config
-from Constants import commands
 
 class CommandProcessor:
     """A class to process commands entered by the user. A function should be
@@ -43,6 +43,29 @@ class CommandProcessor:
             self.checkbook.save()
             print("save successful!")
 
+    def _selectWithNumber(self, textList, prompt, key, defText = None):
+        """Select a value from the given list by using it's index
+        Parameters:
+            textList (list) : a list of strings to Select
+            prompt (str)    : a header for selection
+            key (str)       : a prompt for input
+            defText (str)   : default text to display
+        Returns:
+            (str) : the chosen value from the given list
+        """
+        maxLen = len(max(textList, key=len))
+        formatString = "{:<" + str(maxLen) + "}"
+        prevText = ""
+        if defText is not None:
+            prevText = "(" + str(defText) + ")"
+
+        for i in range(len(textList)):
+            print("  " + formatString.format(textList[i]), i)
+        val = input(key + prevText + " : ")
+        if val.strip() != "" and val.isdigit() and (int(val) >= 0 and int(val) < len(textList)):
+            val = textList[int(val)]
+        return val
+
     def processAddCommand(self):
         """Adds a transaction to the checkbook"""
         print("Enter your transaction")
@@ -50,49 +73,64 @@ class CommandProcessor:
         for key in CBT.KEYS:
             if key != "Num":
                 if key == "Category":
-                    print("Categories to choose:")
-                    for cat in config.CATEGORIES:
-                        print("  " + cat)
-                val = input(key + " : ")
+                    val = self._selectWithNumber(config.CATEGORIES, "Categories to choose:", key)
+                elif key == "Trans":
+                    val = self._selectWithNumber(commands.TRANS_TYPES, "Transaction Types:", key)
+                else:
+                    val = input(key + " : ")
+
                 cbt.setValue(key, val.capitalize())
         self.checkbook.addSingleTrans(cbt)
 
-    def processEditCommand(self):
+    def processEditCommand(self, *args):
         """Edit a transaction"""
-        editTrans = int(input("Which transaction do you want to edit? : "))
+        if not args:
+            editTrans = int(input("Which transaction do you want to edit? : "))
+        else:
+            editTrans = int(args[0])
+
         trans = self.checkbook.findTransaction(editTrans)
         for key in CBT.KEYS:
             if key != "Num":
                 if key == "Category":
-                    print("Categories to choose:")
-                    for cat in config.CATEGORIES:
-                        print("  " + cat)
-                val = input(key + " (" + str(trans.getValue(key)) + ")" + " : ")
+                    val = self._selectWithNumber(config.CATEGORIES, "Categories to choose:", 
+                        key, trans.getValue(key))
+                elif key == "Trans":
+                    val = self._selectWithNumber(commands.TRANS_TYPES, "Transaction Types:", 
+                        key, trans.getValue(key))
+                else:
+                    val = input(key + " (" + str(trans.getValue(key)) + ")" + " : ")
                 if(val.strip() != ""):
                     trans.setValue(key, val.capitalize())
                     self.checkbook.setEdited(True)
 
     def processReportCommand(self):
         """Generate a report"""
+        formatString = "{:<8}"
+        month = None
         print("Report Types:")
-        for elem in CR.REPORT_TYPES:
-            print("  ", elem)
-        repType = input("Enter desired report : ")
+        for i in range(len(CR.REPORT_TYPES)):
+            print(formatString.format(CR.REPORT_TYPES[i]), ":", i)
+        repType = int(input("Enter desired report number : "))
         cr = CR.CheckbookReport(self.checkbook)
-        if(repType.capitalize() == "Monthly"):
+        repMethod = CR.CheckbookReport.dispatcher[CR.REPORT_TYPES[repType]]
+        if(repType == 0):
             month = int(input("Enter desired month as a number : "))
-            cr.genMonthlyReport(month)
-        elif(repType.capitalize() == "Total"):
-            cr.genReport()
+
+        reportText = repMethod(cr, month)
+        print(reportText)
 
     #TODO: should it return checkbook?
-    def processLoadCommand(self):
+    def processLoadCommand(self, *args):
         """Load another checkbook"""
         if(self.checkbook.isEdited()):
             self._doSave()
 
-        fileName = input("Enter an XML file to load : ")
-        self.checkbook = CB.Checkbook()
+        if not args:
+            fileName = input("Enter an XML file to load : ")
+        else:
+            fileName = args[0]
+        self.checkbook.clear()
         self.checkbook.load(fileName)
 
     def processSaveCommand(self):
@@ -104,6 +142,19 @@ class CommandProcessor:
         """Prints the help text"""
         print(commands.HELP_TEXT)
 
-    def processPrintCommand(self):
+    def processPrintCommand(self, *args):
         """Prints the checkbook"""
-        print(self.checkbook)
+        if not args:
+            print(self.checkbook)
+        elif (len(args) == 2):
+            print(self.checkbook.getSpecificPrint(*args))
+        else:
+            printHelpText = """
+Usage : print [<key> <value> | <help>]
+Possible keys with their values :
+    Date     : a number to represent the month
+    Trans    : {}
+    Category : {}
+help displays this text
+            """
+            print (printHelpText.format(", ".join(s for s in commands.TRANS_TYPES), ", ".join(s for s in config.CATEGORIES)))

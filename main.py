@@ -22,10 +22,11 @@ def _handle_input():
     Returns:
         inputVal (list) : list containing one or more strings
     """
-    inputVal = input("What would you like to do? : ").lower().strip().split()
+    inputVal = input("What would you like to do? : ").strip().split()
     if len(inputVal) == 0:
         inputVal = [""]
 
+    inputVal[0].lower()
     return inputVal
                 
 if __name__ == "__main__":
@@ -34,23 +35,23 @@ if __name__ == "__main__":
     val = _handle_input()
     while(val[0] not in commands.EXIT_LIST):
         if(val[0] == commands.HELP_COMMAND):
-            commProcessor.processCommand(CPF.processHelpCommand)
+            commProcessor.processHelpCommand()
         elif(val[0] == commands.PRINT_COMMAND):
-            commProcessor.processCommand(CPF.processPrintCommand, *val[1:])
+            commProcessor.processPrintCommand(*val[1:])
         elif(val[0] == commands.ADD_COMMAND):
-            commProcessor.processCommand(CPF.processAddCommand)
+            commProcessor.processAddCommand()
         elif(val[0] == commands.EDIT_COMMAND):
-            commProcessor.processCommand(CPF.processEditCommand, *val[1:])
+            commProcessor.processEditCommand(*val[1:])
         elif(val[0] == commands.REPORT_COMMAND):
-            commProcessor.processCommand(CPF.processReportCommand)
+            commProcessor.processReportCommand()
         elif(val[0] == commands.LOAD_COMMAND):
-            commProcessor.processCommand(CPF.processLoadCommand, *val[1:])
-            commProcessor.processCommand(CPF.processPrintCommand)
+            commProcessor.processLoadCommand(*val[1:])
+            commProcessor.processPrintCommand()
         elif(val[0] == commands.SAVE_COMMAND):
-            commProcessor.processCommand(CPF.processSaveCommand)
+            commProcessor.processSaveCommand()
 
         val = _handle_input()
 
     # Save prompt
     if(commProcessor.checkbook.isEdited()):
-        commProcessor.processCommand(CPF.processSaveCommand)
+        commProcessor.processSaveCommand()
