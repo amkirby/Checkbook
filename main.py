@@ -11,11 +11,15 @@ import Checkbook as CB
 import CheckbookTransaction as CBT
 import checkbookReport as CR
 import CommandProcessor as CP
+import SQLCommandProcessor as SCP
 import CLIProcessingFunctions as CPF
 
 checkbook = CB.Checkbook()
 checkbook.load(config.FILE_NAME)
-commProcessor = CP.CommandProcessor(checkbook)
+if config.USE_SQL:
+    commProcessor = SCP.SQLCommandProcessor(checkbook)
+else:
+    commProcessor = CP.CommandProcessor(checkbook)
 
 def _handle_input():
     """Gather user input. If the input is empty, make it an empty string.
