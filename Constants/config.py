@@ -12,7 +12,7 @@ DATE_FORMAT = "%m/%d/%Y"        # the format for date print
 THOUSAND_SEP = True             # whether the amount has a thousands
                                 # separator
 LOCALE = locale.LC_ALL          # the local to use for currency print
-USE_SQL = True
+USE_SQL = False
 FILE_NAME = "myXML.xml"
 DB_NAME = "checkbook.db"
 DEBIT_CATEGORIES = ["Groceries", "Gas", "Bills", "Entertainment", "Vape", "Lunch", "Savings", "Other"]

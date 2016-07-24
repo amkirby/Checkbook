@@ -11,6 +11,7 @@ from Constants import printConstants as PC
 from Constants import config
 import locale
 from datetime import datetime
+import XMLProcessor as XML
 
 ROW_SEP = '\n' + (PC.HLINE_CHAR * (sum(PC.SIZELIST) + len(PC.SIZELIST))) + '\n'
 
@@ -51,21 +52,9 @@ class Checkbook:
             fileName (string) : the file to load into the checkbook
         """
         self.fileName = fileName
-        try:
-            root = ET.parse(fileName)
-            treeIter = root.iter("Transaction")
-            for elem in treeIter:
-                cbt = CBT.CheckbookTransaction()
-                for child in list(elem):
-                    cbt.setValue(child.tag, child.text)
-                self.checkRegister.append(cbt)
-        except FileNotFoundError:
-            print("The file " + fileName + " was not found.",
-                  "This file will be used when saving.")
-        except ET.ParseError:
-            print("There was an error parsing " + fileName,
-                  "(possibly empty). This file will be used when saving.")
-        
+        if not config.USE_SQL:
+            self.checkRegister = XML.XMLProcessor.load(self.fileName)
+
     def clear(self):
         """Clears the checkbook"""
         del self.checkRegister[:]
@@ -73,16 +62,8 @@ class Checkbook:
 
     def save(self):
         """Saves the checkbook in XML format"""
-        root = ET.Element('Transactions')
-        for elem in self.checkRegister:
-            currTrans = ET.SubElement(root, "Transaction")
-            for key, value in elem.getItems():
-                transElem = ET.SubElement(currTrans, key)
-                if(key == "Date"):
-                    value = datetime.strftime(value, config.DATE_FORMAT)
-                transElem.text = str(value)
-        tree = ET.ElementTree(root)
-        tree.write(self.fileName, xml_declaration=True)
+        if not config.USE_SQL:
+            XML.XMLProcessor.save(self.fileName, self.checkRegister)
         self.edited = False
 
     def isEdited(self):
