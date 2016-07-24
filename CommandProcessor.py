@@ -10,6 +10,8 @@ from Constants import commands
 import Checkbook as CB
 import CheckbookTransaction as CBT
 import checkbookReport as CR
+import XMLProcessor as XML
+
 
 class CommandProcessor:
     """A class to process commands entered by the user. A function should be
@@ -36,11 +38,11 @@ class CommandProcessor:
         """
         function(self.checkbook, *args)
 
-    def _doSave(self):
+    def _doSave(self, save_function):
         """Saves the checkbook"""
         save = input("Would you like to save? (y or n) ")
         if(save.lower() == "y"):
-            self.checkbook.save()
+            self.checkbook.save(save_function)
             print("save successful!")
 
     def _selectWithNumber(self, textList, prompt, key, defText = None):
@@ -120,23 +122,22 @@ class CommandProcessor:
         reportText = repMethod(cr, month)
         print(reportText)
 
-    #TODO: should it return checkbook?
-    def processLoadCommand(self, *args):
+    def processLoadCommand(self, save_function, load_function, *args):
         """Load another checkbook"""
         if(self.checkbook.isEdited()):
-            self._doSave()
+            self._doSave(save_function)
 
         if not args:
             fileName = input("Enter an XML file to load : ")
         else:
             fileName = args[0]
         self.checkbook.clear()
-        self.checkbook.load(fileName)
+        self.checkbook.load(fileName, load_function)
 
-    def processSaveCommand(self):
+    def processSaveCommand(self, save_function):
         """Save the checkbook"""
         if(self.checkbook.isEdited()):
-            self._doSave()
+            self._doSave(save_function)
 
     def processHelpCommand(self):
         """Prints the help text"""

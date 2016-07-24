@@ -46,24 +46,22 @@ class Checkbook:
         self.checkRegister.append(cbt)
         self.edited = True
 
-    def load(self, fileName):
+    def load(self, fileName, load_function):
         """Tries to load the specified file name into the check register
         Parameter:
             fileName (string) : the file to load into the checkbook
         """
         self.fileName = fileName
-        if not config.USE_SQL:
-            self.checkRegister = XML.XMLProcessor.load(self.fileName)
+        self.checkRegister = load_function(self.fileName)
 
     def clear(self):
         """Clears the checkbook"""
         del self.checkRegister[:]
         CBT.CheckbookTransaction.resetUID()
 
-    def save(self):
+    def save(self, save_function):
         """Saves the checkbook in XML format"""
-        if not config.USE_SQL:
-            XML.XMLProcessor.save(self.fileName, self.checkRegister)
+        save_function(self.fileName, self.checkRegister)
         self.edited = False
 
     def isEdited(self):

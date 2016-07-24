@@ -13,12 +13,15 @@ import checkbookReport as CR
 import CommandProcessor as CP
 import SQLCommandProcessor as SCP
 import CLIProcessingFunctions as CPF
+import XMLProcessor as XML
 
 checkbook = CB.Checkbook()
-checkbook.load(config.FILE_NAME)
 if config.USE_SQL:
     commProcessor = SCP.SQLCommandProcessor(checkbook)
 else:
+    save_function = XML.XMLProcessor.save
+    load_function = XML.XMLProcessor.load
+    checkbook.load(config.FILE_NAME, load_function)
     commProcessor = CP.CommandProcessor(checkbook)
 
 def _handle_input():
@@ -49,13 +52,13 @@ if __name__ == "__main__":
         elif(val[0] == commands.REPORT_COMMAND):
             commProcessor.processReportCommand()
         elif(val[0] == commands.LOAD_COMMAND):
-            commProcessor.processLoadCommand(*val[1:])
+            commProcessor.processLoadCommand(save_function, load_function, *val[1:])
             commProcessor.processPrintCommand()
         elif(val[0] == commands.SAVE_COMMAND):
-            commProcessor.processSaveCommand()
+            commProcessor.processSaveCommand(save_function)
 
         val = _handle_input()
 
     # Save prompt
     if(commProcessor.checkbook.isEdited()):
-        commProcessor.processSaveCommand()
+        commProcessor.processSaveCommand(save_function)
