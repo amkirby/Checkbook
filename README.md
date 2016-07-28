@@ -2,9 +2,15 @@
 This is a command line checkbook program. It currently only works with python3.
 To start the program, type the following at the command line
 
+## Usage
 ```
 python3 main.py
 ```
+
+##### NOTE
+
+```sqlite3``` is needed to use the database functionality
+```ElementTree``` is needed to use the xml functionality
 
 ## Commands
 
@@ -28,3 +34,13 @@ In the *config.py* file, you can set some configuration options
 * ```LOCALE``` : The locale to use for number formatting *default = LC_ALL*
 * ```FILE_NAME``` : the default file to load *default = myXML.xml*
 * ```DEBIT_CATEGORIES``` & ```CREDIT_CATEGORIES``` : set the categories to choose from
+* ```USE_SQL``` : use a sqlite database over xml *default = False*
+* ```DB_NAME``` : the sqlite database file name *default = checkbook.db*
+
+## Converter
+```converter.py``` can be used to convert from a sqlite database to an xml file and vice versa.
+
+### Usage
+```
+python3 converter.py
+```
