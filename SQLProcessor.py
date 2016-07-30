@@ -9,10 +9,28 @@ class SQLProcessor:
 
     @classmethod
     def _scrub(cls, string_to_scrub):
+        """
+        Removes all characters except alphanumeric ones from the specified string
+
+        Args:
+            string_to_scrub (str): The string to scrub
+
+        Returns:
+            str: String containing only alphanumeric characters
+        """
         return ''.join(s for s in string_to_scrub if s.isalnum())
 
     @classmethod
     def _table_exists(cls, table_name):
+        """
+        Determines if the specified table exists
+
+        Args:
+            table_name (str): the table name to check
+
+        Returns:
+            bool: True if the table exists, False otherwise
+        """
         conn = None
         return_val = False
         try:
@@ -30,6 +48,12 @@ class SQLProcessor:
 
     @classmethod
     def _create_columns(cls):
+        """
+        Creates a script specifying the column names and types for a checkbook table
+
+        Returns:
+            str: a script containing column names and types
+        """
         columns = "("
         for i in range(len(CBT.KEYS)):
             data_type = "VARCHAR(" + str(printConstants.SIZE_LIST[i]) + ")"
@@ -45,6 +69,12 @@ class SQLProcessor:
 
     @classmethod
     def _create_table(cls, table_name):
+        """
+        Creates the specified table if it does not exist
+
+        Args:
+            table_name (str): the table to create
+        """
         conn = None
         try:
             scrubbed_table_name = cls._scrub(table_name)
@@ -61,6 +91,13 @@ class SQLProcessor:
 
     @classmethod
     def save(cls, table_name, checkbook_register):
+        """
+        Saves the specified checkbook to the table
+
+        Args:
+            table_name (str): the table to store the data
+            checkbook_register (list): the transactions to save
+        """
         conn = None
         try:
             conn = lite.connect(config.DB_NAME)
@@ -89,6 +126,15 @@ class SQLProcessor:
 
     @classmethod
     def load(cls, table_name):
+        """
+        Loads the checkbook from the database
+
+        Args:
+            table_name (str): the table to load from
+
+        Returns:
+            list: the checkbook transactions from the database
+        """
         conn = None
         return_list = []
         try:

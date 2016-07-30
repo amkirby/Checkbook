@@ -29,33 +29,52 @@ class CheckbookTransaction:
         CheckbookTransaction._UID += 1
 
     def get_items(self):
-        """Gets the key, value of the transaction"""
+        """Gets the key, value of the transaction
+
+        Returns:
+            iterable tuple: key, value pairs of the transaction
+        """
         return dict.items(self.data)
 
     def get_dictionary(self):
-        """Gets the data as a dictionary"""
+        """Gets the data as a dictionary
+
+        Returns:
+            dict: the dictionary of the transaction
+        """
         return self.data
 
     def get_amount(self):
-        """Gets the amount of the transaction"""
+        """Gets the amount of the transaction
+
+        Returns:
+            float: the amount value of the transaction
+        """
         return self.data.get("Amount")
 
     def get_value(self, key):
         """Gets the value of the specified key
 
-        Parameter:
+        Args:
             key (string) : the key to gather
+
+        Returns:
+            object: the value associated with the specified key
         """
         return self.data.get(key)
 
     def get_date(self):
-        """Get the value of the Date key"""
+        """Get the value of the Date key
+
+        Returns:
+            datetime: The date value of the transaction
+        """
         return self.data.get("Date")
 
     def set_value(self, key, value):
         """Sets the specified key with the specified value
 
-        Parameters:
+        Args:
             key (string)   : the key to set
             value (string) : the value to set with key
         """

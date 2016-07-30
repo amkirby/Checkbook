@@ -9,12 +9,21 @@ class CheckbookReport:
     def __init__(self, cb):
         """Initializes the report with the specified checkbook
 
-        Parameter:
+        Args:
             cb (Checkbook) : the checkbook to operate on
         """
         self.checkbook = cb
 
     def gen_report(self, month=None):
+        """
+        Generates a report for the entire checkbook or a particular month if one is specified
+
+        Args:
+            month (int): The int value for a month
+
+        Returns:
+            str: A report of the checkbook broken out into categories
+        """
         return_string = ""
         trans_total, pay_total = self._get_totals_for_reports(month)
         format_string = "{:<12}"
@@ -39,7 +48,7 @@ class CheckbookReport:
     def _get_totals_for_reports(self, month):
         """Gets the debit total and the credit total for the checkbook.
 
-        Parameter:
+        Args:
             month (None | int) : if None, it is a total report, otherwise it is a monthly report
         """
         if month is None:
@@ -55,7 +64,7 @@ class CheckbookReport:
     def _get_cbt_total_for_category(self, cbt_list, month):
         """Gets the total for the given CBT list.
 
-        Parameters:
+        Args:
             cbt_list (list) : CBTs for a specific category
             month (None | int) : if None, it is a total report, otherwise it is a monthly report
         """

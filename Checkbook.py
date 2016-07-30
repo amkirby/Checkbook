@@ -22,7 +22,7 @@ class Checkbook:
     def add(self, cbt_list):
         """Adds the specified list to the checkbook
 
-        Parameter:
+        Args:
             cbt_list (list) : contains values in the order of the CBT.KEYS that
                              are used to create a transaction
         """
@@ -35,7 +35,7 @@ class Checkbook:
     def add_single_trans(self, cbt):
         """Adds a CheckbookTransaction to the register
 
-        Parameter:
+        Args:
              cbt (CheckbookTransaction) : the CBT to be added to the checkbook
         """
         self.check_register.append(cbt)
@@ -44,8 +44,9 @@ class Checkbook:
     def load(self, file_name, load_function):
         """Tries to load the specified file name into the check register
 
-        Parameter:
+        Args:
             file_name (string) : the file to load into the checkbook
+            load_function (function): function used to save the checkbook
         """
         self.file_name = file_name
         self.check_register = load_function(self.file_name)
@@ -56,18 +57,26 @@ class Checkbook:
         CBT.CheckbookTransaction.reset_uid()
 
     def save(self, save_function):
-        """Saves the checkbook in XML format"""
+        """Saves the checkbook in XML format
+
+        Args:
+            save_function (function): function used to save the checkbook
+        """
         save_function(self.file_name, self.check_register)
         self.edited = False
 
     def is_edited(self):
-        """Returns if the checkbook has been edited"""
+        """Returns if the checkbook has been edited
+
+        Returns:
+            boolean: True if checkbook has been edited, False otherwise
+        """
         return self.edited
 
     def set_edited(self, edit):
         """Sets the edited status to the specified value
 
-        Parameter:
+        Args:
             edit (boolean) : the state to set if the checkbook is edited
         """
         self.edited = edit
@@ -75,8 +84,11 @@ class Checkbook:
     def get_transaction_type(self, trans_type):
         """Gets all transactions with the specified trans type
 
-        Parameter:
+        Args:
             trans_type (string) : the transaction type to gather
+
+        Returns:
+            list: a list of transactions with the specified trans type
         """
         return_list = []
         for elem in self.check_register:
@@ -87,8 +99,11 @@ class Checkbook:
     def get_category(self, cat):
         """Gets all transactions with the specified category
 
-        Parameter:
+        Args:
             cat (string) : the category to gather
+
+        Returns:
+            list: a list of transactions with the specified category
         """
         return_list = []
         for elem in self.check_register:
@@ -99,8 +114,11 @@ class Checkbook:
     def get_month(self, find_month):
         """Gets all transactions with the specified month
 
-        Parameter:
+        Args:
             find_month (int) : the integer value for the month to gather
+
+        Returns:
+            list: a list of transactions with the specified month
         """
         month = find_month
         if type(month) is not int:
@@ -116,8 +134,11 @@ class Checkbook:
     def get_total_for_trans(self, trans):
         """Get the total amount for the specified trans type
 
-        Parameter:
+        Args:
             trans (string) : the transaction type that is totaled
+
+        Returns:
+            float: Total amount for the specified trans type
         """
         trans_list = self.get_transaction_type(trans)
         total = 0.0
@@ -128,9 +149,12 @@ class Checkbook:
     def get_total_for_trans_month(self, trans, month):
         """Get the total for the specified transaction in the specified month
 
-        Parameters:
+        Args:
             trans (string) : the transaction type to total
             month (int)    : the month to total the trans type
+
+        Returns:
+            float: Total amount for the specified trans type for the specified month
         """
         month_list = self.get_month(month)
         total = 0.0
@@ -142,8 +166,11 @@ class Checkbook:
     def get_total_for_cat(self, category):
         """Get the total for the specified category
 
-        Parameter:
+        Args:
             category (string) : The category to total
+
+        Returns:
+            float: Total amount for the specified category
         """
         cat_list = self.get_category(category)
         total = 0.0
@@ -154,9 +181,12 @@ class Checkbook:
     def get_total_for_cat_month(self, cat, month):
         """Get the total for the specified transaction in the specified month
 
-        Parameters:
+        Args:
             cat (string) : the category to total
             month (int)  : the month to total the trans type
+
+        Returns:
+            float: Total amount for the specified category in the specified month
         """
         month_list = self.get_month(month)
         total = 0.0
@@ -166,7 +196,11 @@ class Checkbook:
         return total
 
     def get_total(self):
-        """Gets the total for the register"""
+        """Gets the total for the register
+
+        Returns:
+            float: Total amount for the checkbook
+        """
         total = 0.0
         for elem in self.check_register:
             total += elem.getAmount()
@@ -175,8 +209,11 @@ class Checkbook:
     def get_month_total(self, month):
         """Gets the total for the specified month
 
-        Parameter:
+        Args:
             month (int) : the month to total
+
+        Returns:
+            float: Total amount for the checkbook for the specified month
         """
         month_list = self.get_month(month)
         total = 0.0
@@ -187,13 +224,20 @@ class Checkbook:
     def find_transaction(self, in_trans):
         """Gets the specified transaction number from the register
 
-        Parameter:
+        Args:
             in_trans (int) : the transaction to gather
+
+        Returns:
+            CheckbookTransaction: The specified transaction
         """
         return self.check_register[in_trans - 1]
 
     def _gen_total_line_print(self):
-        """creates the total line at the bottom of the register"""
+        """creates the total line at the bottom of the register
+
+        Returns:
+            str: The total line for the checkbook
+        """
         string = PC.VLINE_CHAR
         # format total: text
         format_string = '{:>' + str(sum(PC.SIZE_LIST[:-2]) + 4) + '}'
@@ -207,7 +251,11 @@ class Checkbook:
         return string
 
     def _gen_header_print(self):
-        """Creates the header line at the top of the register"""
+        """Creates the header line at the top of the register
+
+        Returns:
+            str: The header line for the checkbook
+        """
         header = ROW_SEP
         header += PC.VLINE_CHAR
         for i in range(len(CBT.KEYS)):
@@ -219,10 +267,13 @@ class Checkbook:
     def _gen_trans_print(self, print_list=None):
         """Creates the print for each transaction in the register
 
-        Parameter:
+        Args:
             print_list (list) : the list of CBTs to loop through to generate
                                the transaction print. If None, loop through 
                                the whole checkbook
+
+        Returns:
+            str: The print for the transactions in the checkbook
         """
         iter_list = print_list
         if iter_list is None:
@@ -237,9 +288,12 @@ class Checkbook:
     def get_specific_print(self, key, value):
         """Print a subset of the checkbook
 
-        Parameters:
+        Args:
             key (string) : the key to to get the subset from
             value (int | string) : the value from key to get
+
+        Returns:
+            str: The print for a subset of transactions based on the specified input
         """
         string = self._gen_header_print()
         string += ROW_SEP
@@ -249,9 +303,12 @@ class Checkbook:
     def _get_specific_list(self, key, value):
         """Gets the subset list based on the given input
 
-        Parameters:
+        Args:
             key (string) : the key to to get the subset from
             value (int | string) : the value from key to get
+
+        Returns:
+            list: A list of a subset of transactions based on the specified input
         """
         func = self.specific_print_functions[key.capitalize()]
 
@@ -265,7 +322,11 @@ class Checkbook:
         return return_list
 
     def __str__(self):
-        """A string representation of a checkbook"""
+        """A string representation of a checkbook
+
+        Returns:
+            str: The print for the checkbook
+        """
         string = self._gen_header_print()
         string += ROW_SEP
         string += self._gen_trans_print()

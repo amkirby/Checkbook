@@ -27,6 +27,7 @@ Commands:
     save   : Save the checkbook
     edit   : Edit a transaction
     report : Generate a report about the transactions
+    load   : Load a checkbook
 """
 HELP_TEXT = ("""
 {}

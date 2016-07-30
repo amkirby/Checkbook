@@ -17,7 +17,7 @@ class CommandProcessor:
     def __init__(self, checkbook):
         """Initializes the checkbook that will be used for the operations
 
-        Parameter:
+        Args:
             checkbook (Checkbook) : the checkbook to operate on
         """
         self.checkbook = checkbook
@@ -25,7 +25,7 @@ class CommandProcessor:
     def process_command(self, function, *args):
         """Performs the effects of the specified function on the checkbook
 
-        Parameter:
+        Args:
             function (function) : A function that takes a checkbook and performs
                                   some action
             args (variable args) : optional arguments that can be passed to the specified
@@ -34,7 +34,11 @@ class CommandProcessor:
         function(self.checkbook, *args)
 
     def _do_save(self, save_function):
-        """Saves the checkbook"""
+        """Saves the checkbook
+
+        Args:
+            save_function (function): function used to save the checkbook
+        """
         save = input("Would you like to save? (y or n) ")
         if save.lower() == "y":
             self.checkbook.save(save_function)
@@ -43,9 +47,9 @@ class CommandProcessor:
     def _select_with_number(self, text_list, key, def_text=None):
         """Select a value from the given list by using it's index
 
-        Parameters:
+        Args:
             text_list (list) : a list of strings to Select
-            key (str)       : a prompt for input
+            key (str)        : a prompt for input
             def_text (str)   : default text to display
 
         Returns:
@@ -81,7 +85,11 @@ class CommandProcessor:
         self.checkbook.add_single_trans(cbt)
 
     def process_edit_command(self, *args):
-        """Edit a transaction"""
+        """Edit a transaction
+
+        Args:
+            *args (variable args): Can pass an int which specifies the transaction to edit
+        """
         if not args:
             edit_trans = int(input("Which transaction do you want to edit? : "))
         else:
@@ -117,7 +125,13 @@ class CommandProcessor:
         print(report_text)
 
     def process_load_command(self, save_function, load_function, *args):
-        """Load another checkbook"""
+        """Load another checkbook
+
+        Args:
+            save_function (function): function used to save the checkbook
+            load_function (function): function used to save the checkbook
+            *args (variable args)   : Can specify the checkbook to load
+        """
         if self.checkbook.is_edited():
             self._do_save(save_function)
 
@@ -129,7 +143,11 @@ class CommandProcessor:
         self.checkbook.load(file_name, load_function)
 
     def process_save_command(self, save_function):
-        """Save the checkbook"""
+        """Save the checkbook
+
+        Args:
+            save_function (function): function used to save the checkbook
+        """
         if self.checkbook.is_edited():
             self._do_save(save_function)
 
@@ -138,7 +156,11 @@ class CommandProcessor:
         print(commands.HELP_TEXT)
 
     def process_print_command(self, *args):
-        """Prints the checkbook"""
+        """Prints the checkbook
+
+        Args:
+            *args (variable args): can specify what to print
+        """
         if not args:
             print(self.checkbook)
         elif len(args) == 2:
@@ -153,4 +175,4 @@ Possible keys with their values :
 help displays this text
             """
             print(print_help_text.format(", ".join(s for s in commands.TRANS_TYPES),
-                                       ", ".join(s for s in config.CATEGORIES)))
+                                         ", ".join(s for s in config.CATEGORIES)))

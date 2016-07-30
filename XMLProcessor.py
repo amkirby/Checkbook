@@ -11,8 +11,11 @@ class XMLProcessor:
         """
         Loads xml from the specified file
 
-        Parameters:
+        Args:
             file_name (string): the file name to load the xml
+
+        Returns:
+            list: the transactions from the xml file
         """
         return_list = []
         try:
