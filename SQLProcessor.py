@@ -3,8 +3,10 @@ import sqlite3 as lite
 import CheckbookTransaction as CBT
 from datetime import datetime
 
+
 class SQLProcessor:
     """This class handles the saving and loading of the checkbook from a database"""
+
     @classmethod
     def _scrub(cls, string_to_scrub):
         return ''.join(s for s in string_to_scrub if s.isalnum())
@@ -12,25 +14,25 @@ class SQLProcessor:
     @classmethod
     def _table_exists(cls, table_name):
         conn = None
-        returnVal = False
+        return_val = False
         try:
             conn = lite.connect(config.DB_NAME)
             cursor = conn.cursor()
             cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE name = ?", (table_name,))
-            returnVal = cursor.fetchone()
+            return_val = cursor.fetchone()
         except Exception as e:
             raise e
         finally:
             if conn:
                 conn.close()
 
-        return returnVal[0]
+        return return_val[0]
 
     @classmethod
     def _create_columns(cls):
         columns = "("
         for i in range(len(CBT.KEYS)):
-            data_type = "VARCHAR(" + str(printConstants.SIZELIST[i]) + ")"
+            data_type = "VARCHAR(" + str(printConstants.SIZE_LIST[i]) + ")"
             if CBT.KEYS[i] == "Date":
                 data_type = "DATETIME"
             elif CBT.KEYS[i] == "Amount":
@@ -71,7 +73,7 @@ class SQLProcessor:
             for cbt in checkbook_register:
                 cbt_list_before_tuple = []
                 for key in CBT.KEYS:
-                    value = cbt.getValue(key)
+                    value = cbt.get_value(key)
                     if key == "Date":
                         value = datetime.strftime(value, config.DATE_FORMAT)
                     cbt_list_before_tuple.append(value)
@@ -101,7 +103,7 @@ class SQLProcessor:
             for row in rows:
                 cbt = CBT.CheckbookTransaction()
                 for key in CBT.KEYS:
-                    cbt.setValue(key, row[key])
+                    cbt.set_value(key, row[key])
                 return_list.append(cbt)
 
         except lite.Error as e:

@@ -1,20 +1,13 @@
-#*********************************************************************
-# File    : config.py
-# Date    : 9/4/2015
-# Author  : Allen Kirby
-# Purpose : constants that are used for the configuration on the
-#           program
-#*********************************************************************
+"""Configuration constants"""
 
 import locale
 
 DATE_FORMAT = "%m/%d/%Y"        # the format for date print
-THOUSAND_SEP = True             # whether the amount has a thousands
-                                # separator
+THOUSAND_SEP = True             # whether the amount has a thousands separator
 LOCALE = locale.LC_ALL          # the local to use for currency print
-USE_SQL = False
-FILE_NAME = "myXML.xml"
-DB_NAME = "checkbook.db"
+USE_SQL = False                 # determines whether to use SQL or XML
+FILE_NAME = "myXML.xml"         # the XML file name
+DB_NAME = "checkbook.db"        # the SQL database file name
 DEBIT_CATEGORIES = ["Groceries", "Gas", "Bills", "Entertainment", "Vape", "Lunch", "Savings", "Other"]
 CREDIT_CATEGORIES = ["Paycheck"]
-CATEGORIES = DEBIT_CATEGORIES + CREDIT_CATEGORIES # Categories to choose for transactions
+CATEGORIES = DEBIT_CATEGORIES + CREDIT_CATEGORIES  # Categories to choose for transactions

@@ -1,74 +1,68 @@
-#*********************************************************************
-# File : checkbookReport.py
-# Date: 9/8/2015
-# Author: Allen Kirby
-# Purpose: Generate reports for a checkbook
-#*********************************************************************
-
-
-from Constants import config
 import locale
+from Constants import config
 
 REPORT_TYPES = ["Monthly", "Total"]
-headerFormat = "{:*^40}"
+HEADER_FORMAT = "{:*^40}"
+
 
 class CheckbookReport:
-
     def __init__(self, cb):
         """Initializes the report with the specified checkbook
+
         Parameter:
             cb (Checkbook) : the checkbook to operate on
         """
         self.checkbook = cb
 
-    def genReport(self, month=None):
-        returnString = ""
-        transTotal, payTotal = self._getTotalsForReports(month)
-        formatString = "{:<12}"
-        returnString += "\n" + headerFormat.format(" REPORT ") + "\n"
-        returnString += ("\n" + formatString.format("Pay Total") + ": " + 
-            locale.currency(payTotal, grouping=config.THOUSAND_SEP) + "\n")
-        returnString += (formatString.format("Debit Total") + ": " + 
-            locale.currency(transTotal, grouping=config.THOUSAND_SEP) + "\n")
-        returnString += (formatString.format("Savings") + ": " + 
-            locale.currency(payTotal - transTotal, grouping=config.THOUSAND_SEP) + "\n")
-        returnString +="\n" # add extra space before printing categories
+    def gen_report(self, month=None):
+        return_string = ""
+        trans_total, pay_total = self._get_totals_for_reports(month)
+        format_string = "{:<12}"
+        return_string += "\n" + HEADER_FORMAT.format(" REPORT ") + "\n"
+        return_string += ("\n" + format_string.format("Pay Total") + ": " +
+                          locale.currency(pay_total, grouping=config.THOUSAND_SEP) + "\n")
+        return_string += (format_string.format("Debit Total") + ": " +
+                          locale.currency(trans_total, grouping=config.THOUSAND_SEP) + "\n")
+        return_string += (format_string.format("Savings") + ": " +
+                          locale.currency(pay_total - trans_total, grouping=config.THOUSAND_SEP) + "\n")
+        return_string += "\n"  # add extra space before printing categories
         for cat in config.DEBIT_CATEGORIES:
-            currentCatList = self.checkbook.getCategory(cat)
-            total = 0
-            returnString += cat + "\n"
-            total = self._getCBTTotalForCategory(currentCatList, month)
+            current_cat_list = self.checkbook.get_category(cat)
+            return_string += cat + "\n"
+            total = self._get_cbt_total_for_category(current_cat_list, month)
 
-            returnString += ("  " + "{:.2%}".format(total / transTotal) + " (" + 
-                locale.currency(total, grouping=config.THOUSAND_SEP) + ")" + "\n")
-        returnString += "\n" + headerFormat.format(" END REPORT ") + "\n"
-        return returnString
+            return_string += ("  " + "{:.2%}".format(total / trans_total) + " (" +
+                              locale.currency(total, grouping=config.THOUSAND_SEP) + ")" + "\n")
+        return_string += "\n" + HEADER_FORMAT.format(" END REPORT ") + "\n"
+        return return_string
 
-    def _getTotalsForReports(self, month):
+    def _get_totals_for_reports(self, month):
         """Gets the debit total and the credit total for the checkbook.
+
         Parameter:
             month (None | int) : if None, it is a total report, otherwise it is a monthly report
         """
         if month is None:
             # ASSERT: this report is a total report
-            transTotal = abs(self.checkbook.getTotalForTrans("Debit"))
-            payTotal = self.checkbook.getTotalForTrans("Credit")
+            trans_total = abs(self.checkbook.get_total_for_trans("Debit"))
+            pay_total = self.checkbook.get_total_for_trans("Credit")
         else:
             # ASSERT: this report is a monthly report
-            transTotal = abs(self.checkbook.getTotalForTransMonth("Debit", month))
-            payTotal = self.checkbook.getTotalForTransMonth("Credit", month)
-        return transTotal, payTotal
+            trans_total = abs(self.checkbook.get_total_for_trans_month("Debit", month))
+            pay_total = self.checkbook.get_total_for_trans_month("Credit", month)
+        return trans_total, pay_total
 
-    def _getCBTTotalForCategory(self, cbtList, month):
+    def _get_cbt_total_for_category(self, cbt_list, month):
         """Gets the total for the given CBT list.
+
         Parameters:
-            cbtList (list) : CBTs for a specific category
+            cbt_list (list) : CBTs for a specific category
             month (None | int) : if None, it is a total report, otherwise it is a monthly report
         """
         total = 0
-        for cbt in cbtList:
-            if cbt.getValue("Trans") == "Debit": # added Debit check b/c some categories can be both
-                                                 # debit and credit and reports were wrong
+        for cbt in cbt_list:
+            if cbt.getValue("Trans") == "Debit":  # added Debit check b/c some categories can be both
+                # debit and credit and reports were wrong
                 if month is None:
                     # ASSERT: this report is a total report
                     total += abs(cbt.getAmount())
@@ -82,6 +76,6 @@ class CheckbookReport:
 
     # A dictionary used to more generically call the methods for this class
     dispatcher = {
-        REPORT_TYPES[0] : genReport,
-        REPORT_TYPES[1] : genReport
+        REPORT_TYPES[0]: gen_report,
+        REPORT_TYPES[1]: gen_report
     }

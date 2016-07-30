@@ -40,27 +40,27 @@ def _handle_input():
                 
 if __name__ == "__main__":
     print("Welcome to your checkbook!")
-    commProcessor.processPrintCommand()
+    commProcessor.process_print_command()
     val = _handle_input()
     while(val[0] not in commands.EXIT_LIST):
         if(val[0] == commands.HELP_COMMAND):
-            commProcessor.processHelpCommand()
+            commProcessor.process_help_command()
         elif(val[0] == commands.PRINT_COMMAND):
-            commProcessor.processPrintCommand(*val[1:])
+            commProcessor.process_print_command(*val[1:])
         elif(val[0] == commands.ADD_COMMAND):
-            commProcessor.processAddCommand()
+            commProcessor.process_add_command()
         elif(val[0] == commands.EDIT_COMMAND):
-            commProcessor.processEditCommand(*val[1:])
+            commProcessor.process_edit_command(*val[1:])
         elif(val[0] == commands.REPORT_COMMAND):
-            commProcessor.processReportCommand()
+            commProcessor.process_report_command()
         elif(val[0] == commands.LOAD_COMMAND):
-            commProcessor.processLoadCommand(save_function, load_function, *val[1:])
-            commProcessor.processPrintCommand()
+            commProcessor.process_load_command(save_function, load_function, *val[1:])
+            commProcessor.process_print_command()
         elif(val[0] == commands.SAVE_COMMAND):
-            commProcessor.processSaveCommand(save_function)
+            commProcessor.process_save_command(save_function)
 
         val = _handle_input()
 
     # Save prompt
-    if(commProcessor.checkbook.isEdited()):
-        commProcessor.processSaveCommand(save_function)
+    if(commProcessor.checkbook.is_edited()):
+        commProcessor.process_save_command(save_function)

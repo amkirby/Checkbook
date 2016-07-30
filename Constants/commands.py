@@ -1,10 +1,3 @@
-#*********************************************************************
-# File    : commands.py
-# Date    : 9/3/2015
-# Author  : Allen Kirby
-# Purpose : commands that are used at the CLI
-#*********************************************************************
-
 HELP_COMMAND  = "help"          # prints the help
 ADD_COMMAND   = "add"           # adds a transaction
 PRINT_COMMAND = "print"         # prints the checkbook
@@ -16,9 +9,9 @@ LOAD_COMMAND = "load"           # load an XML file
 TRANS_TYPES = ["Debit", "Credit"]
 
 EXIT_LIST = ["Quit", "quit", "Exit", "exit", "q"] # the commands that exit the program
-helpHeadersFormat = "{:*^35}"
-topHelpHeader = helpHeadersFormat.format(" HELP ")
-botHelpHeader = helpHeadersFormat.format(" END HELP ")
+help_headers_format = "{:*^35}"
+top_help_helper = help_headers_format.format(" HELP ")
+bot_help_header = help_headers_format.format(" END HELP ")
 # displays when the help command is executed
 EXIT_HELP = """
 How to exit:
@@ -39,4 +32,4 @@ HELP_TEXT = ("""
 {}
 """ + EXIT_HELP + COMMAND_HELP + """
 {}
-""").format(topHelpHeader, botHelpHeader)
+""").format(top_help_helper, bot_help_header)

@@ -1,16 +1,7 @@
-#*********************************************************************
-# File: CommandProcessor.py
-# Author: Allen Kirby
-# Date : 10/09/2015
-# Purpose: process the commands entered by the user
-#*********************************************************************
-
 from Constants import config
 from Constants import commands
-import Checkbook as CB
 import CheckbookTransaction as CBT
 import checkbookReport as CR
-import XMLProcessor as XML
 
 
 class CommandProcessor:
@@ -18,18 +9,22 @@ class CommandProcessor:
     passed to each method to do the actual processing.
     ****NOTE: Each passed function is expected to take a Checkbook object as a parameter.
     ****NOTE: The separate methods remain to facilitate inheritance if desired.
+
     Attributes:
         checkbook (Checkbook) : the current checkbook the user is using
     """
+
     def __init__(self, checkbook):
         """Initializes the checkbook that will be used for the operations
+
         Parameter:
             checkbook (Checkbook) : the checkbook to operate on
         """
         self.checkbook = checkbook
 
-    def processCommand(self, function, *args):
+    def process_command(self, function, *args):
         """Performs the effects of the specified function on the checkbook
+
         Parameter:
             function (function) : A function that takes a checkbook and performs
                                   some action
@@ -38,119 +33,118 @@ class CommandProcessor:
         """
         function(self.checkbook, *args)
 
-    def _doSave(self, save_function):
+    def _do_save(self, save_function):
         """Saves the checkbook"""
         save = input("Would you like to save? (y or n) ")
-        if(save.lower() == "y"):
+        if save.lower() == "y":
             self.checkbook.save(save_function)
             print("save successful!")
 
-    def _selectWithNumber(self, textList, prompt, key, defText = None):
+    def _select_with_number(self, text_list, key, def_text=None):
         """Select a value from the given list by using it's index
+
         Parameters:
-            textList (list) : a list of strings to Select
-            prompt (str)    : a header for selection
+            text_list (list) : a list of strings to Select
             key (str)       : a prompt for input
-            defText (str)   : default text to display
+            def_text (str)   : default text to display
+
         Returns:
             (str) : the chosen value from the given list
         """
-        maxLen = len(max(textList, key=len))
-        formatString = "{:<" + str(maxLen) + "}"
-        prevText = ""
-        if defText is not None:
-            prevText = "(" + str(defText) + ")"
+        max_len = len(max(text_list, key=len))
+        format_string = "{:<" + str(max_len) + "}"
+        prev_text = ""
+        if def_text is not None:
+            prev_text = "(" + str(def_text) + ")"
 
-        for i in range(len(textList)):
-            print("  " + formatString.format(textList[i]), i)
-        val = input(key + prevText + " : ")
-        if val.strip() != "" and val.isdigit() and (int(val) >= 0 and int(val) < len(textList)):
-            val = textList[int(val)]
+        for i in range(len(text_list)):
+            print("  " + format_string.format(text_list[i]), i)
+        val = input(key + prev_text + " : ")
+        if val.strip() != "" and val.isdigit() and (0 <= int(val) < len(text_list)):
+            val = text_list[int(val)]
         return val
 
-    def processAddCommand(self):
+    def process_add_command(self):
         """Adds a transaction to the checkbook"""
         print("Enter your transaction")
         cbt = CBT.CheckbookTransaction()
         for key in CBT.KEYS:
             if key != "Num":
                 if key == "Category":
-                    val = self._selectWithNumber(config.CATEGORIES, "Categories to choose:", key)
+                    val = self._select_with_number(config.CATEGORIES, key)
                 elif key == "Trans":
-                    val = self._selectWithNumber(commands.TRANS_TYPES, "Transaction Types:", key)
+                    val = self._select_with_number(commands.TRANS_TYPES, key)
                 else:
                     val = input(key + " : ")
 
-                cbt.setValue(key, val.capitalize())
-        self.checkbook.addSingleTrans(cbt)
+                cbt.set_value(key, val.capitalize())
+        self.checkbook.add_single_trans(cbt)
 
-    def processEditCommand(self, *args):
+    def process_edit_command(self, *args):
         """Edit a transaction"""
         if not args:
-            editTrans = int(input("Which transaction do you want to edit? : "))
+            edit_trans = int(input("Which transaction do you want to edit? : "))
         else:
-            editTrans = int(args[0])
+            edit_trans = int(args[0])
 
-        trans = self.checkbook.findTransaction(editTrans)
+        trans = self.checkbook.find_transaction(edit_trans)
         for key in CBT.KEYS:
             if key != "Num":
                 if key == "Category":
-                    val = self._selectWithNumber(config.CATEGORIES, "Categories to choose:", 
-                        key, trans.getValue(key))
+                    val = self._select_with_number(config.CATEGORIES, key, trans.get_value(key))
                 elif key == "Trans":
-                    val = self._selectWithNumber(commands.TRANS_TYPES, "Transaction Types:", 
-                        key, trans.getValue(key))
+                    val = self._select_with_number(commands.TRANS_TYPES, key, trans.get_value(key))
                 else:
-                    val = input(key + " (" + str(trans.getValue(key)) + ")" + " : ")
-                if(val.strip() != ""):
-                    trans.setValue(key, val.capitalize())
-                    self.checkbook.setEdited(True)
+                    val = input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
+                if val.strip() != "":
+                    trans.set_value(key, val.capitalize())
+                    self.checkbook.set_edited(True)
 
-    def processReportCommand(self):
+    def process_report_command(self):
         """Generate a report"""
-        formatString = "{:<8}"
+        format_string = "{:<8}"
         month = None
         print("Report Types:")
         for i in range(len(CR.REPORT_TYPES)):
-            print(formatString.format(CR.REPORT_TYPES[i]), ":", i)
-        repType = int(input("Enter desired report number : "))
+            print(format_string.format(CR.REPORT_TYPES[i]), ":", i)
+        rep_type = int(input("Enter desired report number : "))
         cr = CR.CheckbookReport(self.checkbook)
-        repMethod = CR.CheckbookReport.dispatcher[CR.REPORT_TYPES[repType]]
-        if(repType == 0):
+        rep_method = CR.CheckbookReport.dispatcher[CR.REPORT_TYPES[rep_type]]
+        if rep_type == 0:
             month = int(input("Enter desired month as a number : "))
 
-        reportText = repMethod(cr, month)
-        print(reportText)
+        report_text = rep_method(cr, month)
+        print(report_text)
 
-    def processLoadCommand(self, save_function, load_function, *args):
+    def process_load_command(self, save_function, load_function, *args):
         """Load another checkbook"""
-        if(self.checkbook.isEdited()):
-            self._doSave(save_function)
+        if self.checkbook.is_edited():
+            self._do_save(save_function)
 
         if not args:
-            fileName = input("Enter an XML file to load : ")
+            file_name = input("Enter an XML file to load : ")
         else:
-            fileName = args[0]
+            file_name = args[0]
         self.checkbook.clear()
-        self.checkbook.load(fileName, load_function)
+        self.checkbook.load(file_name, load_function)
 
-    def processSaveCommand(self, save_function):
+    def process_save_command(self, save_function):
         """Save the checkbook"""
-        if(self.checkbook.isEdited()):
-            self._doSave(save_function)
+        if self.checkbook.is_edited():
+            self._do_save(save_function)
 
-    def processHelpCommand(self):
+    def process_help_command(self):
         """Prints the help text"""
         print(commands.HELP_TEXT)
 
-    def processPrintCommand(self, *args):
+    def process_print_command(self, *args):
         """Prints the checkbook"""
         if not args:
             print(self.checkbook)
-        elif (len(args) == 2):
-            print(self.checkbook.getSpecificPrint(*args))
+        elif len(args) == 2:
+            print(self.checkbook.get_specific_print(*args))
         else:
-            printHelpText = """
+            print_help_text = """
 Usage : print [<key> <value> | <help>]
 Possible keys with their values :
     Date     : a number to represent the month
@@ -158,4 +152,5 @@ Possible keys with their values :
     Category : {}
 help displays this text
             """
-            print (printHelpText.format(", ".join(s for s in commands.TRANS_TYPES), ", ".join(s for s in config.CATEGORIES)))
+            print(print_help_text.format(", ".join(s for s in commands.TRANS_TYPES),
+                                       ", ".join(s for s in config.CATEGORIES)))
