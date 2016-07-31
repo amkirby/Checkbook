@@ -45,7 +45,7 @@ class XMLProcessor:
         root = ET.Element('Transactions')
         for elem in checkbook_register:
             curr_trans = ET.SubElement(root, "Transaction")
-            for key, value in elem.getItems():
+            for key, value in elem.get_items():
                 trans_elem = ET.SubElement(curr_trans, key)
                 if key == "Date":
                     value = datetime.strftime(value, config.DATE_FORMAT)

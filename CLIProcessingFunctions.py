@@ -47,7 +47,7 @@ def processAddCommand(checkbook):
             else:
                 val = input(key + " : ")
 
-            cbt.setValue(key, val.capitalize())
+            cbt.set_value(key, val.capitalize())
     checkbook.addSingleTrans(cbt)
 
 def processEditCommand(checkbook, *args):
@@ -62,14 +62,14 @@ def processEditCommand(checkbook, *args):
         if key != "Num":
             if key == "Category":
                 val = _selectWithNumber(config.CATEGORIES, "Categories to choose:", 
-                    key, trans.getValue(key))
+                    key, trans.get_value(key))
             elif key == "Trans":
                 val = _selectWithNumber(commands.TRANS_TYPES, "Transaction Types:", 
-                    key, trans.getValue(key))
+                    key, trans.get_value(key))
             else:
-                val = input(key + " (" + str(trans.getValue(key)) + ")" + " : ")
+                val = input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
             if(val.strip() != ""):
-                trans.setValue(key, val.capitalize())
+                trans.set_value(key, val.capitalize())
                 checkbook.setEdited(True)
 
 def processReportCommand(checkbook):

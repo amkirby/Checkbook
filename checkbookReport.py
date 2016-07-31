@@ -70,16 +70,16 @@ class CheckbookReport:
         """
         total = 0
         for cbt in cbt_list:
-            if cbt.getValue("Trans") == "Debit":  # added Debit check b/c some categories can be both
+            if cbt.get_value("Trans") == "Debit":  # added Debit check b/c some categories can be both
                 # debit and credit and reports were wrong
                 if month is None:
                     # ASSERT: this report is a total report
-                    total += abs(cbt.getAmount())
+                    total += abs(cbt.get_amount())
                 else:
                     # ASSERT: this report is a monthly report
-                    date = cbt.getDate().month
+                    date = cbt.get_date().month
                     if date == month:
-                        total += abs(cbt.getAmount())
+                        total += abs(cbt.get_amount())
 
         return total
 

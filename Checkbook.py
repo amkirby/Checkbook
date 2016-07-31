@@ -92,7 +92,7 @@ class Checkbook:
         """
         return_list = []
         for elem in self.check_register:
-            if elem.getDictionary().get("Trans") == trans_type:
+            if elem.get_dictionary().get("Trans") == trans_type:
                 return_list.append(elem)
         return return_list
 
@@ -107,7 +107,7 @@ class Checkbook:
         """
         return_list = []
         for elem in self.check_register:
-            if elem.getDictionary().get("Category") == cat:
+            if elem.get_dictionary().get("Category") == cat:
                 return_list.append(elem)
         return return_list
 
@@ -126,7 +126,7 @@ class Checkbook:
 
         return_list = []
         for elem in self.check_register:
-            date = elem.getDictionary().get("Date")
+            date = elem.get_dictionary().get("Date")
             if date.month == month:
                 return_list.append(elem)
         return return_list
@@ -143,7 +143,7 @@ class Checkbook:
         trans_list = self.get_transaction_type(trans)
         total = 0.0
         for elem in trans_list:
-            total += elem.getAmount()
+            total += elem.get_amount()
         return total
 
     def get_total_for_trans_month(self, trans, month):
@@ -159,8 +159,8 @@ class Checkbook:
         month_list = self.get_month(month)
         total = 0.0
         for elem in month_list:
-            if elem.getValue("Trans") == trans:
-                total += elem.getAmount()
+            if elem.get_value("Trans") == trans:
+                total += elem.get_amount()
         return total
 
     def get_total_for_cat(self, category):
@@ -175,7 +175,7 @@ class Checkbook:
         cat_list = self.get_category(category)
         total = 0.0
         for elem in cat_list:
-            total += elem.getAmount()
+            total += elem.get_amount()
         return total
 
     def get_total_for_cat_month(self, cat, month):
@@ -191,8 +191,8 @@ class Checkbook:
         month_list = self.get_month(month)
         total = 0.0
         for elem in month_list:
-            if elem.getValue("Category") == cat:
-                total += elem.getAmount()
+            if elem.get_value("Category") == cat:
+                total += elem.get_amount()
         return total
 
     def get_total(self):
@@ -203,7 +203,7 @@ class Checkbook:
         """
         total = 0.0
         for elem in self.check_register:
-            total += elem.getAmount()
+            total += elem.get_amount()
         return total
 
     def get_month_total(self, month):
@@ -218,7 +218,7 @@ class Checkbook:
         month_list = self.get_month(month)
         total = 0.0
         for elem in month_list:
-            total += elem.getAmount()
+            total += elem.get_amount()
         return total
 
     def find_transaction(self, in_trans):
