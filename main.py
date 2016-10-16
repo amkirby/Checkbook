@@ -43,22 +43,25 @@ if __name__ == "__main__":
     commProcessor.process_print_command()
     quit = False
     while(not quit):
-        val = _handle_input()
-        if(val[0] == commands.HELP_COMMAND):
-            commProcessor.process_help_command()
-        elif(val[0] == commands.PRINT_COMMAND):
-            commProcessor.process_print_command(*val[1:])
-        elif(val[0] == commands.ADD_COMMAND):
-            commProcessor.process_add_command()
-        elif(val[0] == commands.EDIT_COMMAND):
-            commProcessor.process_edit_command(*val[1:])
-        elif(val[0] == commands.REPORT_COMMAND):
-            commProcessor.process_report_command()
-        elif(val[0] == commands.LOAD_COMMAND):
-            commProcessor.process_load_command(save_function, load_function, *val[1:])
-            commProcessor.process_print_command()
-        elif(val[0] == commands.SAVE_COMMAND):
-            commProcessor.process_save_command(save_function)
-        elif(val[0] in commands.EXIT_LIST):
-            commProcessor.process_quit_command(save_function)
-            quit = True
+        try:
+            val = _handle_input()
+            if(val[0] == commands.HELP_COMMAND):
+                commProcessor.process_help_command()
+            elif(val[0] == commands.PRINT_COMMAND):
+                commProcessor.process_print_command(*val[1:])
+            elif(val[0] == commands.ADD_COMMAND):
+                commProcessor.process_add_command()
+            elif(val[0] == commands.EDIT_COMMAND):
+                commProcessor.process_edit_command(*val[1:])
+            elif(val[0] == commands.REPORT_COMMAND):
+                commProcessor.process_report_command()
+            elif(val[0] == commands.LOAD_COMMAND):
+                commProcessor.process_load_command(save_function, load_function, *val[1:])
+                commProcessor.process_print_command()
+            elif(val[0] == commands.SAVE_COMMAND):
+                commProcessor.process_save_command(save_function)
+            elif(val[0] in commands.EXIT_LIST):
+                commProcessor.process_quit_command(save_function)
+                quit = True
+        except:
+            pass
