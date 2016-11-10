@@ -155,6 +155,16 @@ class CommandProcessor:
         """Prints the help text"""
         print(commands.HELP_TEXT)
 
+    def process_quit_command(self, save_function):
+        """Quit the program. Save if necessary.
+
+        Args:
+            save_function (function): function used to save the checkbook
+        """
+        if self.checkbook.is_edited():
+            self.process_save_command(save_function)
+
+
     def process_print_command(self, *args):
         """Prints the checkbook
 

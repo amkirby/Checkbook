@@ -41,8 +41,9 @@ def _handle_input():
 if __name__ == "__main__":
     print("Welcome to your checkbook!")
     commProcessor.process_print_command()
-    val = _handle_input()
-    while(val[0] not in commands.EXIT_LIST):
+    quit = False
+    while(not quit):
+        val = _handle_input()
         if(val[0] == commands.HELP_COMMAND):
             commProcessor.process_help_command()
         elif(val[0] == commands.PRINT_COMMAND):
@@ -58,9 +59,6 @@ if __name__ == "__main__":
             commProcessor.process_print_command()
         elif(val[0] == commands.SAVE_COMMAND):
             commProcessor.process_save_command(save_function)
-
-        val = _handle_input()
-
-    # Save prompt
-    if(commProcessor.checkbook.is_edited()):
-        commProcessor.process_save_command(save_function)
+        elif(val[0] in commands.EXIT_LIST):
+            commProcessor.process_quit_command(save_function)
+            quit = True
