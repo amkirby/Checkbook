@@ -2,7 +2,7 @@ from Constants import config
 from Constants import commands
 import CheckbookTransaction as CBT
 import checkbookReport as CR
-
+import CLIDisplayProcessor
 
 class CommandProcessor:
     """A class to process commands entered by the user. A function should be
@@ -172,9 +172,9 @@ class CommandProcessor:
             *args (variable args): can specify what to print
         """
         if not args:
-            print(self.checkbook)
+            print(CLIDisplayProcessor.print_checkbook(self.checkbook))
         elif len(args) == 2:
-            print(self.checkbook.get_specific_print(*args))
+            print(CLIDisplayProcessor.print_checkbook(self.checkbook, *args))
         else:
             print_help_text = """
 Usage : print [<key> <value> | <help>]

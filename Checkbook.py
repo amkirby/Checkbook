@@ -297,10 +297,10 @@ class Checkbook:
         """
         string = self._gen_header_print()
         string += ROW_SEP
-        string += self._gen_trans_print(self._get_specific_list(key, value))
+        string += self._gen_trans_print(self.get_specific_list(key, value))
         return string
 
-    def _get_specific_list(self, key, value):
+    def get_specific_list(self, key, value):
         """Gets the subset list based on the given input
 
         Args:
@@ -320,6 +320,9 @@ class Checkbook:
         return_list = func(self, func_param)
 
         return return_list
+
+    def get_register(self):
+        return self.check_register
 
     def __str__(self):
         """A string representation of a checkbook
