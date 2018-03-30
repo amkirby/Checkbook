@@ -83,11 +83,10 @@ def print_checkbook(checkbook, *args):
     total = 0.0
     if not args:
         transaction_list = checkbook.get_register()
-        total = checkbook.get_total()
     elif len(args) == 2:
         transaction_list = checkbook.get_specific_list(*args)
-        total = _get_total_for_list(transaction_list)
 
+    total = _get_total_for_list(transaction_list)
     output = _gen_header_print()
     output += ROW_SEP
     output += _gen_trans_print(transaction_list)
