@@ -125,16 +125,13 @@ class CommandProcessor:
         report_text = rep_method(cr, month)
         print(report_text)
 
-    def process_load_command(self, save_function, load_function, *args):
+    def process_load_command(self, load_function, *args):
         """Load another checkbook
 
         Args:
-            save_function (function): function used to save the checkbook
             load_function (function): function used to save the checkbook
             *args (variable args)   : Can specify the checkbook to load
         """
-        if self.checkbook.is_edited():
-            self._do_save(save_function)
 
         if not args:
             file_name = input("Enter an XML file to load : ")

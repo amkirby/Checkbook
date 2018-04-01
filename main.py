@@ -53,7 +53,8 @@ if __name__ == "__main__":
             elif(val[0] == commands.REPORT_COMMAND):
                 commProcessor.process_report_command()
             elif(val[0] == commands.LOAD_COMMAND):
-                commProcessor.process_load_command(save_function, load_function, *val[1:])
+                commProcessor.process_save_command(save_function)
+                commProcessor.process_load_command(load_function, *val[1:])
                 commProcessor.process_print_command()
             elif(val[0] == commands.SAVE_COMMAND):
                 commProcessor.process_save_command(save_function)
