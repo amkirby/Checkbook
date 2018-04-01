@@ -1,4 +1,6 @@
 import locale
+from datetime import datetime
+
 from Constants import printConstants as PC
 from Constants import config
 import CheckbookTransaction as CBT
@@ -107,7 +109,7 @@ class Checkbook:
         """
         return_list = []
         for elem in self.check_register:
-            if elem.get_dictionary().get("Category") == cat:
+            if elem.get_dictionary().get("Category") == cat and elem.get_dictionary().get("Date").year == datetime.today().year:
                 return_list.append(elem)
         return return_list
 
@@ -127,7 +129,7 @@ class Checkbook:
         return_list = []
         for elem in self.check_register:
             date = elem.get_dictionary().get("Date")
-            if date.month == month:
+            if date.month == month and date.year == datetime.today().year:
                 return_list.append(elem)
         return return_list
 
