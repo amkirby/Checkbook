@@ -1,7 +1,8 @@
-from Constants import config, printConstants
 import sqlite3 as lite
-import CheckbookTransaction as CBT
 from datetime import datetime
+
+import CheckbookTransaction as CBT
+from Constants import config, printConstants
 
 
 class SQLProcessor:

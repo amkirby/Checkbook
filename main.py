@@ -5,15 +5,12 @@
 # Purpose : A checkbook program
 #********************************************************************
 
-from Constants import commands
-from Constants import config
 import Checkbook as CB
-import CheckbookTransaction as CBT
-import checkbookReport as CR
 import CommandProcessor as CP
 import SQLProcessor as SCP
-import CLIProcessingFunctions as CPF
 import XMLProcessor as XML
+from Constants import commands
+from Constants import config
 
 checkbook = CB.Checkbook()
 if config.USE_SQL:

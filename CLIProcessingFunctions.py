@@ -1,8 +1,8 @@
-from Constants import commands
-from Constants import config
-import Checkbook as CB
 import CheckbookTransaction as CBT
 import checkbookReport as CR
+from Constants import commands
+from Constants import config
+
 
 def _doSave(checkbook):
     """Saves the checkbook"""

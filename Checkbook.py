@@ -1,9 +1,10 @@
 import locale
 from datetime import datetime
 
-from Constants import printConstants as PC
-from Constants import config
+
 import CheckbookTransaction as CBT
+from Constants import config
+from Constants import printConstants as PC
 
 ROW_SEP = '\n' + (PC.HLINE_CHAR * (sum(PC.SIZE_LIST) + len(PC.SIZE_LIST))) + '\n'
 

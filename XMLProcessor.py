@@ -1,8 +1,8 @@
-from datetime import datetime
 import xml.etree.ElementTree as ET
+from datetime import datetime
 
-from Constants import config
 import CheckbookTransaction as CBT
+from Constants import config
 
 
 class XMLProcessor:

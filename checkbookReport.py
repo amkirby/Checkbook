@@ -1,4 +1,5 @@
 import locale
+
 from Constants import config
 
 REPORT_TYPES = ["Monthly", "Total"]

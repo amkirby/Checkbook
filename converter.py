@@ -1,5 +1,5 @@
-import XMLProcessor as XML
 import SQLProcessor as SCP
+import XMLProcessor as XML
 
 
 def main():

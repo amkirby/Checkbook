@@ -1,8 +1,9 @@
-from Constants import config
-from Constants import commands
+import CLIDisplayProcessor
 import CheckbookTransaction as CBT
 import checkbookReport as CR
-import CLIDisplayProcessor
+from Constants import commands
+from Constants import config
+
 
 class CommandProcessor:
     """A class to process commands entered by the user. A function should be

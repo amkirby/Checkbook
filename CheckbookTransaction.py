@@ -1,7 +1,8 @@
-from datetime import datetime
 import locale
-from Constants import printConstants as PC
+from datetime import datetime
+
 from Constants import config
+from Constants import printConstants as PC
 
 locale.setlocale(config.LOCALE, '')  # set the locale for printing the amount
 
