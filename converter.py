@@ -1,5 +1,4 @@
-import SQLProcessor as SCP
-import XMLProcessor as XML
+from DataProcessors import SQLProcessor as SCP, XMLProcessor as XML
 
 
 def main():

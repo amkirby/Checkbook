@@ -1,4 +1,4 @@
-import CLIDisplayProcessor
+from DisplayProcessors import CLIDisplayProcessor
 import CheckbookTransaction as CBT
 import checkbookReport as CR
 from Constants import commands
