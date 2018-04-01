@@ -23,7 +23,7 @@ else:
 checkbook.load(config.FILE_NAME, load_function)
 commProcessor = CP.CommandProcessor(checkbook)
 
-def _handle_input():
+def _handle_user_input():
     """Gather user input. If the input is empty, make it an empty string.
     Returns:
         inputVal (list) : list containing one or more strings
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     quit = False
     while(not quit):
         try:
-            val = _handle_input()
+            val = _handle_user_input()
             if(val[0] == commands.HELP_COMMAND):
                 commProcessor.process_help_command()
             elif(val[0] == commands.PRINT_COMMAND):
