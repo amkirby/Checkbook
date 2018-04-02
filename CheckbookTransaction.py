@@ -86,6 +86,9 @@ class CheckbookTransaction:
             insert_val = float(value)
         self.data[key] = insert_val
 
+    def is_debit(self):
+        return self.data.get("Trans") == "Debit"
+
     @classmethod
     def reset_uid(cls):
         """A class method that resets the _UID"""

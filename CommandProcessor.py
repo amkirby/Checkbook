@@ -83,6 +83,10 @@ class CommandProcessor:
                     val = input(key + " : ")
 
                 cbt.set_value(key, val.capitalize())
+
+        if(cbt.is_debit()):
+            cbt.set_value("Amount", cbt.get_amount() * config.DEBIT_MULTIPLIER)
+
         self.checkbook.add_single_trans(cbt)
 
     def process_edit_command(self, *args):
