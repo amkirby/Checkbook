@@ -233,7 +233,11 @@ class Checkbook:
         Returns:
             CheckbookTransaction: The specified transaction
         """
-        return self.check_register[in_trans - 1]
+        transaction = None #CBT.CheckbookTransaction()
+        for currentTrans in self.check_register:
+            if currentTrans.get_value("Num") == in_trans:
+                transaction = currentTrans
+        return transaction
 
     def _gen_total_line_print(self):
         """creates the total line at the bottom of the register

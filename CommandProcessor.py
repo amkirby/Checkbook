@@ -166,6 +166,14 @@ class CommandProcessor:
         if self.checkbook.is_edited():
             self.process_save_command(save_function)
 
+    def process_delete_command(self, *args):
+        if not args:
+            delete_trans = int(input("Which transaction do you want to delete? : "))
+        else:
+            delete_trans = int(args[0])
+
+        trans = self.checkbook.find_transaction(delete_trans)
+        self.checkbook.get_register().remove(trans)
 
     def process_print_command(self, *args):
         """Prints the checkbook

@@ -5,6 +5,7 @@ SAVE_COMMAND  = "save"          # saves the checkbook
 EDIT_COMMAND = "edit"           # edit a transaction
 REPORT_COMMAND = "report"       # generate a report
 LOAD_COMMAND = "load"           # load an XML file
+DELETE_COMMAND = "delete"
 
 TRANS_TYPES = ["Debit", "Credit"]
 
@@ -28,6 +29,7 @@ Commands:
     edit   : Edit a transaction
     report : Generate a report about the transactions
     load   : Load a checkbook
+    delete : delete a transaction
 """
 HELP_TEXT = ("""
 {}

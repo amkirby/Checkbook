@@ -57,6 +57,8 @@ if __name__ == "__main__":
                 commProcessor.process_print_command()
             elif(val[0] == commands.SAVE_COMMAND):
                 commProcessor.process_save_command(save_function)
+            elif(val[0] == commands.DELETE_COMMAND):
+                commProcessor.process_delete_command(*val[1:])
             elif(val[0] in commands.EXIT_LIST):
                 commProcessor.process_quit_command(save_function)
                 quit = True
