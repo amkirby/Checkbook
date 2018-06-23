@@ -5,6 +5,11 @@ from Constants import commands
 from Constants import config
 
 
+def _apply_debit_multiplier(debit_transaction):
+    if((debit_transaction.is_debit() and int(debit_transaction.get_amount()) > 0)
+        or (not debit_transaction.is_debit() and int(debit_transaction.get_amount()) < 0)):
+        debit_transaction.set_value("Amount", debit_transaction.get_amount() * config.DEBIT_MULTIPLIER)
+
 class CommandProcessor:
     """A class to process commands entered by the user. A function should be
     passed to each method to do the actual processing.
@@ -84,9 +89,7 @@ class CommandProcessor:
 
                 cbt.set_value(key, val.capitalize())
 
-        if(cbt.is_debit()):
-            cbt.set_value("Amount", cbt.get_amount() * config.DEBIT_MULTIPLIER)
-
+        _apply_debit_multiplier(cbt)
         self.checkbook.add_single_trans(cbt)
 
     def process_edit_command(self, *args):
@@ -112,6 +115,8 @@ class CommandProcessor:
                 if val.strip() != "":
                     trans.set_value(key, val.capitalize())
                     self.checkbook.set_edited(True)
+
+        _apply_debit_multiplier(trans)
 
     def process_report_command(self):
         """Generate a report"""
