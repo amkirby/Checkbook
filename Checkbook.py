@@ -235,7 +235,7 @@ class Checkbook:
         """
         transaction = None #CBT.CheckbookTransaction()
         for currentTrans in self.check_register:
-            if currentTrans.get_value("Num") == in_trans:
+            if int(currentTrans.get_value("Num")) == in_trans:
                 transaction = currentTrans
         return transaction
 
