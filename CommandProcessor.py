@@ -1,3 +1,4 @@
+import string
 from DisplayProcessors import CLIDisplayProcessor
 import CheckbookTransaction as CBT
 import checkbookReport as CR
@@ -87,7 +88,7 @@ class CommandProcessor:
                 else:
                     val = input(key + " : ")
 
-                cbt.set_value(key, val.capitalize())
+                cbt.set_value(key, string.capwords(val))
 
         _apply_debit_multiplier(cbt)
         self.checkbook.add_single_trans(cbt)
@@ -113,7 +114,7 @@ class CommandProcessor:
                 else:
                     val = input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
                 if val.strip() != "":
-                    trans.set_value(key, val.capitalize())
+                    trans.set_value(key, string.capwords(val))
                     self.checkbook.set_edited(True)
 
         _apply_debit_multiplier(trans)
