@@ -33,7 +33,7 @@ def _handle_user_input():
 
     inputVal[0].lower()
     return inputVal
-                
+
 if __name__ == "__main__":
     print("Welcome to your checkbook!")
     commProcessor.process_print_command()
@@ -62,5 +62,9 @@ if __name__ == "__main__":
             elif(val[0] in commands.EXIT_LIST):
                 commProcessor.process_quit_command(save_function)
                 quit = True
+            elif (val[0] == commands.SORT_COMMAND):
+                commProcessor.process_sort_command(*val[1:])
+                commProcessor.process_print_command()
+                
         except:
             pass

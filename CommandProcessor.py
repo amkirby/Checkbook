@@ -180,6 +180,15 @@ class CommandProcessor:
         trans = self.checkbook.find_transaction(delete_trans)
         self.checkbook.get_register().remove(trans)
 
+    def process_sort_command(self, *args):
+        if not args:
+            self.checkbook.order_by("Num")
+            sort_key = config.SORT_BY_KEY
+        else:
+            sort_key = args[0]
+        
+        self.checkbook.order_by(sort_key)
+
     def process_print_command(self, *args):
         """Prints the checkbook
 

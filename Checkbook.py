@@ -331,6 +331,9 @@ class Checkbook:
     def get_register(self):
         return self.check_register
 
+    def order_by(self, key):
+        self.check_register.sort(key=lambda cbt: cbt.get_value(key))
+
     def __str__(self):
         """A string representation of a checkbook
 

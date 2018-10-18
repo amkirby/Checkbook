@@ -12,3 +12,4 @@ DEBIT_CATEGORIES = ["Groceries", "Gas", "Bills", "Entertainment", "Vape", "Lunch
 CREDIT_CATEGORIES = ["Paycheck"]
 CATEGORIES = DEBIT_CATEGORIES + CREDIT_CATEGORIES  # Categories to choose for transactions
 DEBIT_MULTIPLIER = -1
+SORT_BY_KEY = "Date"

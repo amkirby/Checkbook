@@ -6,6 +6,7 @@ EDIT_COMMAND = "edit"           # edit a transaction
 REPORT_COMMAND = "report"       # generate a report
 LOAD_COMMAND = "load"           # load an XML file
 DELETE_COMMAND = "delete"
+SORT_COMMAND = "sort"
 
 TRANS_TYPES = ["Debit", "Credit"]
 
