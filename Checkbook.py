@@ -110,7 +110,7 @@ class Checkbook:
         """
         return_list = []
         for elem in self.check_register:
-            if elem.get_dictionary().get("Category").lower() == cat.lower() and elem.get_dictionary().get("Date").year == datetime.today().year:
+            if elem.get_dictionary().get("Category").lower() == cat.lower():
                 return_list.append(elem)
         return return_list
 
