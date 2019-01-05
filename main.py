@@ -65,6 +65,8 @@ if __name__ == "__main__":
             elif (val[0] == commands.SORT_COMMAND):
                 commProcessor.process_sort_command(*val[1:])
                 commProcessor.process_print_command()
+            elif (val[0] == commands.SEARCH_COMMAND):
+                commProcessor.process_search_command(*val[1:])
                 
         except:
             pass

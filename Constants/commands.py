@@ -7,6 +7,7 @@ REPORT_COMMAND = "report"       # generate a report
 LOAD_COMMAND = "load"           # load an XML file
 DELETE_COMMAND = "delete"
 SORT_COMMAND = "sort"
+SEARCH_COMMAND = "search"
 
 TRANS_TYPES = ["Debit", "Credit"]
 

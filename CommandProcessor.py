@@ -190,6 +190,13 @@ class CommandProcessor:
         
         self.checkbook.order_by(sort_key)
 
+    def process_search_command(self, *args):
+        if not args:
+            search_terms = input("Enter your search terms : ")
+        else:
+            search_terms = " ".join(args)
+        print(CLIDisplayProcessor.print_checkbook(self.checkbook, "Desc", search_terms))
+
     def process_print_command(self, *args):
         """Prints the checkbook
 

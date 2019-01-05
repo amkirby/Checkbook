@@ -134,6 +134,17 @@ class Checkbook:
                 return_list.append(elem)
         return return_list
 
+    def get_description(self, search_term):
+        return_list = []
+        if(type(search_term) is not str):
+            search_term = str(search_term)
+        for cbt in self.check_register:
+            transaction_desc = cbt.get_value("Desc")
+            if(search_term.lower() in transaction_desc.lower()):
+                return_list.append(cbt)
+
+        return return_list
+
     def get_total_for_trans(self, trans):
         """Get the total amount for the specified trans type
 
@@ -350,5 +361,6 @@ class Checkbook:
     specific_print_functions = {
         "Date": get_month,
         "Trans": get_transaction_type,
-        "Category": get_category
+        "Category": get_category,
+        "Desc": get_description
     }
