@@ -180,6 +180,7 @@ class CommandProcessor:
 
         trans = self.checkbook.find_transaction(delete_trans)
         self.checkbook.get_register().remove(trans)
+        self.checkbook.edited = True
 
     def process_sort_command(self, *args):
         if not args:
