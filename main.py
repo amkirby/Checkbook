@@ -7,6 +7,7 @@
 
 import Checkbook as CB
 import CommandProcessor as CP
+from Exceptions import *
 from DataProcessors import SQLProcessor as SCP, XMLProcessor as XML
 from Constants import commands
 from Constants import config
@@ -68,5 +69,7 @@ if __name__ == "__main__":
             elif (val[0] == commands.SEARCH_COMMAND):
                 commProcessor.process_search_command(*val[1:])
                 
+        except InvalidDateError as date_error:
+            print(date_error)
         except:
             pass

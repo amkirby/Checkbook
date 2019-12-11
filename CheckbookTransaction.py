@@ -94,6 +94,10 @@ class CheckbookTransaction:
         """A class method that resets the _UID"""
         cls._UID = 1
 
+    @classmethod
+    def decrement_uid(cls):
+        cls._UID = cls._UID - 1    
+
     def __str__(self):
         """A string representation of a Checkbook Transaction"""
         string = PC.VLINE_CHAR

@@ -2,6 +2,7 @@ import string
 from DisplayProcessors import CLIDisplayProcessor
 import CheckbookTransaction as CBT
 import checkbookReport as CR
+from Exceptions import *
 from Constants import commands
 from Constants import config
 
@@ -79,16 +80,21 @@ class CommandProcessor:
         """Adds a transaction to the checkbook"""
         print("Enter your transaction")
         cbt = CBT.CheckbookTransaction()
-        for key in CBT.KEYS:
-            if key != "Num":
-                if key == "Category":
-                    val = self._select_with_number(config.CATEGORIES, key)
-                elif key == "Trans":
-                    val = self._select_with_number(commands.TRANS_TYPES, key)
-                else:
-                    val = input(key + " : ")
+        try:
+            for key in CBT.KEYS:
+                if key != "Num":
+                    if key == "Category":
+                        val = self._select_with_number(config.CATEGORIES, key)
+                    elif key == "Trans":
+                        val = self._select_with_number(commands.TRANS_TYPES, key)
+                    else:
+                        val = input(key + " : ")
 
-                cbt.set_value(key, string.capwords(val))
+                    cbt.set_value(key, string.capwords(val))
+        except ValueError:
+            CBT.CheckbookTransaction.decrement_uid()
+            error = InvalidDateError(val, "Invalid date entered of: ")
+            raise error
 
         _apply_debit_multiplier(cbt)
         self.checkbook.add_single_trans(cbt)
