@@ -3,6 +3,7 @@ import locale
 import CheckbookTransaction as CBT
 from Constants import config
 from Constants import printConstants as PC
+from datetime import datetime
 
 ROW_SEP = '\n' + str((PC.HLINE_CHAR * (sum(PC.SIZE_LIST) + len(PC.SIZE_LIST)))) + '\n'
 
@@ -20,8 +21,21 @@ def _gen_header_print():
         header += format_string.format(CBT.KEYS[i]) + PC.VLINE_CHAR
     return header
 
+def _gen_transaction_print(transaction):
+    string = PC.VLINE_CHAR
+    for i in range(len(CBT.KEYS)):
+        header_length = PC.SIZE_LIST[i]
+        format_string = '{:^' + str(header_length) + '}'
+        val = transaction.data.get(CBT.KEYS[i])
+        if type(val) is datetime:
+            val = datetime.strftime(transaction.data.get(CBT.KEYS[i]), config.DATE_FORMAT)
+        elif type(val) is float:
+            val = locale.currency(val, grouping=config.THOUSAND_SEP)
+        string += format_string.format(str(val)) + PC.VLINE_CHAR
+    return string
+    
 
-def _gen_trans_print(transaction_list):
+def _gen_all_transactions_print(transaction_list):
     """
     Creates the print for each transaction in the register
 
@@ -32,7 +46,7 @@ def _gen_trans_print(transaction_list):
     """
     string = ''
     for elem in transaction_list:
-        string += str(elem)
+        string += _gen_transaction_print(elem)
         string += ROW_SEP
     return string
 
@@ -90,7 +104,7 @@ def print_checkbook(checkbook, *args):
     total = _get_total_for_list(transaction_list)
     output = _gen_header_print()
     output += ROW_SEP
-    output += _gen_trans_print(transaction_list)
+    output += _gen_all_transactions_print(transaction_list)
     output += _gen_total_line_print(total)
     output += ROW_SEP
 
