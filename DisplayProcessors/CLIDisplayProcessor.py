@@ -3,7 +3,9 @@ import locale
 import CheckbookTransaction as CBT
 from Constants import config
 from Constants import printConstants as PC
+from Exceptions import *
 from datetime import datetime
+from Constants import commands
 
 ROW_SEP = '\n' + str((PC.HLINE_CHAR * (sum(PC.SIZE_LIST) + len(PC.SIZE_LIST)))) + '\n'
 
@@ -109,3 +111,61 @@ def print_checkbook(checkbook, *args):
     output += ROW_SEP
 
     return output
+
+class CLIRun:
+
+    def __init__(self, command_processor, save_function, load_function):
+        self.command_processor = command_processor
+        self.save_function = save_function
+        self.load_function = load_function
+
+    def _handle_user_input(self):
+        """Gather user input. If the input is empty, make it an empty string.
+        Returns:
+            inputVal (list) : list containing one or more strings
+        """
+        inputVal = input("What would you like to do? : ").strip().split()
+        if len(inputVal) == 0:
+            inputVal = [""]
+
+        inputVal[0].lower()
+        return inputVal
+
+    def main(self):
+        print("Welcome to your checkbook!")
+        self.command_processor.process_print_command()
+        quit = False
+        while(not quit):
+            try:
+                val = self._handle_user_input()
+                if(val[0] == commands.HELP_COMMAND):
+                    self.command_processor.process_help_command()
+                elif(val[0] == commands.PRINT_COMMAND):
+                    self.command_processor.process_print_command(*val[1:])
+                elif(val[0] == commands.ADD_COMMAND):
+                    self.command_processor.process_add_command()
+                elif(val[0] == commands.EDIT_COMMAND):
+                    self.command_processor.process_edit_command(*val[1:])
+                elif(val[0] == commands.REPORT_COMMAND):
+                    self.command_processor.process_report_command()
+                elif(val[0] == commands.LOAD_COMMAND):
+                    self.command_processor.process_save_command(self.save_function)
+                    self.command_processor.process_load_command(self.load_function, *val[1:])
+                    self.command_processor.process_print_command()
+                elif(val[0] == commands.SAVE_COMMAND):
+                    self.command_processor.process_save_command(self.save_function)
+                elif(val[0] == commands.DELETE_COMMAND):
+                    self.command_processor.process_delete_command(*val[1:])
+                elif(val[0] in commands.EXIT_LIST):
+                    self.command_processor.process_quit_command(self.save_function)
+                    quit = True
+                elif (val[0] == commands.SORT_COMMAND):
+                    self.command_processor.process_sort_command(*val[1:])
+                    self.command_processor.process_print_command()
+                elif (val[0] == commands.SEARCH_COMMAND):
+                    self.command_processor.process_search_command(*val[1:])
+                    
+            except InvalidDateError as date_error:
+                print(date_error)
+            except:
+                pass
