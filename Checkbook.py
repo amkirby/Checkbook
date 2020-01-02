@@ -130,7 +130,7 @@ class Checkbook:
         return_list = []
         for elem in self.check_register:
             date = elem.get_dictionary().get("Date")
-            if date.month == month and date.year == datetime.today().year:
+            if date.month == month:
                 return_list.append(elem)
         return return_list
 
