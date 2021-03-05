@@ -41,12 +41,12 @@ class CheckbookReport:
         return_string += ("-" * 40) + "\n"
         for cat in config.CATEGORIES:
             current_cat_list = self.checkbook.get_category(cat)
-            return_string += cat + "\n"
+            return_string += register_format.format(cat) + " |" + "\n"
             total = self._get_cbt_total_for_category(current_cat_list, month)
 
             return_string += register_format.format(("  " + "{:.2%}".format(total["Debit"] / trans_total) + " (" +
                               locale.currency(total["Debit"], grouping=config.THOUSAND_SEP) + ")")) + " |"
-            return_string += ("  " + "{:.2%}".format(total["Credit"] / trans_total) + " (" +
+            return_string += ("  " + "{:.2%}".format(total["Credit"] / pay_total) + " (" +
                               locale.currency(total["Credit"], grouping=config.THOUSAND_SEP) + ")" + "\n")
             return_string += ("-" * 40) + "\n"
 
