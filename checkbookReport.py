@@ -38,7 +38,7 @@ class CheckbookReport:
                           locale.currency(pay_total - trans_total, grouping=config.THOUSAND_SEP) + "\n")
         return_string += "\n"  # add extra space before printing categories
         return_string += register_format.format("Debit") + " | " + "Credit" + "\n"
-        return_string += ("-" * 40) + "\n"
+        return_string += ("-" * 42) + "\n"
         for cat in config.CATEGORIES:
             current_cat_list = self.checkbook.get_category(cat)
             return_string += register_format.format(cat) + " |" + "\n"
@@ -48,7 +48,7 @@ class CheckbookReport:
                               locale.currency(total["Debit"], grouping=config.THOUSAND_SEP) + ")")) + " |"
             return_string += ("  " + "{:.2%}".format(total["Credit"] / pay_total) + " (" +
                               locale.currency(total["Credit"], grouping=config.THOUSAND_SEP) + ")" + "\n")
-            return_string += ("-" * 40) + "\n"
+            return_string += ("-" * 42) + "\n"
 
         return_string += "\n" + HEADER_FORMAT.format(" END REPORT ") + "\n"
         return return_string
