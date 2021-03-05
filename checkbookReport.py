@@ -27,6 +27,7 @@ class CheckbookReport:
         """
         return_string = ""
         trans_total, pay_total = self._get_totals_for_reports(month)
+        register_format = "{:<20}"
         format_string = "{:<12}"
         return_string += "\n" + HEADER_FORMAT.format(" REPORT ") + "\n"
         return_string += ("\n" + format_string.format("Pay Total") + ": " +
@@ -36,13 +37,19 @@ class CheckbookReport:
         return_string += (format_string.format("Savings") + ": " +
                           locale.currency(pay_total - trans_total, grouping=config.THOUSAND_SEP) + "\n")
         return_string += "\n"  # add extra space before printing categories
-        for cat in config.DEBIT_CATEGORIES:
+        return_string += register_format.format("Debit") + " | " + "Credit" + "\n"
+        return_string += ("-" * 40) + "\n"
+        for cat in config.CATEGORIES:
             current_cat_list = self.checkbook.get_category(cat)
             return_string += cat + "\n"
             total = self._get_cbt_total_for_category(current_cat_list, month)
 
-            return_string += ("  " + "{:.2%}".format(total / trans_total) + " (" +
-                              locale.currency(total, grouping=config.THOUSAND_SEP) + ")" + "\n")
+            return_string += register_format.format(("  " + "{:.2%}".format(total["Debit"] / trans_total) + " (" +
+                              locale.currency(total["Debit"], grouping=config.THOUSAND_SEP) + ")")) + " |"
+            return_string += ("  " + "{:.2%}".format(total["Credit"] / trans_total) + " (" +
+                              locale.currency(total["Credit"], grouping=config.THOUSAND_SEP) + ")" + "\n")
+            return_string += ("-" * 40) + "\n"
+
         return_string += "\n" + HEADER_FORMAT.format(" END REPORT ") + "\n"
         return return_string
 
@@ -69,20 +76,33 @@ class CheckbookReport:
             cbt_list (list) : CBTs for a specific category
             month (None | int) : if None, it is a total report, otherwise it is a monthly report
         """
-        total = 0
+        debitTotal = 0
+        creditTotal = 0
+        transTotal = {};
         for cbt in cbt_list:
             if cbt.get_value("Trans") == "Debit":  # added Debit check b/c some categories can be both
                 # debit and credit and reports were wrong
                 if month is None:
                     # ASSERT: this report is a total report
-                    total += abs(cbt.get_amount())
+                    debitTotal += abs(cbt.get_amount())
                 else:
                     # ASSERT: this report is a monthly report
                     date = cbt.get_date().month
                     if date == month:
-                        total += abs(cbt.get_amount())
-
-        return total
+                        debitTotal += abs(cbt.get_amount())
+            elif cbt.get_value("Trans") == "Credit":
+                if month is None:
+                    # ASSERT: this report is a total report
+                    creditTotal += abs(cbt.get_amount())
+                else:
+                    # ASSERT: this report is a monthly report
+                    date = cbt.get_date().month
+                    if date == month:
+                        creditTotal += abs(cbt.get_amount())
+        
+        transTotal["Debit"] = debitTotal
+        transTotal["Credit"] = creditTotal
+        return transTotal
 
     # A dictionary used to more generically call the methods for this class
     dispatcher = {
