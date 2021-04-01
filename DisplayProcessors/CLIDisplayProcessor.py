@@ -124,7 +124,7 @@ class CLIRun:
         Returns:
             inputVal (list) : list containing one or more strings
         """
-        inputVal = input("What would you like to do? : ").strip().split()
+        inputVal = input("What would you like to do? : ").strip().split(" ", 2)
         if len(inputVal) == 0:
             inputVal = [""]
 
