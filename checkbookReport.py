@@ -27,6 +27,8 @@ class CheckbookReport:
         """
         return_string = ""
         trans_total, pay_total = self._get_totals_for_reports(month)
+        trans_divisor = trans_total if trans_total > 0 else 1
+        pay_divisor = pay_total if pay_total > 0 else 1
         register_format = "{:<20}"
         format_string = "{:<12}"
         return_string += "\n" + HEADER_FORMAT.format(" REPORT ") + "\n"
@@ -44,9 +46,9 @@ class CheckbookReport:
             return_string += register_format.format(cat) + " |" + "\n"
             total = self._get_cbt_total_for_category(current_cat_list, month)
 
-            return_string += register_format.format(("  " + "{:.2%}".format(total["Debit"] / trans_total) + " (" +
+            return_string += register_format.format(("  " + "{:.2%}".format(total["Debit"] / trans_divisor) + " (" +
                               locale.currency(total["Debit"], grouping=config.THOUSAND_SEP) + ")")) + " |"
-            return_string += ("  " + "{:.2%}".format(total["Credit"] / pay_total) + " (" +
+            return_string += ("  " + "{:.2%}".format(total["Credit"] / pay_divisor) + " (" +
                               locale.currency(total["Credit"], grouping=config.THOUSAND_SEP) + ")" + "\n")
             return_string += ("-" * 42) + "\n"
 
