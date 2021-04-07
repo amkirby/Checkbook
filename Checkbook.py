@@ -22,6 +22,9 @@ class Checkbook:
         self.file_name = config.FILE_NAME
         self.edited = False
 
+    def create_based_on_list(self, cbt_list):
+        self.check_register = cbt_list
+
     def add(self, cbt_list):
         """Adds the specified list to the checkbook
 

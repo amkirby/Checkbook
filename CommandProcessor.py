@@ -1,6 +1,7 @@
 import string
 from DisplayProcessors import CLIDisplayProcessor
 import CheckbookTransaction as CBT
+import Checkbook as CB
 import checkbookReport as CR
 from Exceptions import *
 from Constants import commands
@@ -225,3 +226,27 @@ help displays this text
             """
             print(print_help_text.format(", ".join(s for s in commands.TRANS_TYPES),
                                          ", ".join(s for s in config.CATEGORIES)))
+
+    def process_print2_command(self, checkbook, *args):
+        sub_book = CB.Checkbook()
+        trans_list = []
+        if not args:
+            trans_list = self._process_checkbook(checkbook)
+        elif len(args) == 2:
+            trans_list = self._process_checkbook(checkbook, *args)
+
+        sub_book.create_based_on_list(trans_list)
+        return sub_book
+
+    def _process_checkbook(self, checkbook, *args):
+        transaction_list = []
+        total = 0.0
+        if not args:
+            transaction_list = checkbook.get_register()
+        elif len(args) == 2:
+            transaction_list = checkbook.get_specific_list(*args)
+
+        sub_checkbook = CB.Checkbook()
+        sub_checkbook.create_based_on_list(transaction_list)
+
+        return transaction_list
