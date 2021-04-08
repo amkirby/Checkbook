@@ -199,11 +199,14 @@ class CommandProcessor:
         self.checkbook.order_by(sort_key)
 
     def process_search_command(self, *args):
+        sub_book = CB.Checkbook()
         if not args:
             search_terms = input("Enter your search terms : ")
         else:
             search_terms = " ".join(args)
-        print(CLIDisplayProcessor.print_checkbook(self.checkbook, "Desc", search_terms))
+        trans_list = self._process_checkbook_sub_list(self.checkbook, "Desc", search_terms)
+        sub_book.create_based_on_list(trans_list)
+        return sub_book
 
     def process_print_command(self, *args):
         """Prints the checkbook
@@ -231,22 +234,19 @@ help displays this text
         sub_book = CB.Checkbook()
         trans_list = []
         if not args:
-            trans_list = self._process_checkbook(checkbook)
+            trans_list = self._process_checkbook_sub_list(checkbook)
         elif len(args) == 2:
-            trans_list = self._process_checkbook(checkbook, *args)
+            trans_list = self._process_checkbook_sub_list(checkbook, *args)
 
         sub_book.create_based_on_list(trans_list)
         return sub_book
 
-    def _process_checkbook(self, checkbook, *args):
+    def _process_checkbook_sub_list(self, checkbook, *args):
         transaction_list = []
         total = 0.0
         if not args:
             transaction_list = checkbook.get_register()
         elif len(args) == 2:
             transaction_list = checkbook.get_specific_list(*args)
-
-        sub_checkbook = CB.Checkbook()
-        sub_checkbook.create_based_on_list(transaction_list)
 
         return transaction_list
