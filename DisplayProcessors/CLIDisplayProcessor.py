@@ -128,18 +128,13 @@ class CLIRun:
         commands = input("What would you like to do? : ").strip().split("|")
         for command in commands:
             inputVal.append(command.strip().split(" ", 2))
-        # commands_with_params = [[x.strip().split(",") for x in comm] for comm in commands]
-        # inputVal = [x.strip().split(" ", 2) for x in commands_with_params]
-        # if len(inputVal) == 0:
-        #     inputVal = [""]
 
-        #inputVal[0].lower()
         return inputVal
 
     def main(self):
         print("Welcome to your checkbook!")
         checkbook = self.command_processor.checkbook
-        self.command_processor.process_print2_command(checkbook)
+        self.command_processor.process_print_command(checkbook)
         quit = False
         needs_to_print = False
         while(not quit):
@@ -149,8 +144,7 @@ class CLIRun:
                     if(val[0] == commands.HELP_COMMAND):
                         self.command_processor.process_help_command()
                     elif(val[0] == commands.PRINT_COMMAND):
-                            # self.command_processor.process_print_command(*val[1:])
-                            checkbook = self.command_processor.process_print2_command(checkbook, *val[1:])
+                            checkbook = self.command_processor.process_print_command(checkbook, *val[1:])
                             needs_to_print = True
                     elif(val[0] == commands.ADD_COMMAND):
                         self.command_processor.process_add_command()

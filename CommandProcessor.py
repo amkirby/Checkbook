@@ -209,29 +209,7 @@ class CommandProcessor:
         sub_book.create_based_on_list(trans_list)
         return sub_book
 
-    def process_print_command(self, *args):
-        """Prints the checkbook
-
-        Args:
-            *args (variable args): can specify what to print
-        """
-        if not args:
-            print(CLIDisplayProcessor.print_checkbook(self.checkbook))
-        elif len(args) == 2:
-            print(CLIDisplayProcessor.print_checkbook(self.checkbook, *args))
-        else:
-            print_help_text = """
-Usage : print [<key> <value> | <help>]
-Possible keys with their values :
-    Date     : a number to represent the month
-    Trans    : {}
-    Category : {}
-help displays this text
-            """
-            print(print_help_text.format(", ".join(s for s in commands.TRANS_TYPES),
-                                         ", ".join(s for s in config.CATEGORIES)))
-
-    def process_print2_command(self, checkbook, *args):
+    def process_print_command(self, checkbook, *args):
         sub_book = CB.Checkbook()
         trans_list = []
         if not args:
