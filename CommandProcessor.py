@@ -198,13 +198,13 @@ class CommandProcessor:
         
         self.checkbook.order_by(sort_key)
 
-    def process_search_command(self, *args):
+    def process_search_command(self, checkbook, *args):
         sub_book = CB.Checkbook()
         if not args:
             search_terms = input("Enter your search terms : ")
         else:
             search_terms = " ".join(args)
-        trans_list = self._process_checkbook_sub_list(self.checkbook, "Desc", search_terms)
+        trans_list = self._process_checkbook_sub_list(checkbook, "Desc", search_terms)
         sub_book.create_based_on_list(trans_list)
         return sub_book
 

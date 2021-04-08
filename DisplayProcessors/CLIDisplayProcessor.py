@@ -173,7 +173,7 @@ class CLIRun:
                         self.command_processor.process_sort_command(*val[1:])
                         self.command_processor.process_print_command()
                     elif (val[0] == commands.SEARCH_COMMAND):
-                        checkbook = self.command_processor.process_search_command(*val[1:])
+                        checkbook = self.command_processor.process_search_command(checkbook, *val[1:])
                         needs_to_print = True
                 if(needs_to_print):
                     print(checkbook)
