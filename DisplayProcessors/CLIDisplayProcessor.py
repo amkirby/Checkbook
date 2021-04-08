@@ -161,7 +161,8 @@ class CLIRun:
                     elif(val[0] == commands.LOAD_COMMAND):
                         self.command_processor.process_save_command(self.save_function)
                         self.command_processor.process_load_command(self.load_function, *val[1:])
-                        self.command_processor.process_print_command()
+                        checkbook = self.command_processor.checkbook
+                        needs_to_print = True
                     elif(val[0] == commands.SAVE_COMMAND):
                         self.command_processor.process_save_command(self.save_function)
                     elif(val[0] == commands.DELETE_COMMAND):
