@@ -189,14 +189,15 @@ class CommandProcessor:
         self.checkbook.get_register().remove(trans)
         self.checkbook.edited = True
 
-    def process_sort_command(self, *args):
+    def process_sort_command(self, checkbook, *args):
         if not args:
-            self.checkbook.order_by("Num")
+            checkbook.order_by("Num")
             sort_key = config.SORT_BY_KEY
         else:
             sort_key = args[0]
-        
-        self.checkbook.order_by(sort_key)
+
+        checkbook.order_by(sort_key.capitalize())
+        return checkbook
 
     def process_search_command(self, checkbook, *args):
         sub_book = CB.Checkbook()
