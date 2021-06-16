@@ -31,6 +31,7 @@ class CheckbookReport:
         pay_divisor = pay_total if pay_total > 0 else 1
         register_format = "{:<20}"
         format_string = "{:<12}"
+        left_border = "|"
         return_string += "\n" + HEADER_FORMAT.format(" REPORT ") + "\n"
         return_string += ("\n" + format_string.format("Pay Total") + ": " +
                           locale.currency(pay_total, grouping=config.THOUSAND_SEP) + "\n")
@@ -39,18 +40,20 @@ class CheckbookReport:
         return_string += (format_string.format("Savings") + ": " +
                           locale.currency(pay_total - trans_total, grouping=config.THOUSAND_SEP) + "\n")
         return_string += "\n"  # add extra space before printing categories
-        return_string += register_format.format("Debit") + " | " + "Credit" + "\n"
-        return_string += ("-" * 42) + "\n"
+        h_line = ("-" * 42)
+        return_string += left_border + h_line + "\n"
+        return_string += left_border + register_format.format("Debit") + " | " + "Credit" + "\n"
+        return_string += left_border + h_line + "\n"
         for cat in config.CATEGORIES:
             current_cat_list = self.checkbook.get_category(cat)
-            return_string += register_format.format(cat) + " |" + "\n"
+            return_string += left_border + register_format.format(cat) + "\n"
             total = self._get_cbt_total_for_category(current_cat_list, month)
 
-            return_string += register_format.format(("  " + "{:.2%}".format(total["Debit"] / trans_divisor) + " (" +
+            return_string += left_border + register_format.format(("  " + "{:.2%}".format(total["Debit"] / trans_divisor) + " (" +
                               locale.currency(total["Debit"], grouping=config.THOUSAND_SEP) + ")")) + " |"
             return_string += ("  " + "{:.2%}".format(total["Credit"] / pay_divisor) + " (" +
                               locale.currency(total["Credit"], grouping=config.THOUSAND_SEP) + ")" + "\n")
-            return_string += ("-" * 42) + "\n"
+            return_string += left_border + h_line + "\n"
 
         return_string += "\n" + HEADER_FORMAT.format(" END REPORT ") + "\n"
         return return_string
