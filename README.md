@@ -9,7 +9,7 @@ python3 main.py
 
 ##### NOTE
 
-```sqlite3``` is needed to use the database functionality
+```sqlite3``` is needed to use the database functionality  
 ```ElementTree``` is needed to use the xml functionality
 
 ## Commands
@@ -20,14 +20,24 @@ python3 main.py
 * **save**   : save the checkbook
 * **load**   : load a checkbook
 * **report** : generate a report for the checkbook
+* **delete** : delete a transaction
+* **search** : search for text in the description
+* **sort**   : sort the checkbook by a given header
 
 ### Commands that can take arguments
-* **print**  : ```print [<key> <value> | help]```
+* **print**  : ```print [<key> <value>]```
 * **edit**   : ```edit [number]```
 * **load**   : ```load [file name]```
+* **delete** : ```delete [number]```
+* **search** : ```search <text>```
+* **sort**   : ```sort [header | Date]```
+
+### Command chaining
+commands can be chained together by piping one command into the next, similar to ```bash``` piping.  
+Ex: ```print date 8 | print category groceries | sort amount```
 
 ## Configuration
-In the *config.py* file, you can set some configuration options
+In the ```config.py``` file, you can set some configuration options
 
 * ```DATE_FORMAT``` : The format for date input *default = M/D/YYYY*
 * ```THOSUAND_SEP``` :  If numbers have the thousands separator *default = True*

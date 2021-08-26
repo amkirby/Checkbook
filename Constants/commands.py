@@ -26,12 +26,14 @@ COMMAND_HELP = """
 Commands:
     help   : Prints this help
     add    : Add a transaction to the checkbook
-    print  : Print the checkbook 
+    print  : Print the checkbook (print [<key> <value>])
     save   : Save the checkbook
-    edit   : Edit a transaction
+    edit   : Edit a transaction (edit [number])
     report : Generate a report about the transactions
-    load   : Load a checkbook
-    delete : delete a transaction
+    load   : Load a checkbook (load [file name])
+    delete : delete a transaction (delete [number])
+    search : search for text in the description (search <text>)
+    sort   : sort the checkbook by a given header (sort [header | Date])
 """
 HELP_TEXT = ("""
 {}
