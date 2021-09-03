@@ -30,6 +30,7 @@ class CommandProcessor:
             checkbook (Checkbook) : the checkbook to operate on
         """
         self.checkbook = checkbook
+        self._trans_selection = ""
 
     def process_command(self, function, *args):
         """Performs the effects of the specified function on the checkbook
@@ -85,9 +86,10 @@ class CommandProcessor:
             for key in CBT.KEYS:
                 if key != "Num":
                     if key == "Category":
-                        val = self._select_with_number(config.CATEGORIES, key)
+                        val = self._select_with_number(config.CATEGORIES_FOR_ADD[self._trans_selection], key)
                     elif key == "Trans":
                         val = self._select_with_number(commands.TRANS_TYPES, key)
+                        self._trans_selection = val
                     else:
                         val = input(key + " : ")
 
