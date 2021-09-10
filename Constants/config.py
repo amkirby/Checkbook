@@ -1,9 +1,10 @@
 """Configuration constants"""
 
 import locale
+from typing import List
 
-def _unique(data_list):
-    return_list = []
+def _unique(data_list: List[str]) -> List[str]:
+    return_list: List[str] = []
     for cat in data_list:
         if cat not in return_list:
             return_list.append(cat)

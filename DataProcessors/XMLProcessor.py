@@ -1,3 +1,4 @@
+from typing import List
 import xml.etree.ElementTree as ET
 from datetime import datetime
 
@@ -7,7 +8,7 @@ from Constants import config
 
 class XMLProcessor:
     @classmethod
-    def load(cls, file_name):
+    def load(cls, file_name: str) -> List[CBT.CheckbookTransaction]:
         """
         Loads xml from the specified file
 
@@ -17,7 +18,7 @@ class XMLProcessor:
         Returns:
             list: the transactions from the xml file
         """
-        return_list = []
+        return_list: List[CBT.CheckbookTransaction] = []
         try:
             root = ET.parse(file_name)
             tree_iter = root.iter("Transaction")
@@ -34,7 +35,7 @@ class XMLProcessor:
         return return_list
 
     @classmethod
-    def save(cls, file_name, checkbook_register):
+    def save(cls, file_name: str, checkbook_register: List[CBT.CheckbookTransaction]) -> None:
         """
         Saves the specified checkbook transactions to the specified file name as xml
 

@@ -1,5 +1,6 @@
 import locale
 from datetime import datetime
+from typing import Any, Dict, ItemsView
 
 from Constants import config
 from Constants import printConstants as PC
@@ -19,25 +20,25 @@ class CheckbookTransaction:
     Attributes:
         data : a dictionary to contain the transaction
     """
-    _UID = 1  # The current transaction number
+    _uid = 1  # The current transaction number
 
     def __init__(self):
         """Creates an empty transaction with the next available UID"""
-        self.data = dict()
+        self.data: Dict[str, Any] = dict()
         for elem in KEYS:
             self.data[elem] = None
-        self.data[KEYS[-1]] = CheckbookTransaction._UID
-        CheckbookTransaction._UID += 1
+        self.data[KEYS[-1]] = CheckbookTransaction._uid
+        CheckbookTransaction._uid += 1
 
-    def get_items(self):
+    def get_items(self) -> ItemsView[str, Any]:
         """Gets the key, value of the transaction
 
         Returns:
             iterable tuple: key, value pairs of the transaction
         """
-        return dict.items(self.data)
+        return self.data.items()
 
-    def get_dictionary(self):
+    def get_dictionary(self) -> Dict[str, Any]:
         """Gets the data as a dictionary
 
         Returns:
@@ -45,7 +46,7 @@ class CheckbookTransaction:
         """
         return self.data
 
-    def get_amount(self):
+    def get_amount(self) -> Any:
         """Gets the amount of the transaction
 
         Returns:
@@ -53,7 +54,7 @@ class CheckbookTransaction:
         """
         return self.data.get("Amount")
 
-    def get_value(self, key):
+    def get_value(self, key: str) -> Any:
         """Gets the value of the specified key
 
         Args:
@@ -64,15 +65,15 @@ class CheckbookTransaction:
         """
         return self.data.get(key)
 
-    def get_date(self):
+    def get_date(self) -> datetime:
         """Get the value of the Date key
 
         Returns:
             datetime: The date value of the transaction
         """
-        return self.data.get("Date")
+        return self.get_value("Date")
 
-    def set_value(self, key, value):
+    def set_value(self, key: str, value: Any) -> None:
         """Sets the specified key with the specified value
 
         Args:
@@ -86,17 +87,17 @@ class CheckbookTransaction:
             insert_val = float(value)
         self.data[key] = insert_val
 
-    def is_debit(self):
+    def is_debit(self) -> bool:
         return self.data.get("Trans") == "Debit"
 
     @classmethod
-    def reset_uid(cls):
+    def reset_uid(cls) -> None:
         """A class method that resets the _UID"""
-        cls._UID = 1
+        cls._uid = 1
 
     @classmethod
-    def decrement_uid(cls):
-        cls._UID = cls._UID - 1    
+    def decrement_uid(cls) -> None:
+        cls._uid = cls._uid - 1    
 
     def __str__(self):
         """A string representation of a Checkbook Transaction"""
@@ -106,7 +107,7 @@ class CheckbookTransaction:
             format_string = '{:^' + str(header_length) + '}'
             val = self.data.get(KEYS[i])
             if type(val) is datetime:
-                val = datetime.strftime(self.data.get(KEYS[i]), config.DATE_FORMAT)
+                val = datetime.strftime(self.get_value(KEYS[i]), config.DATE_FORMAT) #self.data.get(KEYS[i])
             elif type(val) is float:
                 val = locale.currency(val, grouping=config.THOUSAND_SEP)
             string += format_string.format(str(val)) + PC.VLINE_CHAR

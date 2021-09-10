@@ -1,5 +1,6 @@
 import sqlite3 as lite
 from datetime import datetime
+from typing import Any, List, Tuple
 
 import CheckbookTransaction as CBT
 from Constants import config, printConstants
@@ -9,7 +10,7 @@ class SQLProcessor:
     """This class handles the saving and loading of the checkbook from a database"""
 
     @classmethod
-    def _scrub(cls, string_to_scrub):
+    def _scrub(cls, string_to_scrub: str) -> str:
         """
         Removes all characters except alphanumeric ones from the specified string
 
@@ -22,7 +23,7 @@ class SQLProcessor:
         return ''.join(s for s in string_to_scrub if s.isalnum())
 
     @classmethod
-    def _table_exists(cls, table_name):
+    def _table_exists(cls, table_name: str) -> bool:
         """
         Determines if the specified table exists
 
@@ -48,7 +49,7 @@ class SQLProcessor:
         return return_val[0]
 
     @classmethod
-    def _create_columns(cls):
+    def _create_columns(cls) -> str:
         """
         Creates a script specifying the column names and types for a checkbook table
 
@@ -69,7 +70,7 @@ class SQLProcessor:
         return columns
 
     @classmethod
-    def _create_table(cls, table_name):
+    def _create_table(cls, table_name: str) -> None:
         """
         Creates the specified table if it does not exist
 
@@ -91,7 +92,7 @@ class SQLProcessor:
                 conn.close()
 
     @classmethod
-    def save(cls, table_name, checkbook_register):
+    def save(cls, table_name: str, checkbook_register: List[CBT.CheckbookTransaction]) -> None:
         """
         Saves the specified checkbook to the table
 
@@ -107,9 +108,9 @@ class SQLProcessor:
             if not cls._table_exists(table_name):
                 cls._create_table(table_name)
             cursor.execute("DELETE FROM " + table_name)
-            list_of_cbt_tuples = []
+            list_of_cbt_tuples: List[Tuple[Any, ...]] = []
             for cbt in checkbook_register:
-                cbt_list_before_tuple = []
+                cbt_list_before_tuple: List[Any] = []
                 for key in CBT.KEYS:
                     value = cbt.get_value(key)
                     if key == "Date":
@@ -126,7 +127,7 @@ class SQLProcessor:
                 conn.close()
 
     @classmethod
-    def load(cls, table_name):
+    def load(cls, table_name: str) -> List[CBT.CheckbookTransaction]:
         """
         Loads the checkbook from the database
 
@@ -137,7 +138,7 @@ class SQLProcessor:
             list: the checkbook transactions from the database
         """
         conn = None
-        return_list = []
+        return_list: List[CBT.CheckbookTransaction] = []
         try:
             conn = lite.connect(config.DB_NAME)
             conn.row_factory = lite.Row

@@ -1,5 +1,5 @@
 import string
-from DisplayProcessors import CLIDisplayProcessor
+from typing import Any, Callable, List, Optional
 import CheckbookTransaction as CBT
 import Checkbook as CB
 import checkbookReport as CR
@@ -8,7 +8,7 @@ from Constants import commands
 from Constants import config
 
 
-def _apply_debit_multiplier(debit_transaction):
+def _apply_debit_multiplier(debit_transaction: CBT.CheckbookTransaction) -> None:
     if((debit_transaction.is_debit() and int(debit_transaction.get_amount()) > 0)
         or (not debit_transaction.is_debit() and int(debit_transaction.get_amount()) < 0)):
         debit_transaction.set_value("Amount", debit_transaction.get_amount() * config.DEBIT_MULTIPLIER)
@@ -23,7 +23,7 @@ class CommandProcessor:
         checkbook (Checkbook) : the current checkbook the user is using
     """
 
-    def __init__(self, checkbook):
+    def __init__(self, checkbook: CB.Checkbook):
         """Initializes the checkbook that will be used for the operations
 
         Args:
@@ -32,18 +32,7 @@ class CommandProcessor:
         self.checkbook = checkbook
         self._trans_selection = ""
 
-    def process_command(self, function, *args):
-        """Performs the effects of the specified function on the checkbook
-
-        Args:
-            function (function) : A function that takes a checkbook and performs
-                                  some action
-            args (variable args) : optional arguments that can be passed to the specified
-                                   function
-        """
-        function(self.checkbook, *args)
-
-    def _do_save(self, save_function):
+    def _do_save(self, save_function: Callable[[str, List[CBT.CheckbookTransaction]], None]) -> None:
         """Saves the checkbook
 
         Args:
@@ -54,7 +43,7 @@ class CommandProcessor:
             self.checkbook.save(save_function)
             print("save successful!")
 
-    def _select_with_number(self, text_list, key, def_text=None):
+    def _select_with_number(self, text_list: List[str], key: str, def_text: Optional[Any]=None) -> str:
         """Select a value from the given list by using it's index
 
         Args:
@@ -78,10 +67,11 @@ class CommandProcessor:
             val = text_list[int(val)]
         return val
 
-    def process_add_command(self):
+    def process_add_command(self) -> None:
         """Adds a transaction to the checkbook"""
         print("Enter your transaction")
         cbt = CBT.CheckbookTransaction()
+        val = ""
         try:
             for key in CBT.KEYS:
                 if key != "Num":
@@ -102,7 +92,7 @@ class CommandProcessor:
         _apply_debit_multiplier(cbt)
         self.checkbook.add_single_trans(cbt)
 
-    def process_edit_command(self, *args):
+    def process_edit_command(self, *args: str) -> None:
         """Edit a transaction
 
         Args:
@@ -144,22 +134,23 @@ class CommandProcessor:
         report_text = rep_method(cr, month)
         print(report_text)
 
-    def process_load_command(self, load_function, *args):
+    def process_load_command(self, load_function: Callable[[str], List[CBT.CheckbookTransaction]], *args: str) -> None:
         """Load another checkbook
 
         Args:
             load_function (function): function used to save the checkbook
             *args (variable args)   : Can specify the checkbook to load
         """
-
+        file_name: str = ""
         if not args:
             file_name = input("Enter an XML file to load : ")
         else:
             file_name = args[0]
+
         self.checkbook.clear()
         self.checkbook.load(file_name, load_function)
 
-    def process_save_command(self, save_function):
+    def process_save_command(self, save_function: Callable[[str, List[CBT.CheckbookTransaction]], None]) -> None:
         """Save the checkbook
 
         Args:
@@ -172,7 +163,7 @@ class CommandProcessor:
         """Prints the help text"""
         print(commands.HELP_TEXT)
 
-    def process_quit_command(self, save_function):
+    def process_quit_command(self, save_function: Callable[[str, List[CBT.CheckbookTransaction]], None]) -> None:
         """Quit the program. Save if necessary.
 
         Args:
@@ -181,7 +172,7 @@ class CommandProcessor:
         if self.checkbook.is_edited():
             self.process_save_command(save_function)
 
-    def process_delete_command(self, *args):
+    def process_delete_command(self, *args: str) -> None:
         if not args:
             delete_trans = int(input("Which transaction do you want to delete? : "))
         else:
@@ -191,7 +182,7 @@ class CommandProcessor:
         self.checkbook.get_register().remove(trans)
         self.checkbook.edited = True
 
-    def process_sort_command(self, checkbook, *args):
+    def process_sort_command(self, checkbook: CB.Checkbook, *args: str) -> CB.Checkbook:
         if not args:
             checkbook.order_by("Num")
             sort_key = config.SORT_BY_KEY
@@ -201,7 +192,7 @@ class CommandProcessor:
         checkbook.order_by(sort_key.capitalize())
         return checkbook
 
-    def process_search_command(self, checkbook, *args):
+    def process_search_command(self, checkbook: CB.Checkbook, *args: str) -> CB.Checkbook:
         sub_book = CB.Checkbook()
         if not args:
             search_terms = input("Enter your search terms : ")
@@ -211,7 +202,7 @@ class CommandProcessor:
         sub_book.create_based_on_list(trans_list)
         return sub_book
 
-    def process_print_command(self, checkbook, *args):
+    def process_print_command(self, checkbook: CB.Checkbook, *args: str) -> CB.Checkbook:
         sub_book = CB.Checkbook()
         trans_list = []
         if not args:
@@ -222,9 +213,9 @@ class CommandProcessor:
         sub_book.create_based_on_list(trans_list)
         return sub_book
 
-    def _process_checkbook_sub_list(self, checkbook, *args):
+    def _process_checkbook_sub_list(self, checkbook: CB.Checkbook, *args: str) -> List[CBT.CheckbookTransaction]:
         transaction_list = []
-        total = 0.0
+
         if not args:
             transaction_list = checkbook.get_register()
         elif len(args) == 2:

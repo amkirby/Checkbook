@@ -1,3 +1,6 @@
+from CheckbookTransaction import CheckbookTransaction
+from typing import Any, Dict, List, Optional, Tuple
+from Checkbook import Checkbook
 import locale
 
 from Constants import config
@@ -7,7 +10,7 @@ HEADER_FORMAT = "{:*^40}"
 
 
 class CheckbookReport:
-    def __init__(self, cb):
+    def __init__(self, cb: Checkbook):
         """Initializes the report with the specified checkbook
 
         Args:
@@ -15,7 +18,7 @@ class CheckbookReport:
         """
         self.checkbook = cb
 
-    def gen_report(self, month=None):
+    def gen_report(self, month: Optional[Any]=None) -> str:
         """
         Generates a report for the entire checkbook or a particular month if one is specified
 
@@ -58,7 +61,7 @@ class CheckbookReport:
         return_string += "\n" + HEADER_FORMAT.format(" END REPORT ") + "\n"
         return return_string
 
-    def _get_totals_for_reports(self, month):
+    def _get_totals_for_reports(self, month: Any) -> Tuple[float, float]:
         """Gets the debit total and the credit total for the checkbook.
 
         Args:
@@ -74,7 +77,7 @@ class CheckbookReport:
             pay_total = self.checkbook.get_total_for_trans_month("Credit", month)
         return trans_total, pay_total
 
-    def _get_cbt_total_for_category(self, cbt_list, month):
+    def _get_cbt_total_for_category(self, cbt_list: List[CheckbookTransaction], month: Any) -> Dict[str, float]:
         """Gets the total for the given CBT list.
 
         Args:
@@ -83,7 +86,7 @@ class CheckbookReport:
         """
         debitTotal = 0
         creditTotal = 0
-        transTotal = {};
+        transTotal: Dict[str, float] = {};
         for cbt in cbt_list:
             if cbt.get_value("Trans") == "Debit":  # added Debit check b/c some categories can be both
                 # debit and credit and reports were wrong

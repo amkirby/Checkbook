@@ -1,4 +1,7 @@
+from CommandProcessor import CommandProcessor
+from Checkbook import Checkbook
 import locale
+from typing import Callable, List
 
 import CheckbookTransaction as CBT
 from Constants import config
@@ -10,7 +13,7 @@ from Constants import commands
 ROW_SEP = '\n' + str((PC.HLINE_CHAR * (sum(PC.SIZE_LIST) + len(PC.SIZE_LIST)))) + '\n'
 
 
-def _gen_header_print():
+def _gen_header_print() -> str:
     """
     Creates the header line at the top of the register
     @return: pretty print for the checkbook register header
@@ -23,21 +26,21 @@ def _gen_header_print():
         header += format_string.format(CBT.KEYS[i]) + PC.VLINE_CHAR
     return header
 
-def _gen_transaction_print(transaction):
+def _gen_transaction_print(transaction: CBT.CheckbookTransaction) -> str:
     string = PC.VLINE_CHAR
     for i in range(len(CBT.KEYS)):
         header_length = PC.SIZE_LIST[i]
         format_string = '{:^' + str(header_length) + '}'
         val = transaction.data.get(CBT.KEYS[i])
         if type(val) is datetime:
-            val = datetime.strftime(transaction.data.get(CBT.KEYS[i]), config.DATE_FORMAT)
+            val = datetime.strftime(transaction.get_value(CBT.KEYS[i]), config.DATE_FORMAT) #transaction.data.get(CBT.KEYS[i])
         elif type(val) is float:
             val = locale.currency(val, grouping=config.THOUSAND_SEP)
         string += format_string.format(str(val)) + PC.VLINE_CHAR
     return string
     
 
-def _gen_all_transactions_print(transaction_list):
+def _gen_all_transactions_print(transaction_list: List[CBT.CheckbookTransaction]) -> str:
     """
     Creates the print for each transaction in the register
 
@@ -53,7 +56,7 @@ def _gen_all_transactions_print(transaction_list):
     return string
 
 
-def _gen_total_line_print(total):
+def _gen_total_line_print(total: float) -> str:
     """
     creates the total line at the bottom of the register
     @param total: the total value to print in the line
@@ -73,7 +76,7 @@ def _gen_total_line_print(total):
     return string
 
 
-def _get_total_for_list(transaction_list):
+def _get_total_for_list(transaction_list: List[CBT.CheckbookTransaction]) -> float:
     """
 
     @param transaction_list: the list of CBTs to loop through to generate
@@ -88,7 +91,7 @@ def _get_total_for_list(transaction_list):
     return total
 
 
-def print_checkbook(checkbook, *args):
+def print_checkbook(checkbook: Checkbook, *args: str) -> str:
     """
     pretty print the given checkbook
     @param checkbook: the checkbook being processed
@@ -114,17 +117,17 @@ def print_checkbook(checkbook, *args):
 
 class CLIRun:
 
-    def __init__(self, command_processor, save_function, load_function):
+    def __init__(self, command_processor:CommandProcessor, save_function: Callable[[str, List[CBT.CheckbookTransaction]], None], load_function: Callable[[str], List[CBT.CheckbookTransaction]]):
         self.command_processor = command_processor
         self.save_function = save_function
         self.load_function = load_function
 
-    def _handle_user_input(self):
+    def _handle_user_input(self) -> List[List[str]]:
         """Gather user input. If the input is empty, make it an empty string.
         Returns:
             inputVal (list) : list containing one or more strings
         """
-        inputVal = []
+        inputVal: List[List[str]] = []
         commands = input("What would you like to do? : ").strip().split("|")
         for command in commands:
             inputVal.append(command.strip().split(" ", 2))
