@@ -1,3 +1,4 @@
+from Exceptions import InvalidMonthError
 import locale
 from typing import Any, Callable, List, Optional
 
@@ -128,7 +129,11 @@ class Checkbook:
         """
         month = find_month
         if type(month) is not int:
-            month = int(month)
+            try:
+                month = int(month)
+            except ValueError:
+                error = InvalidMonthError(month, "Invalid month entered : ")
+                raise error
 
         return_list: List[CBT.CheckbookTransaction] = []
         for elem in self.check_register:

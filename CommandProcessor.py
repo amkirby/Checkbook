@@ -84,10 +84,16 @@ class CommandProcessor:
                         val = input(key + " : ")
 
                     cbt.set_value(key, string.capwords(val))
-        except ValueError:
+        except ValueError as e:
             CBT.CheckbookTransaction.decrement_uid()
-            error = InvalidDateError(val, "Invalid date entered of: ")
-            raise error
+            if "time data" in repr(e):
+                error = InvalidDateError(val, "Invalid date entered of: ")
+                raise error
+            elif "convert string to float" in repr(e):
+                error = InvalidAmountError(val, "Invalid amount entered : ")
+                raise error
+            else:
+                raise e
 
         _apply_debit_multiplier(cbt)
         self.checkbook.add_single_trans(cbt)

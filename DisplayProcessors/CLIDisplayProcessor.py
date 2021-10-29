@@ -138,6 +138,7 @@ class CLIRun:
         print("Welcome to your checkbook!")
         checkbook = self.command_processor.checkbook
         self.command_processor.process_print_command(checkbook)
+        print(checkbook)
         quit = False
         needs_to_print = False
         while(not quit):
@@ -173,11 +174,19 @@ class CLIRun:
                     elif (val[0] == commands.SEARCH_COMMAND):
                         checkbook = self.command_processor.process_search_command(checkbook, *val[1:])
                         needs_to_print = True
+                    else:
+                        error = InvalidCommandError(val[0], "Invalid command entered : ")
+                        raise error
+                        
                 if(needs_to_print):
                     print(checkbook)
                     needs_to_print = False
                     checkbook = self.command_processor.checkbook
             except InvalidDateError as date_error:
                 print(date_error)
-            # except:
-            #     pass
+            except InvalidMonthError as month_error:
+                print(month_error)
+            except InvalidCommandError as command_error:
+                print(command_error)
+            except Exception as e:
+                print(e)

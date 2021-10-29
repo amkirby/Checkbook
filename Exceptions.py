@@ -1,3 +1,5 @@
+from Constants import commands, config
+
 class InvalidDateError(Exception):
     """Exception raised when an invalid date is entered."""
 
@@ -6,4 +8,31 @@ class InvalidDateError(Exception):
         self.message = message
 
     def __str__(self) -> str:
-        return self.message + self.date
+        return self.message + self.date + " -> (expected " + config.DATE_FORMAT + ")"
+
+class InvalidMonthError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+        self.month = args[0]
+        self.message = args[1]
+    
+    def __str__(self) -> str:
+        return str(self.message) + str(self.month) + " -> (expected 1-12)"
+
+class InvalidCommandError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+        self.command = args[0]
+        self.message = args[1]
+
+    def __str__(self) -> str:
+        return str(self.message) + str(self.command) + commands.COMMAND_HELP
+    
+class InvalidAmountError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+        self.amount = args[0]
+        self.message = args[1]
+
+    def __str__(self) -> str:
+        return str(self.message) + str(self.amount) + " -> (expected XXXX.XX)"
