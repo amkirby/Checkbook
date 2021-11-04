@@ -113,9 +113,10 @@ class CommandProcessor:
         for key in CBT.KEYS:
             if key != "Num":
                 if key == "Category":
-                    val = self._select_with_number(config.CATEGORIES, key, trans.get_value(key))
+                    val = self._select_with_number(config.CATEGORIES_FOR_ADD[self._trans_selection], key, trans.get_value(key))
                 elif key == "Trans":
                     val = self._select_with_number(commands.TRANS_TYPES, key, trans.get_value(key))
+                    self._trans_selection = val
                 else:
                     val = input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
                 if val.strip() != "":
