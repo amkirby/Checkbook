@@ -8,6 +8,7 @@ LOAD_COMMAND = "load"           # load an XML file
 DELETE_COMMAND = "delete"
 SORT_COMMAND = "sort"
 SEARCH_COMMAND = "search"
+RESEQUENCE_COMMAND = "reseq"
 
 TRANS_TYPES = ["Debit", "Credit"]
 
@@ -34,6 +35,7 @@ Commands:
     delete : delete a transaction (delete [number])
     search : search for text in the description (search <text>)
     sort   : sort the checkbook by a given header (sort [header | Date])
+    reseq  : re-number the entire checkbook
 """
 HELP_TEXT = ("""
 {}

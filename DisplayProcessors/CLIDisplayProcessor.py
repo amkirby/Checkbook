@@ -174,6 +174,9 @@ class CLIRun:
                     elif (val[0] == commands.SEARCH_COMMAND):
                         checkbook = self.command_processor.process_search_command(checkbook, *val[1:])
                         needs_to_print = True
+                    elif (val[0] == "resequence"):
+                        self.command_processor.process_resequence_command(checkbook)
+                        needs_to_print = True
                     else:
                         error = InvalidCommandError(val[0], "Invalid command entered : ")
                         raise error
