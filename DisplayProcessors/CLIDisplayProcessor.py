@@ -174,7 +174,7 @@ class CLIRun:
                     elif (val[0] == commands.SEARCH_COMMAND):
                         checkbook = self.command_processor.process_search_command(checkbook, *val[1:])
                         needs_to_print = True
-                    elif (val[0] == "resequence"):
+                    elif (val[0] == commands.RESEQUENCE_COMMAND):
                         self.command_processor.process_resequence_command(checkbook)
                         needs_to_print = True
                     else:
