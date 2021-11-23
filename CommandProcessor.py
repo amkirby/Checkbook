@@ -116,7 +116,7 @@ class CommandProcessor:
                     val = self._select_with_number(config.CATEGORIES_FOR_ADD[self._trans_selection], key, trans.get_value(key))
                 elif key == "Trans":
                     val = self._select_with_number(commands.TRANS_TYPES, key, trans.get_value(key))
-                    self._trans_selection = val
+                    self._trans_selection = val if val.strip() != "" else trans.get_value(key)
                 else:
                     val = input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
                 if val.strip() != "":
