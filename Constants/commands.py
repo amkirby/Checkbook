@@ -9,6 +9,7 @@ DELETE_COMMAND = "delete"
 SORT_COMMAND = "sort"
 SEARCH_COMMAND = "search"
 RESEQUENCE_COMMAND = "reseq"
+COPY_COMMAND = "copy"
 
 TRANS_TYPES = ["Debit", "Credit"]
 

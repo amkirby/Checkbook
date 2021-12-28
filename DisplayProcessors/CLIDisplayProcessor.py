@@ -9,6 +9,7 @@ from Constants import printConstants as PC
 from Exceptions import *
 from datetime import datetime
 from Constants import commands
+import copyToAnother as CTA
 
 ROW_SEP = '\n' + str((PC.HLINE_CHAR * (sum(PC.SIZE_LIST) + len(PC.SIZE_LIST)))) + '\n'
 
@@ -177,6 +178,8 @@ class CLIRun:
                     elif (val[0] == commands.RESEQUENCE_COMMAND):
                         self.command_processor.process_resequence_command(checkbook)
                         needs_to_print = True
+                    elif (val[0] == commands.COPY_COMMAND):
+                        CTA.copy()
                     else:
                         error = InvalidCommandError(val[0], "Invalid command entered : ")
                         raise error
