@@ -112,3 +112,18 @@ class CheckbookTransaction:
                 val = locale.currency(val, grouping=config.THOUSAND_SEP)
             string += format_string.format(str(val)) + PC.VLINE_CHAR
         return string
+
+    def __eq__(self, __o: object) -> bool:
+        areEqual = True
+        if isinstance(__o, CheckbookTransaction):
+            for val in KEYS:
+                if val != "Num":
+                    thisVal = self.get_value(val)
+                    otherVal = __o.get_value(val)
+                    if thisVal != otherVal:
+                        areEqual = False
+                        break
+        else:
+            areEqual = False
+
+        return areEqual
