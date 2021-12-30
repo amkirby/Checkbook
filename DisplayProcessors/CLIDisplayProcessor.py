@@ -179,7 +179,7 @@ class CLIRun:
                         self.command_processor.process_resequence_command(checkbook)
                         needs_to_print = True
                     elif (val[0] == commands.COPY_COMMAND):
-                        CTA.copy()
+                        CTA.copy(self.command_processor.checkbook.get_file_name())
                     else:
                         error = InvalidCommandError(val[0], "Invalid command entered : ")
                         raise error

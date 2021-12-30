@@ -258,6 +258,9 @@ class Checkbook:
                 transaction = currentTrans
         return transaction
 
+    def get_file_name(self) -> str:
+        return self.file_name
+
     def _gen_total_line_print(self) -> str:
         """creates the total line at the bottom of the register
 

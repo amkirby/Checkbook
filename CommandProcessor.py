@@ -231,9 +231,12 @@ class CommandProcessor:
         return transaction_list
 
     def process_resequence_command(self, checkbook: CB.Checkbook) -> None:
-        sequenceNum = 1
-        for cbt in checkbook.get_register():
-            cbt.set_value("Num", sequenceNum)
-            sequenceNum += 1
+        reseq = input("Would you like to resequence? (y or n) ")
+        if reseq.lower() == "y":
+            sequenceNum = 1
+            for cbt in checkbook.get_register():
+                cbt.set_value("Num", sequenceNum)
+                sequenceNum += 1
 
-        self.checkbook.set_edited(True)
+            self.checkbook.set_edited(True)
+            print("resequence successful!")
