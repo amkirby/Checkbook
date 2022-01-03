@@ -20,6 +20,6 @@ DB_NAME = "checkbook.db"        # the SQL database file name
 DEBIT_CATEGORIES = ["Groceries", "Gas", "Bills", "Entertainment", "Food", "Savings", "Good Time","Vacation","Christmas", "Wedding", "Medical","Whiskey", "Other"]
 CREDIT_CATEGORIES = ["Bills", "Other", "Paycheck"]
 CATEGORIES = _unique(DEBIT_CATEGORIES + CREDIT_CATEGORIES)  # Categories to choose for transactions
-CATEGORIES_FOR_ADD = {"Debit": DEBIT_CATEGORIES, "Credit": CREDIT_CATEGORIES}
+CATEGORIES_FOR_ADD = {"Debit": DEBIT_CATEGORIES, "Credit": CREDIT_CATEGORIES, "all": CATEGORIES}
 DEBIT_MULTIPLIER = -1
 SORT_BY_KEY = "Date"

@@ -79,7 +79,7 @@ class CommandProcessor:
                         val = self._select_with_number(config.CATEGORIES_FOR_ADD[self._trans_selection], key)
                     elif key == "Trans":
                         val = self._select_with_number(commands.TRANS_TYPES, key)
-                        self._trans_selection = val
+                        self._trans_selection = val if val in commands.TRANS_TYPES else "all"
                     else:
                         val = input(key + " : ")
 
