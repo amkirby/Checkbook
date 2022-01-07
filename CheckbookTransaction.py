@@ -99,6 +99,10 @@ class CheckbookTransaction:
     def decrement_uid(cls) -> None:
         cls._uid = cls._uid - 1    
 
+    @classmethod
+    def set_uid(cls, value: int) -> None:
+        cls._uid = value    
+
     def __str__(self):
         """A string representation of a Checkbook Transaction"""
         string = PC.VLINE_CHAR

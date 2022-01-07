@@ -237,6 +237,6 @@ class CommandProcessor:
             for cbt in checkbook.get_register():
                 cbt.set_value("Num", sequenceNum)
                 sequenceNum += 1
-
+            CBT.CheckbookTransaction.set_uid(sequenceNum)
             self.checkbook.set_edited(True)
             print("resequence successful!")
