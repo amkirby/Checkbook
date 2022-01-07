@@ -186,8 +186,14 @@ class CommandProcessor:
             delete_trans = int(args[0])
 
         trans = self.checkbook.find_transaction(delete_trans)
-        self.checkbook.get_register().remove(trans)
-        self.checkbook.edited = True
+        if(trans is not None):
+            header_text = " Transaction Being Deleted "
+            header_line = header_text.center(50, "*")
+            print(header_line)
+            print(trans)
+            print("*" * len(header_line))
+            self.checkbook.get_register().remove(trans)
+            self.checkbook.edited = True
 
     def process_sort_command(self, checkbook: CB.Checkbook, *args: str) -> CB.Checkbook:
         if not args:
