@@ -29,6 +29,7 @@ the SIZE_LIST can be set in the configuration class
 
 ### other discussion
 should locale be in yaml?
+
 DEBIT_MULTIPLIER? still needed?
 
 CATEGORIES & CATEGORIES_TO_ADD will be set in the configuration class
