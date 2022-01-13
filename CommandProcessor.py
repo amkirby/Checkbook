@@ -1,17 +1,20 @@
 import string
 from typing import Any, Callable, List, Optional
-import CheckbookTransaction as CBT
+
 import Checkbook as CB
 import checkbookReport as CR
-from Exceptions import *
+import CheckbookTransaction as CBT
+import ConfigurationProcessor as Conf
 from Constants import commands
-from Constants import config
+from Exceptions import *
+
+conf = Conf.ConfigurationProcessor()
 
 
 def _apply_debit_multiplier(debit_transaction: CBT.CheckbookTransaction) -> None:
     if((debit_transaction.is_debit() and int(debit_transaction.get_amount()) > 0)
         or (not debit_transaction.is_debit() and int(debit_transaction.get_amount()) < 0)):
-        debit_transaction.set_value("Amount", debit_transaction.get_amount() * config.DEBIT_MULTIPLIER)
+        debit_transaction.set_value("Amount", debit_transaction.get_amount() * conf.get_property("DEBIT_MULTIPLIER"))
 
 class CommandProcessor:
     """A class to process commands entered by the user. A function should be
@@ -76,7 +79,7 @@ class CommandProcessor:
             for key in CBT.KEYS:
                 if key != "Num":
                     if key == "Category":
-                        val = self._select_with_number(config.CATEGORIES_FOR_ADD[self._trans_selection], key)
+                        val = self._select_with_number(conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key)
                     elif key == "Trans":
                         val = self._select_with_number(commands.TRANS_TYPES, key)
                         self._trans_selection = val if val in commands.TRANS_TYPES else "all"
@@ -113,7 +116,7 @@ class CommandProcessor:
         for key in CBT.KEYS:
             if key != "Num":
                 if key == "Category":
-                    val = self._select_with_number(config.CATEGORIES_FOR_ADD[self._trans_selection], key, trans.get_value(key))
+                    val = self._select_with_number(conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key, trans.get_value(key))
                 elif key == "Trans":
                     val = self._select_with_number(commands.TRANS_TYPES, key, trans.get_value(key))
                     self._trans_selection = val if val.strip() != "" else trans.get_value(key)
@@ -198,7 +201,7 @@ class CommandProcessor:
     def process_sort_command(self, checkbook: CB.Checkbook, *args: str) -> CB.Checkbook:
         if not args:
             checkbook.order_by("Num")
-            sort_key = config.SORT_BY_KEY
+            sort_key = conf.get_property("SORT_BY_KEY")
         else:
             sort_key = args[0]
 

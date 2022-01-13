@@ -1,10 +1,11 @@
-from typing import List
 import xml.etree.ElementTree as ET
 from datetime import datetime
+from typing import List
 
 import CheckbookTransaction as CBT
-from Constants import config
+import ConfigurationProcessor as Conf
 
+conf = Conf.ConfigurationProcessor()
 
 class XMLProcessor:
     @classmethod
@@ -49,7 +50,7 @@ class XMLProcessor:
             for key, value in elem.get_items():
                 trans_elem = ET.SubElement(curr_trans, key)
                 if key == "Date":
-                    value = datetime.strftime(value, config.DATE_FORMAT)
+                    value = datetime.strftime(value, conf.get_property("DATE_FORMAT"))
                 trans_elem.text = str(value)
         tree = ET.ElementTree(root)
         tree.write(file_name, xml_declaration=True)

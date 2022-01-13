@@ -1,9 +1,11 @@
-from CheckbookTransaction import CheckbookTransaction
-from typing import Any, Dict, List, Optional, Tuple
-from Checkbook import Checkbook
 import locale
+from typing import Any, Dict, List, Optional, Tuple
 
-from Constants import config
+import ConfigurationProcessor as Conf
+from Checkbook import Checkbook
+from CheckbookTransaction import CheckbookTransaction
+
+conf = Conf.ConfigurationProcessor()
 
 REPORT_TYPES = ["Monthly", "Total"]
 HEADER_FORMAT = "{:*^40}"
@@ -37,25 +39,25 @@ class CheckbookReport:
         left_border = "|"
         return_string += "\n" + HEADER_FORMAT.format(" REPORT ") + "\n"
         return_string += ("\n" + format_string.format("Pay Total") + ": " +
-                          locale.currency(pay_total, grouping=config.THOUSAND_SEP) + "\n")
+                          locale.currency(pay_total, grouping=conf.get_property("THOUSAND_SEP")) + "\n")
         return_string += (format_string.format("Debit Total") + ": " +
-                          locale.currency(trans_total, grouping=config.THOUSAND_SEP) + "\n")
+                          locale.currency(trans_total, grouping=conf.get_property("THOUSAND_SEP")) + "\n")
         return_string += (format_string.format("Savings") + ": " +
-                          locale.currency(pay_total - trans_total, grouping=config.THOUSAND_SEP) + "\n")
+                          locale.currency(pay_total - trans_total, grouping=conf.get_property("THOUSAND_SEP")) + "\n")
         return_string += "\n"  # add extra space before printing categories
         h_line = ("-" * 42)
         return_string += left_border + h_line + "\n"
         return_string += left_border + register_format.format("Debit") + " | " + "Credit" + "\n"
         return_string += left_border + h_line + "\n"
-        for cat in config.CATEGORIES:
+        for cat in conf.get_property("CATEGORIES"):
             current_cat_list = self.checkbook.get_category(cat)
             return_string += left_border + register_format.format(cat) + "\n"
             total = self._get_cbt_total_for_category(current_cat_list, month)
 
             return_string += left_border + register_format.format(("  " + "{:.2%}".format(total["Debit"] / trans_divisor) + " (" +
-                              locale.currency(total["Debit"], grouping=config.THOUSAND_SEP) + ")")) + " |"
+                              locale.currency(total["Debit"], grouping=conf.get_property("THOUSAND_SEP")) + ")")) + " |"
             return_string += ("  " + "{:.2%}".format(total["Credit"] / pay_divisor) + " (" +
-                              locale.currency(total["Credit"], grouping=config.THOUSAND_SEP) + ")" + "\n")
+                              locale.currency(total["Credit"], grouping=conf.get_property("THOUSAND_SEP")) + ")" + "\n")
             return_string += left_border + h_line + "\n"
 
         return_string += "\n" + HEADER_FORMAT.format(" END REPORT ") + "\n"

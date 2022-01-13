@@ -1,13 +1,13 @@
-from Exceptions import InvalidMonthError
 import locale
 from typing import Any, Callable, List, Optional
 
-
 import CheckbookTransaction as CBT
-from Constants import config
-from Constants import printConstants as PC
+import ConfigurationProcessor as Conf
+from Exceptions import InvalidMonthError
 
-ROW_SEP = '\n' + (PC.HLINE_CHAR * (sum(PC.SIZE_LIST) + len(PC.SIZE_LIST))) + '\n'
+conf = Conf.ConfigurationProcessor()
+
+ROW_SEP = '\n' + (conf.get_property("HLINE_CHAR") * (sum(conf.get_property("SIZE_LIST")) + len(conf.get_property("SIZE_LIST")))) + '\n'
 
 
 class Checkbook:
@@ -20,7 +20,7 @@ class Checkbook:
     def __init__(self):
         """Initializes an empty check register"""
         self.check_register: List[CBT.CheckbookTransaction] = []
-        self.file_name: str = config.FILE_NAME
+        self.file_name: str = conf.get_property("FILE_NAME")
         self.edited: bool = False
 
     def create_based_on_list(self, cbt_list: List[CBT.CheckbookTransaction]) -> None:
@@ -267,16 +267,16 @@ class Checkbook:
         Returns:
             str: The total line for the checkbook
         """
-        string = PC.VLINE_CHAR
+        string = conf.get_property("VLINE_CHAR")
         # format total: text
-        format_string = '{:>' + str(sum(PC.SIZE_LIST[:-2]) + 4) + '}'
+        format_string = '{:>' + str(sum(conf.get_property("SIZE_LIST")[:-2]) + 4) + '}'
         string += format_string.format("Total : ")
         # format amount
-        format_string = '{:^' + str((PC.SIZE_LIST[-2])) + '}'
-        string += format_string.format(locale.currency(self.get_total(), grouping=config.THOUSAND_SEP))
+        format_string = '{:^' + str((conf.get_property("SIZE_LIST")[-2])) + '}'
+        string += format_string.format(locale.currency(self.get_total(), grouping=conf.get_property("THOUSAND_SEP")))
         # format final bar
-        format_string = '{:>' + str((PC.SIZE_LIST[-1]) + 2) + '}'
-        string += format_string.format(PC.VLINE_CHAR)
+        format_string = '{:>' + str((conf.get_property("SIZE_LIST")[-1]) + 2) + '}'
+        string += format_string.format(conf.get_property("VLINE_CHAR"))
         return string
 
     def _gen_header_print(self) -> str:
@@ -286,11 +286,11 @@ class Checkbook:
             str: The header line for the checkbook
         """
         header = ROW_SEP
-        header += PC.VLINE_CHAR
+        header += conf.get_property("VLINE_CHAR")
         for i in range(len(CBT.KEYS)):
-            header_length = PC.SIZE_LIST[i]
+            header_length = conf.get_property("SIZE_LIST")[i]
             format_string = '{:^' + str(header_length) + '}'
-            header += format_string.format(CBT.KEYS[i]) + PC.VLINE_CHAR
+            header += format_string.format(CBT.KEYS[i]) + conf.get_property("VLINE_CHAR")
         return header
 
     def _gen_trans_print(self, print_list: Optional[List[CBT.CheckbookTransaction]]=None) -> str:
