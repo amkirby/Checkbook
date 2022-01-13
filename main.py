@@ -7,20 +7,22 @@
 
 import Checkbook as CB
 import CommandProcessor as CP
-# from Exceptions import *
-from DataProcessors import SQLProcessor as SCP, XMLProcessor as XML
-from Constants import config
+import ConfigurationProcessor as Conf
+from DataProcessors import SQLProcessor as SCP
+from DataProcessors import XMLProcessor as XML
 from DisplayProcessors import CLIDisplayProcessor
 
+conf = Conf.ConfigurationProcessor()
+
 checkbook = CB.Checkbook()
-if config.USE_SQL:
+if conf.get_property("USE_SQL"):
     save_function = SCP.SQLProcessor.save
     load_function = SCP.SQLProcessor.load
 else:
     save_function = XML.XMLProcessor.save
     load_function = XML.XMLProcessor.load
 
-checkbook.load(config.FILE_NAME, load_function)
+checkbook.load(conf.get_property("FILE_NAME"), load_function)
 commProcessor = CP.CommandProcessor(checkbook)
 
 if __name__ == "__main__":

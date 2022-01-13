@@ -3,8 +3,9 @@ from datetime import datetime
 from typing import Any, List, Tuple
 
 import CheckbookTransaction as CBT
-from Constants import config, printConstants
+import ConfigurationProcessor as Conf
 
+conf = Conf.ConfigurationProcessor()
 
 class SQLProcessor:
     """This class handles the saving and loading of the checkbook from a database"""
@@ -36,7 +37,7 @@ class SQLProcessor:
         conn = None
         return_val = False
         try:
-            conn = lite.connect(config.DB_NAME)
+            conn = lite.connect(conf.get_property("DB_NAME"))
             cursor = conn.cursor()
             cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE name = ?", (table_name,))
             return_val = cursor.fetchone()
@@ -58,7 +59,7 @@ class SQLProcessor:
         """
         columns = "("
         for i in range(len(CBT.KEYS)):
-            data_type = "VARCHAR(" + str(printConstants.SIZE_LIST[i]) + ")"
+            data_type = "VARCHAR(" + str(conf.get_property("SIZE_LIST")[i]) + ")"
             if CBT.KEYS[i] == "Date":
                 data_type = "DATETIME"
             elif CBT.KEYS[i] == "Amount":
@@ -82,7 +83,7 @@ class SQLProcessor:
             scrubbed_table_name = cls._scrub(table_name)
 
             table_script = "CREATE TABLE " + scrubbed_table_name + " " + cls._create_columns()
-            conn = lite.connect(config.DB_NAME)
+            conn = lite.connect(conf.get_property("DB_NAME"))
             cursor = conn.cursor()
             cursor.execute(table_script)
         except Exception as e:
@@ -102,7 +103,7 @@ class SQLProcessor:
         """
         conn = None
         try:
-            conn = lite.connect(config.DB_NAME)
+            conn = lite.connect(conf.get_property("DB_NAME"))
             cursor = conn.cursor()
             table_name = cls._scrub(table_name.split('.')[0])
             if not cls._table_exists(table_name):
@@ -114,7 +115,7 @@ class SQLProcessor:
                 for key in CBT.KEYS:
                     value = cbt.get_value(key)
                     if key == "Date":
-                        value = datetime.strftime(value, config.DATE_FORMAT)
+                        value = datetime.strftime(value, conf.get_property("DATE_FORMAT"))
                     cbt_list_before_tuple.append(value)
                 list_of_cbt_tuples.append(tuple(cbt_list_before_tuple))
             cursor.executemany("INSERT INTO " + table_name + " VALUES(?, ?, ?, ?, ?, ?)", list_of_cbt_tuples)
@@ -140,7 +141,7 @@ class SQLProcessor:
         conn = None
         return_list: List[CBT.CheckbookTransaction] = []
         try:
-            conn = lite.connect(config.DB_NAME)
+            conn = lite.connect(conf.get_property("DB_NAME"))
             conn.row_factory = lite.Row
             cursor = conn.cursor()
             table_name = cls._scrub(table_name.split('.')[0])

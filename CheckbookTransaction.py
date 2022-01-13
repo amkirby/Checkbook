@@ -2,10 +2,11 @@ import locale
 from datetime import datetime
 from typing import Any, Dict, ItemsView
 
-from Constants import config
-from Constants import printConstants as PC
+import ConfigurationProcessor as Conf
 
-locale.setlocale(config.LOCALE, '')  # set the locale for printing the amount
+conf = Conf.ConfigurationProcessor()
+
+locale.setlocale(conf.get_property("LOCALE"), '')  # set the locale for printing the amount
 
 # the Keys used for the Transaction and printing the transaction
 KEYS = ["Date", "Trans", "Category", "Desc", "Amount", "Num"]
@@ -82,7 +83,7 @@ class CheckbookTransaction:
         """
         insert_val = value
         if key == "Date":
-            insert_val = datetime.strptime(value, config.DATE_FORMAT).date()
+            insert_val = datetime.strptime(value, conf.get_property("DATE_FORMAT")).date()
         elif key == "Amount":
             insert_val = float(value)
         self.data[key] = insert_val
@@ -101,16 +102,16 @@ class CheckbookTransaction:
 
     def __str__(self):
         """A string representation of a Checkbook Transaction"""
-        string = PC.VLINE_CHAR
+        string = conf.get_property("VLINE_CHAR")
         for i in range(len(KEYS)):
-            header_length = PC.SIZE_LIST[i]
+            header_length = conf.get_property("SIZE_LIST")[i]
             format_string = '{:^' + str(header_length) + '}'
             val = self.data.get(KEYS[i])
             if type(val) is datetime:
-                val = datetime.strftime(self.get_value(KEYS[i]), config.DATE_FORMAT) #self.data.get(KEYS[i])
+                val = datetime.strftime(self.get_value(KEYS[i]), conf.get_property("DATE_FORMAT")) #self.data.get(KEYS[i])
             elif type(val) is float:
-                val = locale.currency(val, grouping=config.THOUSAND_SEP)
-            string += format_string.format(str(val)) + PC.VLINE_CHAR
+                val = locale.currency(val, grouping=conf.get_property("THOUSAND_SEP"))
+            string += format_string.format(str(val)) + conf.get_property("VLINE_CHAR")
         return string
 
     def __eq__(self, __o: object) -> bool:

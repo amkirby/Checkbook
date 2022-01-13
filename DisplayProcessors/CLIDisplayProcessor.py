@@ -1,17 +1,18 @@
-from CommandProcessor import CommandProcessor
-from Checkbook import Checkbook
 import locale
+from datetime import datetime
 from typing import Callable, List
 
 import CheckbookTransaction as CBT
-from Constants import config
-from Constants import printConstants as PC
-from Exceptions import *
-from datetime import datetime
-from Constants import commands
+import ConfigurationProcessor as Conf
 import copyToAnother as CTA
+from Checkbook import Checkbook
+from CommandProcessor import CommandProcessor
+from Constants import commands
+from Exceptions import *
 
-ROW_SEP = '\n' + str((PC.HLINE_CHAR * (sum(PC.SIZE_LIST) + len(PC.SIZE_LIST)))) + '\n'
+conf = Conf.ConfigurationProcessor()
+
+ROW_SEP = '\n' + str((conf.get_property("HLINE_CHAR") * (sum(conf.get_property("SIZE_LIST")) + len(conf.get_property("SIZE_LIST"))))) + '\n'
 
 
 def _gen_header_print() -> str:
@@ -20,24 +21,24 @@ def _gen_header_print() -> str:
     @return: pretty print for the checkbook register header
     """
     header = ROW_SEP
-    header += PC.VLINE_CHAR
+    header += conf.get_property("VLINE_CHAR")
     for i in range(len(CBT.KEYS)):
-        header_length = PC.SIZE_LIST[i]
+        header_length = conf.get_property("SIZE_LIST")[i]
         format_string = '{:^' + str(header_length) + '}'
-        header += format_string.format(CBT.KEYS[i]) + PC.VLINE_CHAR
+        header += format_string.format(CBT.KEYS[i]) + conf.get_property("VLINE_CHAR")
     return header
 
 def _gen_transaction_print(transaction: CBT.CheckbookTransaction) -> str:
-    string = PC.VLINE_CHAR
+    string = conf.get_property("VLINE_CHAR")
     for i in range(len(CBT.KEYS)):
-        header_length = PC.SIZE_LIST[i]
+        header_length = conf.get_property("SIZE_LIST")[i]
         format_string = '{:^' + str(header_length) + '}'
         val = transaction.data.get(CBT.KEYS[i])
         if type(val) is datetime:
-            val = datetime.strftime(transaction.get_value(CBT.KEYS[i]), config.DATE_FORMAT) #transaction.data.get(CBT.KEYS[i])
+            val = datetime.strftime(transaction.get_value(CBT.KEYS[i]), conf.get_property("DATE_FORMAT")) #transaction.data.get(CBT.KEYS[i])
         elif type(val) is float:
-            val = locale.currency(val, grouping=config.THOUSAND_SEP)
-        string += format_string.format(str(val)) + PC.VLINE_CHAR
+            val = locale.currency(val, grouping=conf.get_property("THOUSAND_SEP"))
+        string += format_string.format(str(val)) + conf.get_property("VLINE_CHAR")
     return string
     
 
@@ -64,16 +65,16 @@ def _gen_total_line_print(total: float) -> str:
     @type total: float
     @return: pretty print of the given total for the checkbook register
     """
-    string = PC.VLINE_CHAR
+    string = conf.get_property("VLINE_CHAR")
     # format total: text
-    format_string = '{:>' + str(sum(PC.SIZE_LIST[:-2]) + 4) + '}'
+    format_string = '{:>' + str(sum(conf.get_property("SIZE_LIST")[:-2]) + 4) + '}'
     string += format_string.format("Total : ")
     # format amount
-    format_string = '{:^' + str((PC.SIZE_LIST[-2])) + '}'
-    string += format_string.format(locale.currency(total, grouping=config.THOUSAND_SEP))
+    format_string = '{:^' + str((conf.get_property("SIZE_LIST")[-2])) + '}'
+    string += format_string.format(locale.currency(total, grouping=conf.get_property("THOUSAND_SEP")))
     # format final bar
-    format_string = '{:>' + str((PC.SIZE_LIST[-1]) + 2) + '}'
-    string += format_string.format(PC.VLINE_CHAR)
+    format_string = '{:>' + str((conf.get_property("SIZE_LIST")[-1]) + 2) + '}'
+    string += format_string.format(conf.get_property("VLINE_CHAR"))
     return string
 
 

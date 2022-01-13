@@ -1,0 +1,23 @@
+# column widths
+DATE_SIZE   : 12
+TRANS_SIZE  : 8
+CAT_SIZE    : 15
+DESC_SIZE   : 40
+AMOUNT_SIZE : 12
+NUM_SIZE    : 6
+
+# display separators
+HLINE_CHAR : '='
+VLINE_CHAR : '|'
+
+# categories for selection
+DEBIT_CATEGORIES  : ["Groceries", "Gas", "Bills", "Entertainment", "Food", "Savings", "Good Time","Vacation","Christmas", "Wedding", "Medical","Whiskey", "Other"]
+CREDIT_CATEGORIES : ["Bills", "Other", "Paycheck"]
+
+
+DATE_FORMAT  : "%m/%d/%Y" # format date must be entered in (default : %m/%d/%Y -> m/d/yyyy)
+THOUSAND_SEP : True # use the thousand separator for the amount
+USE_SQL      : False # use sqlite instead of xml
+FILE_NAME    : "2022.xml" # default file to load
+DB_NAME      : "checkbook.db" # default sql database to load
+SORT_BY_KEY  : "Date" # default key to sort by when none is entered
