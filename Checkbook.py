@@ -127,11 +127,18 @@ class Checkbook:
         Returns:
             list: a list of transactions with the specified month
         """
+        month_start = month_end = year_start = year_end = 0
         try:
             month_start, month_end, year_start, year_end = self._process_date_range(str(find_month))
+            valid_date_range = self._validate_date_ranges(month_start, month_end, year_start, year_end)
+            if(not valid_date_range):
+                raise InvalidMonthError(find_month ,"Invalid date range entered : ")
         except ValueError:
-            error = InvalidMonthError(find_month, "Invalid date criteria entered : ")
+            # catches a letter in the value entered
+            error = InvalidMonthError(find_month, "Invalid date range entered : ")
             raise error
+        except InvalidMonthError as e:
+            raise e
 
         return_list: List[CBT.CheckbookTransaction] = []
         for elem in self.check_register:
@@ -182,6 +189,19 @@ class Checkbook:
 
 
         return start, end
+
+    def _validate_date_ranges(self, month_start: int, month_end: int, year_start: int, year_end: int) -> bool:
+        is_valid = True
+        month_valid = False
+        year_valid = False
+        if(month_start <= month_end and 1 <= month_start <= 12 and 1 <= month_end <= 12):
+            month_valid = True
+        if(year_start <= year_end and 1998 <= year_start <= 9999 and 1998 <= year_end <= 9999):
+            year_valid = True
+        
+        is_valid = month_valid and year_valid
+
+        return is_valid
 
     def get_description(self, search_term: str) -> List[CBT.CheckbookTransaction]:
         return_list: List[CBT.CheckbookTransaction] = []

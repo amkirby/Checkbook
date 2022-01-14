@@ -17,7 +17,7 @@ class InvalidMonthError(Exception):
         self.message = args[1]
     
     def __str__(self) -> str:
-        return str(self.message) + str(self.month) + " -> (expected 1-12)"
+        return str(self.message) + str(self.month) + " -> (expected month : 1-12 year : 1998-9999)"
 
 class InvalidCommandError(Exception):
     def __init__(self, *args: object) -> None:
