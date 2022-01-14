@@ -127,20 +127,61 @@ class Checkbook:
         Returns:
             list: a list of transactions with the specified month
         """
-        month = find_month
-        if type(month) is not int:
-            try:
-                month = int(month)
-            except ValueError:
-                error = InvalidMonthError(month, "Invalid month entered : ")
-                raise error
+        try:
+            month_start, month_end, year_start, year_end = self._process_date_range(str(find_month))
+        except ValueError:
+            error = InvalidMonthError(find_month, "Invalid date criteria entered : ")
+            raise error
 
         return_list: List[CBT.CheckbookTransaction] = []
         for elem in self.check_register:
             date: Any = elem.get_dictionary().get("Date")
-            if date.month == month:
+            if (date.month >= month_start and date.month <= month_end) and (date.year >= year_start and date.year <= year_end): 
                 return_list.append(elem)
         return return_list
+
+    def _process_date_range(self, month_str: str):
+        month_start = 1
+        month_end = 12
+        year_start = 1998
+        year_end = 9999
+
+        vals = month_str.split() # separate month and year by spaces
+        if(len(vals) == 1):
+            # could be month (range) or year (range)
+            ranges = vals[0].split("-")
+            ranges = [int(i) for i in ranges]
+            if(ranges[0] >= 1 and ranges[0] <= 12):
+                #month value
+                month_start, month_end = self._get_start_end_values(ranges)
+            else:
+                # assumed year value
+                year_start, year_end = self._get_start_end_values(ranges)
+        elif(len(vals) == 2):
+            # both month (range) and year (range)
+            month_ranges = vals[0].split("-")
+            month_ranges = [int(i) for i in month_ranges]
+            year_ranges = vals[1].split("-")
+            year_ranges = [int(i) for i in year_ranges]
+
+            month_start, month_end = self._get_start_end_values(month_ranges)
+            year_start, year_end = self._get_start_end_values(year_ranges)
+
+
+        return month_start, month_end, year_start, year_end
+
+    def _get_start_end_values(self, ranges : List[int]):
+        start = -1
+        end = -1
+
+        if(len(ranges) == 1):
+            start = end = ranges[0]
+        else:
+            start = ranges[0]
+            end = ranges[1]
+
+
+        return start, end
 
     def get_description(self, search_term: str) -> List[CBT.CheckbookTransaction]:
         return_list: List[CBT.CheckbookTransaction] = []
