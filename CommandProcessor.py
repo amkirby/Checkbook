@@ -43,14 +43,23 @@ class CommandProcessor:
         self.checkbook = checkbook
         self._trans_selection = ""
 
+    def _comfirm_selection(self, command: str) -> bool:
+        confirmed = True
+
+        user_input = input("Would you like to " + command + "? (y or n) ")
+        if user_input.lower() == "n":
+            confirmed = False
+
+
+        return confirmed
+
     def _do_save(self, save_function: Callable[[str, List[CBT.CheckbookTransaction]], None]) -> None:
         """Saves the checkbook
 
         Args:
             save_function (function): function used to save the checkbook
         """
-        save = input("Would you like to save? (y or n) ")
-        if save.lower() == "y":
+        if(self._comfirm_selection("save")):
             self.checkbook.save(save_function)
             print("save successful!")
 
@@ -122,7 +131,7 @@ class CommandProcessor:
 
         trans = self.checkbook.find_transaction(edit_trans)
         _print_list_of_trans(" Transaction Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
-        if(trans is not None):
+        if(trans is not None and self._comfirm_selection("edit")):
             for key in CBT.KEYS:
                 if key != "Num":
                     if key == "Category":
@@ -200,7 +209,7 @@ class CommandProcessor:
 
         trans = self.checkbook.find_transaction(delete_trans)
         _print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
-        if(trans is not None):
+        if(trans is not None and self._comfirm_selection("delete")):
             self.checkbook.get_register().remove(trans)
             self.checkbook.edited = True
 
@@ -246,8 +255,7 @@ class CommandProcessor:
         return transaction_list
 
     def process_resequence_command(self, checkbook: CB.Checkbook) -> None:
-        reseq = input("Would you like to resequence? (y or n) ")
-        if reseq.lower() == "y":
+        if(self._comfirm_selection("resequence")):
             sequenceNum = 1
             for cbt in checkbook.get_register():
                 cbt.set_value("Num", sequenceNum)
