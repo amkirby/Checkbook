@@ -87,6 +87,21 @@ class CommandProcessor:
             val = text_list[int(val)]
         return val
 
+    def _handle_edit_description(self, current_desc: str) -> str:
+        edit_val = current_desc
+        user_input = input("Desc (" + current_desc + ")(- to prepend, + to append) : ").strip()
+        if(user_input.startswith("-")):
+            user_input = user_input[1:]
+            edit_val = user_input.strip() + " " + current_desc
+        elif(user_input.startswith("+")):
+            user_input = user_input[1:]
+            edit_val = current_desc + " " + user_input.strip()
+        elif(user_input.strip() != ""):
+            edit_val = user_input.strip()
+
+
+        return edit_val
+
     def process_add_command(self) -> None:
         """Adds a transaction to the checkbook"""
         print("Enter your transaction")
@@ -139,6 +154,8 @@ class CommandProcessor:
                     elif key == "Trans":
                         val = self._select_with_number(commands.TRANS_TYPES, key, trans.get_value(key))
                         self._trans_selection = val if val.strip() != "" else trans.get_value(key)
+                    elif key == "Desc":
+                        val = self._handle_edit_description(trans.get_value("Desc"))
                     else:
                         val = input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
                     if val.strip() != "":
