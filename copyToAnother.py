@@ -1,8 +1,19 @@
 from typing import List
+
+import Checkbook as CB
+import CheckbookTransaction as CT
+import ConfigurationProcessor as Conf
 from CommandProcessor import CommandProcessor
 from DataProcessors import XMLProcessor as XML
-import CheckbookTransaction as CT
-import Checkbook as CB
+
+conf = Conf.ConfigurationProcessor()
+
+def print_list_of_trans(header_text : str, width : int, fill_char : str, list_of_trans : List[CT.CheckbookTransaction]):
+    header_line = header_text.center(width,fill_char)
+    print(header_line)
+    for current_trans in list_of_trans:
+        print(current_trans)
+    print(fill_char * len(header_line))
 
 def copy(from_book : str = "", to_book : str = ""):
     save_function = XML.XMLProcessor.save
@@ -44,17 +55,14 @@ def copy(from_book : str = "", to_book : str = ""):
         else:
             break
 
-    print("*" * 10 + " Transactions Being Added " + "*" * 10)
-    for current_trans in trans_to_add[::-1]:
-        print(current_trans)
-    print("*" * len("*" * 10 + " Transactions Being Added " + "*" * 10))
+    print_list_of_trans(" Transactions Being Added ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), trans_to_add[::-1])
 
+    if(len(trans_to_add) > 0):
+        for current_trans in trans_to_add[::-1]:
+            to_checkbook.add_single_trans(current_trans)
 
-    for current_trans in trans_to_add[::-1]:
-        to_checkbook.add_single_trans(current_trans)
-
-    to_command_processor.process_resequence_command(to_checkbook)
-    to_command_processor.process_save_command(save_function)
+        to_command_processor.process_resequence_command(to_checkbook)
+        to_command_processor.process_save_command(save_function)
 
 
 # COMPARE LOGIC

@@ -93,7 +93,7 @@ def _get_total_for_list(transaction_list: List[CBT.CheckbookTransaction]) -> flo
     return total
 
 
-def print_checkbook(checkbook: Checkbook, *args: str) -> str:
+def print_checkbook(checkbook: Checkbook, *args: str) -> None:
     """
     pretty print the given checkbook
     @param checkbook: the checkbook being processed
@@ -115,7 +115,7 @@ def print_checkbook(checkbook: Checkbook, *args: str) -> str:
     output += _gen_total_line_print(total)
     output += ROW_SEP
 
-    return output
+    print(output)
 
 class CLIRun:
 
@@ -140,7 +140,7 @@ class CLIRun:
         print("Welcome to your checkbook!")
         checkbook = self.command_processor.checkbook
         self.command_processor.process_print_command(checkbook)
-        print(checkbook)
+        print_checkbook(checkbook)
         quit = False
         needs_to_print = False
         while(not quit):
@@ -186,7 +186,7 @@ class CLIRun:
                         raise error
                         
                 if(needs_to_print):
-                    print(checkbook)
+                    print_checkbook(checkbook)
                     needs_to_print = False
                     checkbook = self.command_processor.checkbook
             except InvalidDateError as date_error:

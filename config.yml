@@ -9,6 +9,7 @@ NUM_SIZE    : 6
 # display separators
 HLINE_CHAR : '='
 VLINE_CHAR : '|'
+TRANS_FILL_CHAR : '*'
 
 # categories for selection
 DEBIT_CATEGORIES  : ["Groceries", "Gas", "Bills", "Entertainment", "Food", "Savings", "Good Time","Vacation","Christmas", "Wedding", "Medical","Whiskey", "Other"]

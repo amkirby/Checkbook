@@ -16,6 +16,14 @@ def _apply_debit_multiplier(debit_transaction: CBT.CheckbookTransaction) -> None
         or (not debit_transaction.is_debit() and int(debit_transaction.get_amount()) < 0)):
         debit_transaction.set_value("Amount", debit_transaction.get_amount() * conf.get_property("DEBIT_MULTIPLIER"))
 
+def _print_list_of_trans(header_text : str, width : int, fill_char : str, list_of_trans : List[CBT.CheckbookTransaction]):
+    header_line = header_text.center(width,fill_char)
+    print(header_line)
+    for current_trans in list_of_trans:
+        if(current_trans is not None):
+            print(current_trans)
+    print(fill_char * len(header_line))
+
 class CommandProcessor:
     """A class to process commands entered by the user. A function should be
     passed to each method to do the actual processing.
@@ -113,20 +121,22 @@ class CommandProcessor:
             edit_trans = int(args[0])
 
         trans = self.checkbook.find_transaction(edit_trans)
-        for key in CBT.KEYS:
-            if key != "Num":
-                if key == "Category":
-                    val = self._select_with_number(conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key, trans.get_value(key))
-                elif key == "Trans":
-                    val = self._select_with_number(commands.TRANS_TYPES, key, trans.get_value(key))
-                    self._trans_selection = val if val.strip() != "" else trans.get_value(key)
-                else:
-                    val = input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
-                if val.strip() != "":
-                    trans.set_value(key, string.capwords(val))
-                    self.checkbook.set_edited(True)
+        _print_list_of_trans(" Transaction Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
+        if(trans is not None):
+            for key in CBT.KEYS:
+                if key != "Num":
+                    if key == "Category":
+                        val = self._select_with_number(conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key, trans.get_value(key))
+                    elif key == "Trans":
+                        val = self._select_with_number(commands.TRANS_TYPES, key, trans.get_value(key))
+                        self._trans_selection = val if val.strip() != "" else trans.get_value(key)
+                    else:
+                        val = input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
+                    if val.strip() != "":
+                        trans.set_value(key, string.capwords(val))
+                        self.checkbook.set_edited(True)
 
-        _apply_debit_multiplier(trans)
+            _apply_debit_multiplier(trans)
 
     def process_report_command(self):
         """Generate a report"""
@@ -189,12 +199,8 @@ class CommandProcessor:
             delete_trans = int(args[0])
 
         trans = self.checkbook.find_transaction(delete_trans)
+        _print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
         if(trans is not None):
-            header_text = " Transaction Being Deleted "
-            header_line = header_text.center(50, "*")
-            print(header_line)
-            print(trans)
-            print("*" * len(header_line))
             self.checkbook.get_register().remove(trans)
             self.checkbook.edited = True
 

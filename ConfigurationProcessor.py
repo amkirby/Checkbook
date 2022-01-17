@@ -41,6 +41,7 @@ class ConfigurationProcessor():
         values["CATEGORIES"] = cls._unique(debit_cats + credit_cats) 
         values["CATEGORIES_FOR_ADD"] = {"Debit": values["DEBIT_CATEGORIES"], "Credit": values["CREDIT_CATEGORIES"], "all": values["CATEGORIES"]}
         values["SIZE_LIST"] = [values["DATE_SIZE"], values["TRANS_SIZE"], values["CAT_SIZE"], values["DESC_SIZE"], values["AMOUNT_SIZE"], values["NUM_SIZE"]]
+        values["MAX_WIDTH"] = sum(values["SIZE_LIST"]) + len(values["SIZE_LIST"]) + 1
         values["DEBIT_MULTIPLIER"] = -1
 
 
