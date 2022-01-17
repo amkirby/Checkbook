@@ -22,3 +22,4 @@ USE_SQL      : False # use sqlite instead of xml
 FILE_NAME    : "2022.xml" # default file to load
 DB_NAME      : "checkbook.db" # default sql database to load
 SORT_BY_KEY  : "Date" # default key to sort by when none is entered
+REPORT_DISPLAY_0 : False # display zero values in report

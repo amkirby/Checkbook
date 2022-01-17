@@ -55,15 +55,25 @@ class CheckbookReport:
             current_cat_list = self.checkbook.get_category(cat)
             return_string += left_border + register_format.format(cat) + "\n"
             total = self._get_cbt_total_for_category(current_cat_list, date_processor)
+            debit_print, credit_print = self._get_transaction_print(trans_divisor, pay_divisor, total)
 
-            return_string += left_border + register_format.format(("  " + "{:.2%}".format(total["Debit"] / trans_divisor) + " (" +
-                              locale.currency(total["Debit"], grouping=conf.get_property("THOUSAND_SEP")) + ")")) + " |"
-            return_string += ("  " + "{:.2%}".format(total["Credit"] / pay_divisor) + " (" +
-                              locale.currency(total["Credit"], grouping=conf.get_property("THOUSAND_SEP")) + ")" + "\n")
+            return_string += left_border + register_format.format(debit_print) + " |"
+            return_string += credit_print + "\n"
             return_string += left_border + h_line + "\n"
 
         return_string += "\n" + HEADER_FORMAT.format(" END REPORT ") + "\n"
         return return_string
+
+    def _get_transaction_print(self, trans_divisor: float, pay_divisor: float, total: Dict[str, float]):
+        debit_print = ("  " + "{:.2%}".format(total["Debit"] / trans_divisor) + " (" + locale.currency(total["Debit"], grouping=conf.get_property("THOUSAND_SEP")) + ")")
+        credit_print = ("  " + "{:.2%}".format(total["Credit"] / pay_divisor) + " (" + locale.currency(total["Credit"], grouping=conf.get_property("THOUSAND_SEP")) + ")")
+        if(not conf.get_property("REPORT_DISPLAY_0")):
+            if(total["Debit"] == 0):
+                debit_print = ""
+            if(total["Credit"] == 0):
+                credit_print = ""
+
+        return debit_print, credit_print
 
     def _get_totals_for_reports(self, date_processor: DateProcessor) -> Tuple[float, float]:
         """Gets the debit total and the credit total for the checkbook.
