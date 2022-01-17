@@ -68,10 +68,11 @@ class CheckbookReport:
         debit_print = ("  " + "{:.2%}".format(total["Debit"] / trans_divisor) + " (" + locale.currency(total["Debit"], grouping=conf.get_property("THOUSAND_SEP")) + ")")
         credit_print = ("  " + "{:.2%}".format(total["Credit"] / pay_divisor) + " (" + locale.currency(total["Credit"], grouping=conf.get_property("THOUSAND_SEP")) + ")")
         if(not conf.get_property("REPORT_DISPLAY_0")):
+            fill_char = conf.get_property("REPORT_0_FILL_CHAR")
             if(total["Debit"] == 0):
-                debit_print = ""
+                debit_print = fill_char * len(debit_print)
             if(total["Credit"] == 0):
-                credit_print = ""
+                credit_print = fill_char * len(credit_print)
 
         return debit_print, credit_print
 
