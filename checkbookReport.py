@@ -9,7 +9,7 @@ from DateProcessor import DateProcessor
 conf = Conf.ConfigurationProcessor()
 
 REPORT_TYPES = ["Date Criteria", "Total"]
-HEADER_FORMAT = "{:*^40}"
+HEADER_FORMAT = "{:" + conf.get_property("REPORT_HEADER_FILL_CHAR") + "^" + str(conf.get_property("MAX_WIDTH")) + "}"
 MAX_REPORT_TYPE = len(max(REPORT_TYPES, key=len))
 
 class CheckbookReport:

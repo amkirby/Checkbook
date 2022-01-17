@@ -10,6 +10,7 @@ NUM_SIZE    : 6
 HLINE_CHAR : '='
 VLINE_CHAR : '|'
 TRANS_FILL_CHAR : '*'
+REPORT_HEADER_FILL_CHAR : "*"
 
 # categories for selection
 DEBIT_CATEGORIES  : ["Groceries", "Gas", "Bills", "Entertainment", "Food", "Savings", "Good Time","Vacation","Christmas", "Wedding", "Medical","Whiskey", "Other"]
