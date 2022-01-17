@@ -3,7 +3,7 @@ from typing import Any, Callable, List, Optional
 
 import CheckbookTransaction as CBT
 import ConfigurationProcessor as Conf
-from Exceptions import InvalidMonthError
+from DateProcessor import DateProcessor
 
 conf = Conf.ConfigurationProcessor()
 
@@ -118,32 +118,19 @@ class Checkbook:
                 return_list.append(elem)
         return return_list
 
-    def get_month(self, find_month: int) -> List[CBT.CheckbookTransaction]:
+    def get_month(self, date_processor: DateProcessor) -> List[CBT.CheckbookTransaction]:
         """Gets all transactions with the specified month
 
         Args:
-            find_month (int) : the integer value for the month to gather
-
+            date_processor (DateProcessor): The date range
         Returns:
             list: a list of transactions with the specified month
         """
-        month_start = month_end = year_start = year_end = 0
-        try:
-            month_start, month_end, year_start, year_end = self._process_date_range(str(find_month))
-            valid_date_range = self._validate_date_ranges(month_start, month_end, year_start, year_end)
-            if(not valid_date_range):
-                raise InvalidMonthError(find_month ,"Invalid date range entered : ")
-        except ValueError:
-            # catches a letter in the value entered
-            error = InvalidMonthError(find_month, "Invalid date range entered : ")
-            raise error
-        except InvalidMonthError as e:
-            raise e
 
         return_list: List[CBT.CheckbookTransaction] = []
         for elem in self.check_register:
             date: Any = elem.get_dictionary().get("Date")
-            if (date.month >= month_start and date.month <= month_end) and (date.year >= year_start and date.year <= year_end): 
+            if (date_processor.date_within_range(date)): 
                 return_list.append(elem)
         return return_list
 
@@ -229,17 +216,17 @@ class Checkbook:
             total += elem.get_amount()
         return total
 
-    def get_total_for_trans_month(self, trans: str, month: int) -> float:
+    def get_total_for_trans_month(self, trans: str, date_processor: DateProcessor) -> float:
         """Get the total for the specified transaction in the specified month
 
         Args:
             trans (string) : the transaction type to total
-            month (int)    : the month to total the trans type
+            date_processor (DateProcessor): The date range
 
         Returns:
             float: Total amount for the specified trans type for the specified month
         """
-        month_list = self.get_month(month)
+        month_list = self.get_month(date_processor)
         total = 0.0
         for elem in month_list:
             if elem.get_value("Trans") == trans:
@@ -261,23 +248,6 @@ class Checkbook:
             total += elem.get_amount()
         return total
 
-    def get_total_for_cat_month(self, cat: str, month: int) -> float:
-        """Get the total for the specified transaction in the specified month
-
-        Args:
-            cat (string) : the category to total
-            month (int)  : the month to total the trans type
-
-        Returns:
-            float: Total amount for the specified category in the specified month
-        """
-        month_list = self.get_month(month)
-        total = 0.0
-        for elem in month_list:
-            if elem.get_value("Category") == cat:
-                total += elem.get_amount()
-        return total
-
     def get_total(self) -> float:
         """Gets the total for the register
 
@@ -286,21 +256,6 @@ class Checkbook:
         """
         total = 0.0
         for elem in self.check_register:
-            total += elem.get_amount()
-        return total
-
-    def get_month_total(self, month: int) -> float:
-        """Gets the total for the specified month
-
-        Args:
-            month (int) : the month to total
-
-        Returns:
-            float: Total amount for the checkbook for the specified month
-        """
-        month_list = self.get_month(month)
-        total = 0.0
-        for elem in month_list:
             total += elem.get_amount()
         return total
 
@@ -404,7 +359,9 @@ class Checkbook:
         """
         func = self.specific_print_functions[key.capitalize()]
         func_param: Any = None
-        if value.isdigit():
+        if "Date" == key.capitalize():
+            func_param = DateProcessor(value)
+        elif value.isdigit():
             func_param = int(value)
         else:
             func_param = value.capitalize()

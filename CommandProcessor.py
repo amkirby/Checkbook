@@ -130,8 +130,8 @@ class CommandProcessor:
 
     def process_report_command(self):
         """Generate a report"""
-        format_string = "{:<8}"
-        month = None
+        format_string = "{:<" + str(CR.MAX_REPORT_TYPE) + "}"
+        date_range = None
         print("Report Types:")
         for i in range(len(CR.REPORT_TYPES)):
             print(format_string.format(CR.REPORT_TYPES[i]), ":", i)
@@ -139,9 +139,9 @@ class CommandProcessor:
         cr = CR.CheckbookReport(self.checkbook)
         rep_method = CR.CheckbookReport.dispatcher[CR.REPORT_TYPES[rep_type]]
         if rep_type == 0:
-            month = int(input("Enter desired month as a number : "))
+            date_range = input("Enter desired date criteria : ")
 
-        report_text = rep_method(cr, month)
+        report_text = rep_method(cr, date_range)
         print(report_text)
 
     def process_load_command(self, load_function: Callable[[str], List[CBT.CheckbookTransaction]], *args: str) -> None:

@@ -10,7 +10,7 @@ class InvalidDateError(Exception):
     def __str__(self) -> str:
         return self.message + self.date + " -> (expected " + config.DATE_FORMAT + ")"
 
-class InvalidMonthError(Exception):
+class InvalidDateRangeError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.month = args[0]
