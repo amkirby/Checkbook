@@ -191,7 +191,7 @@ class CLIRun:
                     checkbook = self.command_processor.checkbook
             except InvalidDateError as date_error:
                 print(date_error)
-            except InvalidMonthError as month_error:
+            except InvalidDateRangeError as month_error:
                 print(month_error)
             except InvalidCommandError as command_error:
                 print(command_error)

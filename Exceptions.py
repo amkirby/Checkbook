@@ -10,14 +10,14 @@ class InvalidDateError(Exception):
     def __str__(self) -> str:
         return self.message + self.date + " -> (expected " + config.DATE_FORMAT + ")"
 
-class InvalidMonthError(Exception):
+class InvalidDateRangeError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.month = args[0]
         self.message = args[1]
     
     def __str__(self) -> str:
-        return str(self.message) + str(self.month) + " -> (expected 1-12)"
+        return str(self.message) + str(self.month) + " -> (expected month : 1-12 year : 1998-9999)"
 
 class InvalidCommandError(Exception):
     def __init__(self, *args: object) -> None:

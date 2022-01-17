@@ -3,7 +3,7 @@ from typing import Any, Callable, List, Optional
 
 import CheckbookTransaction as CBT
 import ConfigurationProcessor as Conf
-from Exceptions import InvalidMonthError
+from DateProcessor import DateProcessor
 
 conf = Conf.ConfigurationProcessor()
 
@@ -118,29 +118,77 @@ class Checkbook:
                 return_list.append(elem)
         return return_list
 
-    def get_month(self, find_month: int) -> List[CBT.CheckbookTransaction]:
+    def get_month(self, date_processor: DateProcessor) -> List[CBT.CheckbookTransaction]:
         """Gets all transactions with the specified month
 
         Args:
-            find_month (int) : the integer value for the month to gather
-
+            date_processor (DateProcessor): The date range
         Returns:
             list: a list of transactions with the specified month
         """
-        month = find_month
-        if type(month) is not int:
-            try:
-                month = int(month)
-            except ValueError:
-                error = InvalidMonthError(month, "Invalid month entered : ")
-                raise error
 
         return_list: List[CBT.CheckbookTransaction] = []
         for elem in self.check_register:
             date: Any = elem.get_dictionary().get("Date")
-            if date.month == month:
+            if (date_processor.date_within_range(date)): 
                 return_list.append(elem)
         return return_list
+
+    def _process_date_range(self, month_str: str):
+        month_start = 1
+        month_end = 12
+        year_start = 1998
+        year_end = 9999
+
+        vals = month_str.split() # separate month and year by spaces
+        if(len(vals) == 1):
+            # could be month (range) or year (range)
+            ranges = vals[0].split("-")
+            ranges = [int(i) for i in ranges]
+            if(ranges[0] >= 1 and ranges[0] <= 12):
+                #month value
+                month_start, month_end = self._get_start_end_values(ranges)
+            else:
+                # assumed year value
+                year_start, year_end = self._get_start_end_values(ranges)
+        elif(len(vals) == 2):
+            # both month (range) and year (range)
+            month_ranges = vals[0].split("-")
+            month_ranges = [int(i) for i in month_ranges]
+            year_ranges = vals[1].split("-")
+            year_ranges = [int(i) for i in year_ranges]
+
+            month_start, month_end = self._get_start_end_values(month_ranges)
+            year_start, year_end = self._get_start_end_values(year_ranges)
+
+
+        return month_start, month_end, year_start, year_end
+
+    def _get_start_end_values(self, ranges : List[int]):
+        start = -1
+        end = -1
+
+        if(len(ranges) == 1):
+            start = end = ranges[0]
+        else:
+            start = ranges[0]
+            end = ranges[1]
+
+
+        return start, end
+
+    def _validate_date_ranges(self, month_start: int, month_end: int, year_start: int, year_end: int) -> bool:
+        is_valid = True
+        month_valid = False
+        year_valid = False
+        if(month_start <= month_end and 1 <= month_start <= 12 and 1 <= month_end <= 12):
+            month_valid = True
+        if(year_start <= year_end and 1998 <= year_start <= 9999 and 1998 <= year_end <= 9999):
+            year_valid = True
+        
+        is_valid = month_valid and year_valid
+
+        return is_valid
 
     def get_description(self, search_term: str) -> List[CBT.CheckbookTransaction]:
         return_list: List[CBT.CheckbookTransaction] = []
@@ -168,17 +216,17 @@ class Checkbook:
             total += elem.get_amount()
         return total
 
-    def get_total_for_trans_month(self, trans: str, month: int) -> float:
+    def get_total_for_trans_month(self, trans: str, date_processor: DateProcessor) -> float:
         """Get the total for the specified transaction in the specified month
 
         Args:
             trans (string) : the transaction type to total
-            month (int)    : the month to total the trans type
+            date_processor (DateProcessor): The date range
 
         Returns:
             float: Total amount for the specified trans type for the specified month
         """
-        month_list = self.get_month(month)
+        month_list = self.get_month(date_processor)
         total = 0.0
         for elem in month_list:
             if elem.get_value("Trans") == trans:
@@ -200,23 +248,6 @@ class Checkbook:
             total += elem.get_amount()
         return total
 
-    def get_total_for_cat_month(self, cat: str, month: int) -> float:
-        """Get the total for the specified transaction in the specified month
-
-        Args:
-            cat (string) : the category to total
-            month (int)  : the month to total the trans type
-
-        Returns:
-            float: Total amount for the specified category in the specified month
-        """
-        month_list = self.get_month(month)
-        total = 0.0
-        for elem in month_list:
-            if elem.get_value("Category") == cat:
-                total += elem.get_amount()
-        return total
-
     def get_total(self) -> float:
         """Gets the total for the register
 
@@ -225,21 +256,6 @@ class Checkbook:
         """
         total = 0.0
         for elem in self.check_register:
-            total += elem.get_amount()
-        return total
-
-    def get_month_total(self, month: int) -> float:
-        """Gets the total for the specified month
-
-        Args:
-            month (int) : the month to total
-
-        Returns:
-            float: Total amount for the checkbook for the specified month
-        """
-        month_list = self.get_month(month)
-        total = 0.0
-        for elem in month_list:
             total += elem.get_amount()
         return total
 
@@ -343,7 +359,9 @@ class Checkbook:
         """
         func = self.specific_print_functions[key.capitalize()]
         func_param: Any = None
-        if value.isdigit():
+        if "Date" == key.capitalize():
+            func_param = DateProcessor(value)
+        elif value.isdigit():
             func_param = int(value)
         else:
             func_param = value.capitalize()

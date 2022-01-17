@@ -4,12 +4,13 @@ from typing import Any, Dict, List, Optional, Tuple
 import ConfigurationProcessor as Conf
 from Checkbook import Checkbook
 from CheckbookTransaction import CheckbookTransaction
+from DateProcessor import DateProcessor
 
 conf = Conf.ConfigurationProcessor()
 
-REPORT_TYPES = ["Monthly", "Total"]
+REPORT_TYPES = ["Date Criteria", "Total"]
 HEADER_FORMAT = "{:*^40}"
-
+MAX_REPORT_TYPE = len(max(REPORT_TYPES, key=len))
 
 class CheckbookReport:
     def __init__(self, cb: Checkbook):
@@ -20,18 +21,19 @@ class CheckbookReport:
         """
         self.checkbook = cb
 
-    def gen_report(self, month: Optional[Any]=None) -> str:
+    def gen_report(self, date_range: Optional[Any]=None) -> str:
         """
-        Generates a report for the entire checkbook or a particular month if one is specified
+        Generates a report for the entire checkbook or a particular date range if one is specified
 
         Args:
-            month (int): The int value for a month
+            date_range (None | string): The date range
 
         Returns:
             str: A report of the checkbook broken out into categories
         """
         return_string = ""
-        trans_total, pay_total = self._get_totals_for_reports(month)
+        date_processor = DateProcessor(date_range)
+        trans_total, pay_total = self._get_totals_for_reports(date_processor)
         trans_divisor = trans_total if trans_total > 0 else 1
         pay_divisor = pay_total if pay_total > 0 else 1
         register_format = "{:<20}"
@@ -52,7 +54,7 @@ class CheckbookReport:
         for cat in conf.get_property("CATEGORIES"):
             current_cat_list = self.checkbook.get_category(cat)
             return_string += left_border + register_format.format(cat) + "\n"
-            total = self._get_cbt_total_for_category(current_cat_list, month)
+            total = self._get_cbt_total_for_category(current_cat_list, date_processor)
 
             return_string += left_border + register_format.format(("  " + "{:.2%}".format(total["Debit"] / trans_divisor) + " (" +
                               locale.currency(total["Debit"], grouping=conf.get_property("THOUSAND_SEP")) + ")")) + " |"
@@ -63,28 +65,23 @@ class CheckbookReport:
         return_string += "\n" + HEADER_FORMAT.format(" END REPORT ") + "\n"
         return return_string
 
-    def _get_totals_for_reports(self, month: Any) -> Tuple[float, float]:
+    def _get_totals_for_reports(self, date_processor: DateProcessor) -> Tuple[float, float]:
         """Gets the debit total and the credit total for the checkbook.
 
         Args:
-            month (None | int) : if None, it is a total report, otherwise it is a monthly report
+            date_processor (DateProcessor): The date range
         """
-        if month is None:
-            # ASSERT: this report is a total report
-            trans_total = abs(self.checkbook.get_total_for_trans("Debit"))
-            pay_total = self.checkbook.get_total_for_trans("Credit")
-        else:
-            # ASSERT: this report is a monthly report
-            trans_total = abs(self.checkbook.get_total_for_trans_month("Debit", month))
-            pay_total = self.checkbook.get_total_for_trans_month("Credit", month)
+
+        trans_total = abs(self.checkbook.get_total_for_trans_month("Debit", date_processor))
+        pay_total = self.checkbook.get_total_for_trans_month("Credit", date_processor)
         return trans_total, pay_total
 
-    def _get_cbt_total_for_category(self, cbt_list: List[CheckbookTransaction], month: Any) -> Dict[str, float]:
+    def _get_cbt_total_for_category(self, cbt_list: List[CheckbookTransaction], date_processor: DateProcessor) -> Dict[str, float]:
         """Gets the total for the given CBT list.
 
         Args:
             cbt_list (list) : CBTs for a specific category
-            month (None | int) : if None, it is a total report, otherwise it is a monthly report
+            date_ (DateProcessor): The date range
         """
         debitTotal = 0
         creditTotal = 0
@@ -92,23 +89,13 @@ class CheckbookReport:
         for cbt in cbt_list:
             if cbt.get_value("Trans") == "Debit":  # added Debit check b/c some categories can be both
                 # debit and credit and reports were wrong
-                if month is None:
-                    # ASSERT: this report is a total report
+                date = cbt.get_date()
+                if date_processor.date_within_range(date):
                     debitTotal += abs(cbt.get_amount())
-                else:
-                    # ASSERT: this report is a monthly report
-                    date = cbt.get_date().month
-                    if date == month:
-                        debitTotal += abs(cbt.get_amount())
             elif cbt.get_value("Trans") == "Credit":
-                if month is None:
-                    # ASSERT: this report is a total report
+                date = cbt.get_date()
+                if date_processor.date_within_range(date):
                     creditTotal += abs(cbt.get_amount())
-                else:
-                    # ASSERT: this report is a monthly report
-                    date = cbt.get_date().month
-                    if date == month:
-                        creditTotal += abs(cbt.get_amount())
         
         transTotal["Debit"] = debitTotal
         transTotal["Credit"] = creditTotal
