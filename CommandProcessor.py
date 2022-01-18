@@ -16,7 +16,7 @@ def _apply_debit_multiplier(debit_transaction: CBT.CheckbookTransaction) -> None
         or (not debit_transaction.is_debit() and int(debit_transaction.get_amount()) < 0)):
         debit_transaction.set_value("Amount", debit_transaction.get_amount() * conf.get_property("DEBIT_MULTIPLIER"))
 
-def _print_list_of_trans(header_text : str, width : int, fill_char : str, list_of_trans : List[CBT.CheckbookTransaction]):
+def print_list_of_trans(header_text : str, width : int, fill_char : str, list_of_trans : List[CBT.CheckbookTransaction]):
     header_line = header_text.center(width,fill_char)
     print(header_line)
     for current_trans in list_of_trans:
@@ -43,10 +43,10 @@ class CommandProcessor:
         self.checkbook = checkbook
         self._trans_selection = ""
 
-    def _comfirm_selection(self, command: str) -> bool:
+    def confirm_selection(self, command: str) -> bool:
         confirmed = True
 
-        user_input = input("Would you like to " + command + "? (y or n) ")
+        user_input = input("Would you like to " + command + "? (Y or n) ")
         if user_input.lower() == "n":
             confirmed = False
 
@@ -59,7 +59,7 @@ class CommandProcessor:
         Args:
             save_function (function): function used to save the checkbook
         """
-        if(self._comfirm_selection("save")):
+        if(self.confirm_selection("save")):
             self.checkbook.save(save_function)
             print("save successful!")
 
@@ -145,8 +145,8 @@ class CommandProcessor:
             edit_trans = int(args[0])
 
         trans = self.checkbook.find_transaction(edit_trans)
-        _print_list_of_trans(" Transaction Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
-        if(trans is not None and self._comfirm_selection("edit")):
+        print_list_of_trans(" Transaction Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
+        if(trans is not None and self.confirm_selection("edit")):
             for key in CBT.KEYS:
                 if key != "Num":
                     if key == "Category":
@@ -225,8 +225,8 @@ class CommandProcessor:
             delete_trans = int(args[0])
 
         trans = self.checkbook.find_transaction(delete_trans)
-        _print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
-        if(trans is not None and self._comfirm_selection("delete")):
+        print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
+        if(trans is not None and self.confirm_selection("delete")):
             self.checkbook.get_register().remove(trans)
             self.checkbook.edited = True
 
@@ -272,7 +272,7 @@ class CommandProcessor:
         return transaction_list
 
     def process_resequence_command(self, checkbook: CB.Checkbook) -> None:
-        if(self._comfirm_selection("resequence")):
+        if(self.confirm_selection("resequence")):
             sequenceNum = 1
             for cbt in checkbook.get_register():
                 cbt.set_value("Num", sequenceNum)

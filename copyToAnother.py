@@ -3,17 +3,10 @@ from typing import List
 import Checkbook as CB
 import CheckbookTransaction as CT
 import ConfigurationProcessor as Conf
-from CommandProcessor import CommandProcessor
+import CommandProcessor
 from DataProcessors import XMLProcessor as XML
 
 conf = Conf.ConfigurationProcessor()
-
-def print_list_of_trans(header_text : str, width : int, fill_char : str, list_of_trans : List[CT.CheckbookTransaction]):
-    header_line = header_text.center(width,fill_char)
-    print(header_line)
-    for current_trans in list_of_trans:
-        print(current_trans)
-    print(fill_char * len(header_line))
 
 def copy(from_book : str = "", to_book : str = ""):
     save_function = XML.XMLProcessor.save
@@ -42,7 +35,7 @@ def copy(from_book : str = "", to_book : str = ""):
     to_checkbook = CB.Checkbook()
     to_checkbook.load(to_checkbook_name, load_function)
 
-    to_command_processor = CommandProcessor(to_checkbook)
+    to_command_processor = CommandProcessor.CommandProcessor(to_checkbook)
 
     last_trans_of_to = to_checkbook.get_register()[-1]
 
@@ -54,10 +47,10 @@ def copy(from_book : str = "", to_book : str = ""):
             trans_to_add.append(current_trans)
         else:
             break
-
-    print_list_of_trans(" Transactions Being Added ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), trans_to_add[::-1])
-
-    if(len(trans_to_add) > 0):
+    
+    
+    CommandProcessor.print_list_of_trans(" Transactions Being Added ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), trans_to_add[::-1])
+    if(len(trans_to_add) > 0 and to_command_processor.confirm_selection("copy")):
         for current_trans in trans_to_add[::-1]:
             to_checkbook.add_single_trans(current_trans)
 
