@@ -10,6 +10,7 @@ SORT_COMMAND = "sort"
 SEARCH_COMMAND = "search"
 RESEQUENCE_COMMAND = "reseq"
 COPY_COMMAND = "copy"
+CSV_COMMAND = "csv"
 
 TRANS_TYPES = ["Debit", "Credit"]
 
@@ -37,6 +38,7 @@ Commands:
     search : search for text in the description (search <text>)
     sort   : sort the checkbook by a given header (sort [header | Date])
     reseq  : re-number the entire checkbook
+    csv    : save checkbook to a CSV file
 """
 HELP_TEXT = ("""
 {}

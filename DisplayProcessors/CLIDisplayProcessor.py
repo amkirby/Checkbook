@@ -5,6 +5,7 @@ from typing import Callable, List
 import CheckbookTransaction as CBT
 import ConfigurationProcessor as Conf
 import copyToAnother as CTA
+import SaveToCSV as STC
 from Checkbook import Checkbook
 from CommandProcessor import CommandProcessor
 from Constants import commands
@@ -181,6 +182,8 @@ class CLIRun:
                         needs_to_print = True
                     elif (val[0] == commands.COPY_COMMAND):
                         CTA.copy(self.command_processor.checkbook.get_file_name(), conf.get_property("DEFAULT_COPY_TO"))
+                    elif(val[0] == commands.CSV_COMMAND):
+                        STC.save_to_csv(self.command_processor.checkbook.get_file_name())
                     else:
                         error = InvalidCommandError(val[0], "Invalid command entered : ")
                         raise error
