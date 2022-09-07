@@ -39,34 +39,86 @@ class CheckbookReport:
         register_format = "{:<20}"
         format_string = "{:<12}"
         left_border = "|"
-        return_string += "\n" + HEADER_FORMAT.format(" REPORT ") + "\n"
-        return_string += ("\n" + format_string.format("Pay Total") + ": " +
-                          locale.currency(pay_total, grouping=conf.get_property("THOUSAND_SEP")) + "\n")
+        new_line = "\n"
+        return_string += new_line + HEADER_FORMAT.format(" REPORT ") + new_line
+        return_string += (new_line + format_string.format("Pay Total") + ": " +
+                          self._format_currency(pay_total) + new_line)
         return_string += (format_string.format("Debit Total") + ": " +
-                          locale.currency(trans_total, grouping=conf.get_property("THOUSAND_SEP")) + "\n")
+                          self._format_currency(trans_total) + new_line)
         return_string += (format_string.format("Savings") + ": " +
-                          locale.currency(pay_total - trans_total, grouping=conf.get_property("THOUSAND_SEP")) + "\n")
-        return_string += "\n"  # add extra space before printing categories
+                          self._format_currency(pay_total - trans_total) + new_line)
+        return_string += new_line  # add extra space before printing categories
         h_line = ("-" * 42)
-        return_string += left_border + h_line + "\n"
-        return_string += left_border + register_format.format("Debit") + " | " + "Credit" + "\n"
-        return_string += left_border + h_line + "\n"
+        return_string += left_border + h_line + new_line
+        return_string += left_border + register_format.format("Debit") + " | " + "Credit" + new_line
+        return_string += left_border + h_line + new_line
         for cat in conf.get_property("CATEGORIES"):
             current_cat_list = self.checkbook.get_category(cat)
-            return_string += left_border + register_format.format(cat) + "\n"
+            return_string += left_border + register_format.format(cat) + new_line
             total = self._get_cbt_total_for_category(current_cat_list, date_processor)
             debit_print, credit_print = self._get_transaction_print(trans_divisor, pay_divisor, total)
 
             return_string += left_border + register_format.format(debit_print) + " |"
-            return_string += credit_print + "\n"
-            return_string += left_border + h_line + "\n"
+            return_string += credit_print + new_line
+            return_string += left_border + h_line + new_line
 
-        return_string += "\n" + HEADER_FORMAT.format(" END REPORT ") + "\n"
+        return_string += new_line + HEADER_FORMAT.format(" END REPORT ") + new_line
         return return_string
 
+    # def gen_report2(self, date_range: Optional[Any]=None) -> str:
+    #     """
+    #     Generates a report for the entire checkbook or a particular date range if one is specified
+
+    #     Args:
+    #         date_range (None | string): The date range
+
+    #     Returns:
+    #         str: A report of the checkbook broken out into categories
+    #     """
+    #     return_string = ""
+    #     date_processor = DateProcessor(date_range)
+    #     trans_total, pay_total = self._get_totals_for_reports(date_processor)
+    #     trans_divisor = trans_total if trans_total > 0 else 1
+    #     pay_divisor = pay_total if pay_total > 0 else 1
+    #     register_format = "{:<20}"
+    #     format_string = "{:<12}"
+    #     left_border = "|"
+    #     new_line = "\n"
+    #     report_data = {}
+    #     report_data["Pay Total"] = pay_total
+    #     report_data["Debit Total"] = trans_total
+    #     report_data["Savings"] = pay_total = trans_total
+    #     return_string += new_line + HEADER_FORMAT.format(" REPORT ") + new_line
+    #     return_string += (new_line + format_string.format("Pay Total") + ": " +
+    #                       self._format_currency(pay_total) + new_line)
+    #     return_string += (format_string.format("Debit Total") + ": " +
+    #                       self._format_currency(trans_total) + new_line)
+    #     return_string += (format_string.format("Savings") + ": " +
+    #                       self._format_currency(pay_total - trans_total) + new_line)
+    #     return_string += new_line  # add extra space before printing categories
+    #     h_line = ("-" * 42)
+    #     return_string += left_border + h_line + new_line
+    #     return_string += left_border + register_format.format("Debit") + " | " + "Credit" + new_line
+    #     return_string += left_border + h_line + new_line
+    #     for cat in conf.get_property("CATEGORIES"):
+    #         current_cat_list = self.checkbook.get_category(cat)
+    #         return_string += left_border + register_format.format(cat) + new_line
+    #         total = self._get_cbt_total_for_category(current_cat_list, date_processor)
+    #         debit_print, credit_print = self._get_transaction_print(trans_divisor, pay_divisor, total)
+
+    #         return_string += left_border + register_format.format(debit_print) + " |"
+    #         return_string += credit_print + new_line
+    #         return_string += left_border + h_line + new_line
+
+    #     return_string += new_line + HEADER_FORMAT.format(" END REPORT ") + new_line
+    #     return return_string
+
+    def _format_currency(self, value: float):
+        return locale.currency(value, grouping=conf.get_property("THOUSAND_SEP"))
+
     def _get_transaction_print(self, trans_divisor: float, pay_divisor: float, total: Dict[str, float]):
-        debit_print = ("  " + "{:.2%}".format(total["Debit"] / trans_divisor) + " (" + locale.currency(total["Debit"], grouping=conf.get_property("THOUSAND_SEP")) + ")")
-        credit_print = ("  " + "{:.2%}".format(total["Credit"] / pay_divisor) + " (" + locale.currency(total["Credit"], grouping=conf.get_property("THOUSAND_SEP")) + ")")
+        debit_print = ("  " + "{:.2%}".format(total["Debit"] / trans_divisor) + " (" + self._format_currency(total["Debit"]) + ")")
+        credit_print = ("  " + "{:.2%}".format(total["Credit"] / pay_divisor) + " (" + self._format_currency(total["Credit"]) + ")")
         if(not conf.get_property("REPORT_DISPLAY_0")):
             fill_char = conf.get_property("REPORT_0_FILL_CHAR")
             if(total["Debit"] == 0):
