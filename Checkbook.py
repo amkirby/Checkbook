@@ -113,9 +113,11 @@ class Checkbook:
             list: a list of transactions with the specified category
         """
         return_list: List[CBT.CheckbookTransaction] = []
-        for elem in self.check_register:
-            if str(elem.get_dictionary().get("Category")).lower() == cat.lower():
-                return_list.append(elem)
+        cat_list = [x.strip() for x in cat.split(",")]
+        for category in cat_list:
+            for elem in self.check_register:
+                if str(elem.get_dictionary().get("Category")).lower() == category.lower():
+                    return_list.append(elem)
         return return_list
 
     def get_month(self, date_processor: DateProcessor) -> List[CBT.CheckbookTransaction]:
