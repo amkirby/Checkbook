@@ -4,8 +4,8 @@ from typing import Callable, List
 
 import CheckbookTransaction as CBT
 import ConfigurationProcessor as Conf
-import copyToAnother as CTA
-import SaveToCSV as STC
+from Tools import copyToAnother as CTA
+from Tools import SaveToCSV as STC
 from Checkbook import Checkbook
 from CommandProcessor import CommandProcessor
 from Constants import commands
