@@ -276,6 +276,23 @@ class Checkbook:
                 transaction = currentTrans
         return transaction
 
+    def find_transactions(self, in_trans: List[int]) -> List[CBT.CheckbookTransaction]:
+        """Gets the specified transaction number from the register
+
+        Args:
+            in_trans (int) : the transaction to gather
+
+        Returns:
+            CheckbookTransaction: The specified transaction
+        """
+        transactions: List[CBT.CheckbookTransaction] = [] #CBT.CheckbookTransaction()
+        for num in in_trans:
+            for currentTrans in self.check_register:
+                if int(currentTrans.get_value("Num")) == int(num):
+                    transactions.append(currentTrans)
+        return transactions
+
+
     def get_file_name(self) -> str:
         return self.file_name
 
@@ -377,6 +394,15 @@ class Checkbook:
 
     def order_by(self, key: str):
         self.check_register.sort(key=lambda cbt: cbt.get_value(key))
+
+    def delete_transaction(self, cbt:CBT.CheckbookTransaction) -> None:
+        self.get_register().remove(cbt)
+        self.edited = True
+
+    def delete_transactions(self, cbts:List[CBT.CheckbookTransaction]) -> None:
+        for cbt in cbts:
+            self.get_register().remove(cbt)
+            self.edited = True
 
     def __str__(self):
         """A string representation of a checkbook

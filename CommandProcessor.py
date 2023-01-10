@@ -140,29 +140,31 @@ class CommandProcessor:
             *args (variable args): Can pass an int which specifies the transaction to edit
         """
         if not args:
-            edit_trans = int(input("Which transaction do you want to edit? : "))
+            transactions_to_edit = self._process_list_input(input("Which transaction(s) do you want to edit? : "))
         else:
-            edit_trans = int(args[0])
+            transactions_to_edit = self._process_list_input(args[0])
 
-        trans = self.checkbook.find_transaction(edit_trans)
-        print_list_of_trans(" Transaction Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
-        if(trans is not None and self.confirm_selection("edit")):
-            for key in CBT.KEYS:
-                if key != "Num":
-                    if key == "Category":
-                        val = self._select_with_number(conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key, trans.get_value(key))
-                    elif key == "Trans":
-                        val = self._select_with_number(commands.TRANS_TYPES, key, trans.get_value(key))
-                        self._trans_selection = val if val.strip() != "" else trans.get_value(key)
-                    elif key == "Desc":
-                        val = self._handle_edit_description(trans.get_value("Desc"))
-                    else:
-                        val = input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
-                    if val.strip() != "":
-                        trans.set_value(key, string.capwords(val))
-                        self.checkbook.set_edited(True)
+        transactions_from_cb = self.checkbook.find_transactions(transactions_to_edit)
+        print_list_of_trans(" Transaction(s) Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), transactions_from_cb)
+        if(transactions_from_cb is not None and self.confirm_selection("edit")):
+            for trans in transactions_from_cb:
+                print_list_of_trans(" Current Transaction Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
+                for key in CBT.KEYS:
+                    if key != "Num":
+                        if key == "Category":
+                            val = self._select_with_number(conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key, trans.get_value(key))
+                        elif key == "Trans":
+                            val = self._select_with_number(commands.TRANS_TYPES, key, trans.get_value(key))
+                            self._trans_selection = val if val.strip() != "" else trans.get_value(key)
+                        elif key == "Desc":
+                            val = self._handle_edit_description(trans.get_value("Desc"))
+                        else:
+                            val = input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
+                        if val.strip() != "":
+                            trans.set_value(key, string.capwords(val))
+                            self.checkbook.set_edited(True)
 
-            _apply_debit_multiplier(trans)
+                _apply_debit_multiplier(trans)
 
     def process_report_command(self):
         """Generate a report"""
@@ -218,7 +220,7 @@ class CommandProcessor:
         if self.checkbook.is_edited():
             self.process_save_command(save_function)
 
-    def process_delete_command(self, *args: str) -> None:
+    def process_delete_command_old(self, *args: str) -> None:
         if not args:
             delete_trans = int(input("Which transaction do you want to delete? : "))
         else:
@@ -227,8 +229,18 @@ class CommandProcessor:
         trans = self.checkbook.find_transaction(delete_trans)
         print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
         if(trans is not None and self.confirm_selection("delete")):
-            self.checkbook.get_register().remove(trans)
-            self.checkbook.edited = True
+            self.checkbook.delete_transaction(trans)
+
+    def process_delete_command(self, *args: str) -> None:
+        if not args:
+            transactions_to_delete = self._process_list_input(input("Which transaction(s) do you want to delete? : "))
+        else:
+            transactions_to_delete = self._process_list_input(args[0])
+
+        transactions_from_cb = self.checkbook.find_transactions(transactions_to_delete)
+        print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), transactions_from_cb)
+        if(transactions_from_cb is not None and self.confirm_selection("delete")):
+            self.checkbook.delete_transactions(transactions_from_cb)
 
     def process_sort_command(self, checkbook: CB.Checkbook, *args: str) -> CB.Checkbook:
         if not args:
@@ -280,3 +292,11 @@ class CommandProcessor:
             CBT.CheckbookTransaction.set_uid(sequenceNum)
             self.checkbook.set_edited(True)
             print("resequence successful!")
+
+    def _process_list_input(self, val: str) -> List[str]:
+        return_val = [""]
+
+        if(val is not None):
+            return_val = [x.strip() for x in val.split(",")]
+
+        return return_val
