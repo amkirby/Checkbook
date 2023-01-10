@@ -6,6 +6,7 @@ import CheckbookTransaction as CBT
 import ConfigurationProcessor as Conf
 from Tools import copyToAnother as CTA
 from Tools import SaveToCSV as STC
+from Tools import FindMissingTransactions as COMP
 from Checkbook import Checkbook
 from CommandProcessor import CommandProcessor
 from Constants import commands
@@ -184,6 +185,9 @@ class CLIRun:
                         CTA.copy(self.command_processor.checkbook.get_file_name(), conf.get_property("DEFAULT_COPY_TO"))
                     elif(val[0] == commands.CSV_COMMAND):
                         STC.save_to_csv(self.command_processor.checkbook.get_file_name())
+                    elif(val[0] == commands.COMPARE_COMMAND):
+                        checkbook = COMP.process_compare()
+                        needs_to_print = True
                     else:
                         error = InvalidCommandError(val[0], "Invalid command entered : ")
                         raise error

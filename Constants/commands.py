@@ -11,6 +11,7 @@ SEARCH_COMMAND = "search"
 RESEQUENCE_COMMAND = "reseq"
 COPY_COMMAND = "copy"
 CSV_COMMAND = "csv"
+COMPARE_COMMAND = "compare"
 
 TRANS_TYPES = ["Debit", "Credit"]
 
