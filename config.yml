@@ -27,3 +27,4 @@ REPORT_DISPLAY_0 : False # display zero values in report
 REPORT_0_FILL_CHAR : "" # character to display in place of the zero when REPORT_DISPLAY_0 is false (can be blank)
 DEFAULT_COPY_TO : "to.xml" # default file to copy to
 DEFAULT_TO_CSV: "checkbook.csv"
+PATH_FOR_REGISTERS: "./Registers/;./Registers/Test/"

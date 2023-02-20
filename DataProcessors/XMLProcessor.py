@@ -29,7 +29,7 @@ class XMLProcessor:
                     cbt.set_value(child.tag, child.text)
                 return_list.append(cbt)
         except FileNotFoundError:
-            print("The file " + file_name + " was not found.")
+            pass # file will be created
         except ET.ParseError:
             print("There was an error parsing " + file_name, "(possibly empty).")
 

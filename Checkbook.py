@@ -56,7 +56,19 @@ class Checkbook:
             load_function (function): function used to save the checkbook
         """
         self.file_name = file_name
-        self.check_register = load_function(self.file_name)
+
+        list_of_paths = conf.get_property("PATH_FOR_REGISTERS").split(";")
+        list_of_paths.append("./") # always check current directory
+        for path in list_of_paths:
+            full_path = path + file_name
+            self.check_register = load_function(full_path)
+            if(len(self.check_register) > 0):
+                self.file_name = full_path
+                break
+        if(len(self.check_register) == 0):
+            # file doesn't exist so it will be created
+            self.file_name = file_name
+            self.check_register = load_function(full_path)
 
     def clear(self) -> None:
         """Clears the checkbook"""
