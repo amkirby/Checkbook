@@ -1,6 +1,7 @@
 import locale
+import textwrap
 from datetime import datetime
-from typing import Any, Dict, ItemsView
+from typing import Any, Dict, ItemsView, List
 
 import ConfigurationProcessor as Conf
 
@@ -11,6 +12,18 @@ locale.setlocale(conf.get_property("LOCALE"), '')  # set the locale for printing
 # the Keys used for the Transaction and printing the transaction
 KEYS = ["Date", "Trans", "Category", "Desc", "Amount", "Num"]
 
+def _build_template():
+    template = ""
+    template += conf.get_property("VLINE_CHAR")
+    for i in range(len(KEYS)):
+        header_length = conf.get_property("SIZE_LIST")[i]
+        format_string = '{' + KEYS[i] + ':^' + str(header_length) + '}'
+        template += format_string + conf.get_property("VLINE_CHAR")
+
+
+    return template
+
+TRANSACTION_ROW_PRINT_TEMPLATE = _build_template()
 
 class CheckbookTransaction:
     """This class represents a Checkbook Transaction
@@ -104,9 +117,54 @@ class CheckbookTransaction:
     def set_uid(cls, value: int) -> None:
         cls._uid = value    
 
+    def _wrap_text(self, text: str, length: int) -> str:
+        wrapped_text = textwrap.wrap(text, width=length)
+
+        if(len(text) > length):
+            pass
+
+        return wrapped_text
+    
+    def _create_default_row(self):
+        default_row = {}
+        for key in KEYS:
+            default_row[key] = ""
+
+        return default_row
+
+    def _get_row_for_index(self, rows_to_create, index):
+        row = {}
+
+        if(len(rows_to_create) == index):
+            rows_to_create.append(self._create_default_row())
+
+        row = rows_to_create[index]
+
+        return row
+
+    def _fill_in_rows(self, rows_to_create, key: str, text_to_wrap: List[str]) -> None:
+        for i in range(len(text_to_wrap)):
+            current_row = self._get_row_for_index(rows_to_create, i)
+            current_row[key] = text_to_wrap[i]
+
+    def _wrap_transaction_text(self, transaction_vals) -> str:
+        wrapped_text = ""
+        rows_to_create = []
+
+        for i in range(len(KEYS)):
+            text_after_wrap = textwrap.fill(transaction_vals[KEYS[i]], width=conf.get_property("SIZE_LIST")[i]).split("\n")
+            self._fill_in_rows(rows_to_create, KEYS[i], text_after_wrap)
+
+        for row in rows_to_create:
+            wrapped_text += TRANSACTION_ROW_PRINT_TEMPLATE.format(**row) + "\n"
+
+
+        return wrapped_text.strip()
+
     def __str__(self):
         """A string representation of a Checkbook Transaction"""
         string = conf.get_property("VLINE_CHAR")
+        transaction_vals = {}
         for i in range(len(KEYS)):
             header_length = conf.get_property("SIZE_LIST")[i]
             format_string = '{:^' + str(header_length) + '}'
@@ -115,7 +173,12 @@ class CheckbookTransaction:
                 val = datetime.strftime(self.get_value(KEYS[i]), conf.get_property("DATE_FORMAT")) #self.data.get(KEYS[i])
             elif type(val) is float:
                 val = locale.currency(val, grouping=conf.get_property("THOUSAND_SEP"))
+    
             string += format_string.format(str(val)) + conf.get_property("VLINE_CHAR")
+            transaction_vals[KEYS[i]] = str(val)
+
+
+        string = self._wrap_transaction_text(transaction_vals)
         return string
 
     def __eq__(self, __o: object) -> bool:

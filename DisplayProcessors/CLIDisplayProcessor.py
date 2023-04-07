@@ -1,5 +1,6 @@
 import locale
 from datetime import datetime
+import textwrap
 from typing import Callable, List
 
 import CheckbookTransaction as CBT
@@ -16,6 +17,18 @@ conf = Conf.ConfigurationProcessor()
 
 ROW_SEP = '\n' + str((conf.get_property("HLINE_CHAR") * (sum(conf.get_property("SIZE_LIST")) + len(conf.get_property("SIZE_LIST"))))) + '\n'
 
+def _build_template():
+    template = ""
+    template += conf.get_property("VLINE_CHAR")
+    for i in range(len(CBT.KEYS)):
+        header_length = conf.get_property("SIZE_LIST")[i]
+        format_string = '{' + CBT.KEYS[i] + ':^' + str(header_length) + '}'
+        template += format_string + conf.get_property("VLINE_CHAR")
+
+
+    return template
+
+TRANSACTION_ROW_PRINT_TEMPLATE = _build_template()
 
 def _gen_header_print() -> str:
     """
@@ -23,24 +36,73 @@ def _gen_header_print() -> str:
     @return: pretty print for the checkbook register header
     """
     header = ROW_SEP
-    header += conf.get_property("VLINE_CHAR")
+
+    vals = {}
     for i in range(len(CBT.KEYS)):
-        header_length = conf.get_property("SIZE_LIST")[i]
-        format_string = '{:^' + str(header_length) + '}'
-        header += format_string.format(CBT.KEYS[i]) + conf.get_property("VLINE_CHAR")
+        vals[CBT.KEYS[i]] = CBT.KEYS[i]
+
+    header += TRANSACTION_ROW_PRINT_TEMPLATE.format(**vals)
     return header
 
-def _gen_transaction_print(transaction: CBT.CheckbookTransaction) -> str:
-    string = conf.get_property("VLINE_CHAR")
+# def _any_keys_need_wrapped(transaction_vals) -> bool:
+#     needs_wrapped = False
+#     for i in range(len(CBT.KEYS)):
+#         if len(transaction_vals[CBT.KEYS[i]]) > conf.get_property("SIZE_LIST")[i]:
+#             needs_wrapped = True
+#             break
+    
+#     return needs_wrapped
+
+def _create_default_row():
+    default_row = {}
+    for key in CBT.KEYS:
+        default_row[key] = ""
+
+    return default_row
+
+def _get_row_for_index(rows_to_create, index):
+    row = {}
+
+    if(len(rows_to_create) == index):
+        rows_to_create.append(_create_default_row())
+
+    row = rows_to_create[index]
+
+    return row
+
+def _fill_in_rows(rows_to_create, key: str, text_to_wrap: List[str]) -> None:
+    for i in range(len(text_to_wrap)):
+        current_row = _get_row_for_index(rows_to_create, i)
+        current_row[key] = text_to_wrap[i]
+
+def _wrap_transaction_text(transaction_vals) -> str:
+    wrapped_text = ""
+    rows_to_create = []
+
     for i in range(len(CBT.KEYS)):
-        header_length = conf.get_property("SIZE_LIST")[i]
-        format_string = '{:^' + str(header_length) + '}'
+        text_after_wrap = textwrap.fill(transaction_vals[CBT.KEYS[i]], width=conf.get_property("SIZE_LIST")[i]).split("\n")
+        _fill_in_rows(rows_to_create, CBT.KEYS[i], text_after_wrap)
+
+    for row in rows_to_create:
+        wrapped_text += TRANSACTION_ROW_PRINT_TEMPLATE.format(**row) + "\n"
+
+
+    return wrapped_text.strip()
+
+def _gen_transaction_print(transaction: CBT.CheckbookTransaction) -> str:
+    string = ""
+    transaction_vals = {}
+    for i in range(len(CBT.KEYS)):
         val = transaction.data.get(CBT.KEYS[i])
         if type(val) is datetime:
-            val = datetime.strftime(transaction.get_value(CBT.KEYS[i]), conf.get_property("DATE_FORMAT")) #transaction.data.get(CBT.KEYS[i])
+            val = datetime.strftime(transaction.get_value(CBT.KEYS[i]), conf.get_property("DATE_FORMAT"))
         elif type(val) is float:
             val = locale.currency(val, grouping=conf.get_property("THOUSAND_SEP"))
-        string += format_string.format(str(val)) + conf.get_property("VLINE_CHAR")
+
+        transaction_vals[CBT.KEYS[i]] = str(val)
+        
+    string += _wrap_transaction_text(transaction_vals) #TRANSACTION_ROW_PRINT_TEMPLATE.format(**vals)
+        
     return string
     
 
