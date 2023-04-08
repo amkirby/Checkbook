@@ -5,6 +5,7 @@ import CheckbookTransaction as CT
 import ConfigurationProcessor as Conf
 import CommandProcessor
 from DataProcessors import XMLProcessor as XML
+from DisplayProcessors import CLIDisplayProcessor as CDP
 
 conf = Conf.ConfigurationProcessor()
 
@@ -35,7 +36,8 @@ def copy(from_book : str = "", to_book : str = ""):
     to_checkbook = CB.Checkbook()
     to_checkbook.load(to_checkbook_name, load_function)
 
-    to_command_processor = CommandProcessor.CommandProcessor(to_checkbook)
+    display_processor = CDP.CLIDisplayProcessor()
+    to_command_processor = CommandProcessor.CommandProcessor(to_checkbook, display_processor)
 
     last_trans_of_to = to_checkbook.get_register()[-1]
 
@@ -49,7 +51,7 @@ def copy(from_book : str = "", to_book : str = ""):
             break
     
     
-    CommandProcessor.print_list_of_trans(" Transactions Being Added ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), trans_to_add[::-1])
+    display_processor.print_list_of_trans(" Transactions Being Added ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), trans_to_add[::-1])
     if(len(trans_to_add) > 0 and to_command_processor.confirm_selection("copy")):
         for current_trans in trans_to_add[::-1]:
             to_checkbook.add_single_trans(current_trans)

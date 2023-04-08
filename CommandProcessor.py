@@ -7,6 +7,10 @@ import CheckbookTransaction as CBT
 import ConfigurationProcessor as Conf
 from Constants import commands
 from Exceptions import *
+from DisplayProcessors import CLIDisplayProcessor as CDP
+from Tools import copyToAnother as CTA
+from Tools import SaveToCSV as STC
+from Tools import FindMissingTransactions as COMP
 
 conf = Conf.ConfigurationProcessor()
 
@@ -15,14 +19,6 @@ def _apply_debit_multiplier(debit_transaction: CBT.CheckbookTransaction) -> None
     if((debit_transaction.is_debit() and int(debit_transaction.get_amount()) > 0)
         or (not debit_transaction.is_debit() and int(debit_transaction.get_amount()) < 0)):
         debit_transaction.set_value("Amount", debit_transaction.get_amount() * conf.get_property("DEBIT_MULTIPLIER"))
-
-def print_list_of_trans(header_text : str, width : int, fill_char : str, list_of_trans : List[CBT.CheckbookTransaction]):
-    header_line = header_text.center(width,fill_char)
-    print(header_line)
-    for current_trans in list_of_trans:
-        if(current_trans is not None):
-            print(current_trans)
-    print(fill_char * len(header_line))
 
 class CommandProcessor:
     """A class to process commands entered by the user. A function should be
@@ -34,7 +30,7 @@ class CommandProcessor:
         checkbook (Checkbook) : the current checkbook the user is using
     """
 
-    def __init__(self, checkbook: CB.Checkbook):
+    def __init__(self, checkbook: CB.Checkbook, display_processor :CDP.CLIDisplayProcessor):
         """Initializes the checkbook that will be used for the operations
 
         Args:
@@ -42,11 +38,12 @@ class CommandProcessor:
         """
         self.checkbook = checkbook
         self._trans_selection = ""
+        self.display_processor :CDP.CLIDisplayProcessor = display_processor
 
     def confirm_selection(self, command: str) -> bool:
         confirmed = True
 
-        user_input = input("Would you like to " + command + "? (Y or n) ")
+        user_input = self.display_processor.handle_single_input("Would you like to " + command + "? (Y or n) ")
         if user_input.lower() == "n":
             confirmed = False
 
@@ -61,35 +58,12 @@ class CommandProcessor:
         """
         if(self.confirm_selection("save")):
             self.checkbook.save(save_function)
-            print("save successful!")
+            self.display_processor.display_message("save successful!")
 
-    def _select_with_number(self, text_list: List[str], key: str, def_text: Optional[Any]=None) -> str:
-        """Select a value from the given list by using it's index
-
-        Args:
-            text_list (list) : a list of strings to Select
-            key (str)        : a prompt for input
-            def_text (str)   : default text to display
-
-        Returns:
-            (str) : the chosen value from the given list
-        """
-        max_len = len(max(text_list, key=len))
-        format_string = "{:<" + str(max_len) + "}"
-        prev_text = ""
-        if def_text is not None:
-            prev_text = "(" + str(def_text) + ")"
-
-        for i in range(len(text_list)):
-            print("  " + format_string.format(text_list[i]), i)
-        val = input(key + prev_text + " : ")
-        if val.strip() != "" and val.isdigit() and (0 <= int(val) < len(text_list)):
-            val = text_list[int(val)]
-        return val
 
     def _handle_edit_description(self, current_desc: str) -> str:
         edit_val = current_desc
-        user_input = input("Desc (" + current_desc + ")(- to prepend, + to append) : ").strip()
+        user_input = self.display_processor.handle_single_input("Desc (" + current_desc + ")(- to prepend, + to append) : ").strip()
         if(user_input.startswith("-")):
             user_input = user_input[1:]
             edit_val = user_input.strip() + " " + current_desc
@@ -104,19 +78,19 @@ class CommandProcessor:
 
     def process_add_command(self) -> None:
         """Adds a transaction to the checkbook"""
-        print("Enter your transaction")
+        self.display_processor.display_message("Enter your transaction")
         cbt = CBT.CheckbookTransaction()
         val = ""
         try:
             for key in CBT.KEYS:
                 if key != "Num":
                     if key == "Category":
-                        val = self._select_with_number(conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key)
+                        val = self.display_processor.select_from_list(conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key)
                     elif key == "Trans":
-                        val = self._select_with_number(commands.TRANS_TYPES, key)
+                        val = self.display_processor.select_from_list(commands.TRANS_TYPES, key)
                         self._trans_selection = val if val in commands.TRANS_TYPES else "all"
                     else:
-                        val = input(key + " : ")
+                        val = self.display_processor.handle_single_input(key + " : ")
 
                     cbt.set_value(key, string.capwords(val))
         except ValueError as e:
@@ -140,26 +114,26 @@ class CommandProcessor:
             *args (variable args): Can pass an int which specifies the transaction to edit
         """
         if not args:
-            transactions_to_edit = self._process_list_input(input("Which transaction(s) do you want to edit? : "))
+            transactions_to_edit = self._process_list_input(self.display_processor.handle_single_input("Which transaction(s) do you want to edit? : "))
         else:
             transactions_to_edit = self._process_list_input(args[0])
 
         transactions_from_cb = self.checkbook.find_transactions(transactions_to_edit)
-        print_list_of_trans(" Transaction(s) Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), transactions_from_cb)
+        self.display_processor.print_list_of_trans(" Transaction(s) Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), transactions_from_cb)
         if(transactions_from_cb is not None and self.confirm_selection("edit")):
             for trans in transactions_from_cb:
-                print_list_of_trans(" Current Transaction Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
+                self.display_processor.print_list_of_trans(" Current Transaction Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
                 for key in CBT.KEYS:
                     if key != "Num":
                         if key == "Category":
-                            val = self._select_with_number(conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key, trans.get_value(key))
+                            val = self.display_processor.select_from_list(conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key, trans.get_value(key))
                         elif key == "Trans":
-                            val = self._select_with_number(commands.TRANS_TYPES, key, trans.get_value(key))
+                            val = self.display_processor.select_from_list(commands.TRANS_TYPES, key, trans.get_value(key))
                             self._trans_selection = val if val.strip() != "" else trans.get_value(key)
                         elif key == "Desc":
                             val = self._handle_edit_description(trans.get_value("Desc"))
                         else:
-                            val = input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
+                            val = self.display_processor.handle_single_input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
                         if val.strip() != "":
                             trans.set_value(key, string.capwords(val))
                             self.checkbook.set_edited(True)
@@ -170,17 +144,17 @@ class CommandProcessor:
         """Generate a report"""
         format_string = "{:<" + str(CR.MAX_REPORT_TYPE) + "}"
         date_range = None
-        print("Report Types:")
+        self.display_processor.display_message("Report Types:")
         for i in range(len(CR.REPORT_TYPES)):
-            print(format_string.format(CR.REPORT_TYPES[i]), ":", i)
-        rep_type = int(input("Enter desired report number : "))
+            self.display_processor.display_message(format_string.format(CR.REPORT_TYPES[i]), ": " + str(i))
+        rep_type = int(self.display_processor.handle_single_input("Enter desired report number : "))
         cr = CR.CheckbookReport(self.checkbook)
         rep_method = CR.CheckbookReport.dispatcher[CR.REPORT_TYPES[rep_type]]
         if rep_type == 0:
-            date_range = input("Enter desired date criteria : ")
+            date_range = self.display_processor.handle_single_input("Enter desired date criteria : ")
 
         report_text = rep_method(cr, date_range)
-        print(report_text)
+        self.display_processor.display_message(report_text)
 
     def process_load_command(self, load_function: Callable[[str], List[CBT.CheckbookTransaction]], *args: str) -> None:
         """Load another checkbook
@@ -191,7 +165,7 @@ class CommandProcessor:
         """
         file_name: str = ""
         if not args:
-            file_name = input("Enter an XML file to load : ")
+            file_name = self.display_processor.handle_single_input("Enter an XML file to load : ")
         else:
             file_name = args[0]
 
@@ -209,7 +183,7 @@ class CommandProcessor:
 
     def process_help_command(self):
         """Prints the help text"""
-        print(commands.HELP_TEXT)
+        self.display_processor.display_message(commands.HELP_TEXT)
 
     def process_quit_command(self, save_function: Callable[[str, List[CBT.CheckbookTransaction]], None]) -> None:
         """Quit the program. Save if necessary.
@@ -222,23 +196,23 @@ class CommandProcessor:
 
     def process_delete_command_old(self, *args: str) -> None:
         if not args:
-            delete_trans = int(input("Which transaction do you want to delete? : "))
+            delete_trans = int(self.display_processor.handle_single_input("Which transaction do you want to delete? : "))
         else:
             delete_trans = int(args[0])
 
         trans = self.checkbook.find_transaction(delete_trans)
-        print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
+        self.display_processor.print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
         if(trans is not None and self.confirm_selection("delete")):
             self.checkbook.delete_transaction(trans)
 
     def process_delete_command(self, *args: str) -> None:
         if not args:
-            transactions_to_delete = self._process_list_input(input("Which transaction(s) do you want to delete? : "))
+            transactions_to_delete = self._process_list_input(self.display_processor.handle_single_input("Which transaction(s) do you want to delete? : "))
         else:
             transactions_to_delete = self._process_list_input(args[0])
 
         transactions_from_cb = self.checkbook.find_transactions(transactions_to_delete)
-        print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), transactions_from_cb)
+        self.display_processor.print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), transactions_from_cb)
         if(transactions_from_cb is not None and self.confirm_selection("delete")):
             self.checkbook.delete_transactions(transactions_from_cb)
 
@@ -255,7 +229,7 @@ class CommandProcessor:
     def process_search_command(self, checkbook: CB.Checkbook, *args: str) -> CB.Checkbook:
         sub_book = CB.Checkbook()
         if not args:
-            search_terms = input("Enter your search terms : ")
+            search_terms = self.display_processor.handle_single_input("Enter your search terms : ")
         else:
             search_terms = " ".join(args)
         trans_list = self._process_checkbook_sub_list(checkbook, "Desc", search_terms)
@@ -291,7 +265,7 @@ class CommandProcessor:
                 sequenceNum += 1
             CBT.CheckbookTransaction.set_uid(sequenceNum)
             self.checkbook.set_edited(True)
-            print("resequence successful!")
+            self.display_processor.display_message("resequence successful!")
 
     def _process_list_input(self, val: str) -> List[str]:
         return_val = [""]
@@ -300,3 +274,93 @@ class CommandProcessor:
             return_val = [x.strip() for x in val.split(",")]
 
         return return_val
+
+
+
+class CLIRun:
+
+    def __init__(self, command_processor:CommandProcessor, display_processor:CDP.CLIDisplayProcessor, save_function: Callable[[str, List[CBT.CheckbookTransaction]], None], load_function: Callable[[str], List[CBT.CheckbookTransaction]]):
+        self.command_processor = command_processor
+        self.display_processor = display_processor
+        self.save_function = save_function
+        self.load_function = load_function
+        self.checkbook = self.command_processor.checkbook
+
+    def _handle_user_input(self) -> List[List[str]]:
+        """Gather user input. If the input is empty, make it an empty string.
+        Returns:
+            inputVal (list) : list containing one or more strings
+        """
+        inputVal: List[List[str]] = []
+        commands = self.display_processor.handle_single_input("What would you like to do? : ").strip().split("|")
+        for command in commands:
+            inputVal.append(command.strip().split(" ", 2))
+
+        return inputVal
+
+    def main(self):
+        self.display_processor.display_message("Welcome to your checkbook!")
+        checkbook = self.checkbook
+        self.command_processor.process_print_command(checkbook)
+        self.display_processor.display_checkbook(checkbook)
+        quit = False
+        needs_to_print = False
+        while(not quit):
+            try:
+                all_val = self._handle_user_input()
+                for val in all_val:
+                    if(val[0] == commands.HELP_COMMAND):
+                        self.command_processor.process_help_command()
+                    elif(val[0] == commands.PRINT_COMMAND):
+                            checkbook = self.command_processor.process_print_command(checkbook, *val[1:])
+                            needs_to_print = True
+                    elif(val[0] == commands.ADD_COMMAND):
+                        self.command_processor.process_add_command()
+                    elif(val[0] == commands.EDIT_COMMAND):
+                        self.command_processor.process_edit_command(*val[1:])
+                    elif(val[0] == commands.REPORT_COMMAND):
+                        self.command_processor.process_report_command()
+                    elif(val[0] == commands.LOAD_COMMAND):
+                        self.command_processor.process_save_command(self.save_function)
+                        self.command_processor.process_load_command(self.load_function, *val[1:])
+                        checkbook = self.checkbook
+                        needs_to_print = True
+                    elif(val[0] == commands.SAVE_COMMAND):
+                        self.command_processor.process_save_command(self.save_function)
+                    elif(val[0] == commands.DELETE_COMMAND):
+                        self.command_processor.process_delete_command(*val[1:])
+                    elif(val[0] in commands.EXIT_LIST):
+                        self.command_processor.process_quit_command(self.save_function)
+                        quit = True
+                    elif (val[0] == commands.SORT_COMMAND):
+                        checkbook = self.command_processor.process_sort_command(checkbook, *val[1:])
+                        needs_to_print = True
+                    elif (val[0] == commands.SEARCH_COMMAND):
+                        checkbook = self.command_processor.process_search_command(checkbook, *val[1:])
+                        needs_to_print = True
+                    elif (val[0] == commands.RESEQUENCE_COMMAND):
+                        self.command_processor.process_resequence_command(checkbook)
+                        needs_to_print = True
+                    elif (val[0] == commands.COPY_COMMAND):
+                        CTA.copy(self.checkbook.get_file_name(), conf.get_property("DEFAULT_COPY_TO"))
+                    elif(val[0] == commands.CSV_COMMAND):
+                        STC.save_to_csv(self.checkbook.get_file_name())
+                    elif(val[0] == commands.COMPARE_COMMAND):
+                        checkbook = COMP.process_compare()
+                        needs_to_print = True
+                    else:
+                        error = InvalidCommandError(val[0], "Invalid command entered : ")
+                        raise error
+                        
+                if(needs_to_print):
+                    self.display_processor.display_checkbook(checkbook)
+                    needs_to_print = False
+                    checkbook = self.checkbook
+            except InvalidDateError as date_error:
+                print(date_error)
+            except InvalidDateRangeError as month_error:
+                print(month_error)
+            except InvalidCommandError as command_error:
+                print(command_error)
+            except Exception as e:
+                print(e)
