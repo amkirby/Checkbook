@@ -117,7 +117,7 @@ class CheckbookTransaction:
     def set_uid(cls, value: int) -> None:
         cls._uid = value    
 
-    def _wrap_text(self, text: str, length: int) -> str:
+    def _wrap_text(self, text: str, length: int) -> List[str]:
         wrapped_text = textwrap.wrap(text, width=length)
 
         if(len(text) > length):
@@ -125,15 +125,15 @@ class CheckbookTransaction:
 
         return wrapped_text
     
-    def _create_default_row(self):
-        default_row = {}
+    def _create_default_row(self) -> Dict[str, str]:
+        default_row :Dict[str, str] = {}
         for key in KEYS:
             default_row[key] = ""
 
         return default_row
 
-    def _get_row_for_index(self, rows_to_create, index):
-        row = {}
+    def _get_row_for_index(self, rows_to_create :List[Dict[str, str]], index :int) -> Dict[str, str]:
+        row :Dict[str, str] = {}
 
         if(len(rows_to_create) == index):
             rows_to_create.append(self._create_default_row())
@@ -142,14 +142,14 @@ class CheckbookTransaction:
 
         return row
 
-    def _fill_in_rows(self, rows_to_create, key: str, text_to_wrap: List[str]) -> None:
+    def _fill_in_rows(self, rows_to_create :List[Dict[str, str]], key: str, text_to_wrap: List[str]) -> None:
         for i in range(len(text_to_wrap)):
             current_row = self._get_row_for_index(rows_to_create, i)
             current_row[key] = text_to_wrap[i]
 
-    def _wrap_transaction_text(self, transaction_vals) -> str:
+    def _wrap_transaction_text(self, transaction_vals :Dict[str, str]) -> str:
         wrapped_text = ""
-        rows_to_create = []
+        rows_to_create :List[Dict[str, str]] = []
 
         for i in range(len(KEYS)):
             text_after_wrap = textwrap.fill(transaction_vals[KEYS[i]], width=conf.get_property("SIZE_LIST")[i]).split("\n")

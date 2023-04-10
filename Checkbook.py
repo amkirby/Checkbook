@@ -59,6 +59,7 @@ class Checkbook:
 
         list_of_paths = conf.get_property("PATH_FOR_REGISTERS").split(";")
         list_of_paths.append("./") # always check current directory
+        full_path = ""
         for path in list_of_paths:
             full_path = path + file_name
             self.check_register = load_function(full_path)
@@ -288,7 +289,7 @@ class Checkbook:
                 transaction = currentTrans
         return transaction
 
-    def find_transactions(self, in_trans: List[int]) -> List[CBT.CheckbookTransaction]:
+    def find_transactions(self, in_trans: List[str]) -> List[CBT.CheckbookTransaction]:
         """Gets the specified transaction number from the register
 
         Args:

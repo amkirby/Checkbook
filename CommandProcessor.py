@@ -1,5 +1,5 @@
 import string
-from typing import Any, Callable, List, Optional
+from typing import Callable, List
 
 import Checkbook as CB
 import checkbookReport as CR
@@ -120,7 +120,7 @@ class CommandProcessor:
 
         transactions_from_cb = self.checkbook.find_transactions(transactions_to_edit)
         self.display_processor.print_list_of_trans(" Transaction(s) Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), transactions_from_cb)
-        if(transactions_from_cb is not None and self.confirm_selection("edit")):
+        if(transactions_from_cb and self.confirm_selection("edit")):
             for trans in transactions_from_cb:
                 self.display_processor.print_list_of_trans(" Current Transaction Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
                 for key in CBT.KEYS:
@@ -146,7 +146,7 @@ class CommandProcessor:
         date_range = None
         self.display_processor.display_message("Report Types:")
         for i in range(len(CR.REPORT_TYPES)):
-            self.display_processor.display_message(format_string.format(CR.REPORT_TYPES[i]), ": " + str(i))
+            self.display_processor.display_message(format_string.format(CR.REPORT_TYPES[i]) + " : " + str(i))
         rep_type = int(self.display_processor.handle_single_input("Enter desired report number : "))
         cr = CR.CheckbookReport(self.checkbook)
         rep_method = CR.CheckbookReport.dispatcher[CR.REPORT_TYPES[rep_type]]
@@ -194,16 +194,16 @@ class CommandProcessor:
         if self.checkbook.is_edited():
             self.process_save_command(save_function)
 
-    def process_delete_command_old(self, *args: str) -> None:
-        if not args:
-            delete_trans = int(self.display_processor.handle_single_input("Which transaction do you want to delete? : "))
-        else:
-            delete_trans = int(args[0])
+    # def process_delete_command_old(self, *args: str) -> None:
+    #     if not args:
+    #         delete_trans = int(self.display_processor.handle_single_input("Which transaction do you want to delete? : "))
+    #     else:
+    #         delete_trans = int(args[0])
 
-        trans = self.checkbook.find_transaction(delete_trans)
-        self.display_processor.print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
-        if(trans is not None and self.confirm_selection("delete")):
-            self.checkbook.delete_transaction(trans)
+    #     trans = self.checkbook.find_transaction(delete_trans)
+    #     self.display_processor.print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
+    #     if(trans and self.confirm_selection("delete")):
+    #         self.checkbook.delete_transaction(trans)
 
     def process_delete_command(self, *args: str) -> None:
         if not args:
@@ -213,7 +213,7 @@ class CommandProcessor:
 
         transactions_from_cb = self.checkbook.find_transactions(transactions_to_delete)
         self.display_processor.print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), transactions_from_cb)
-        if(transactions_from_cb is not None and self.confirm_selection("delete")):
+        if(transactions_from_cb and self.confirm_selection("delete")):
             self.checkbook.delete_transactions(transactions_from_cb)
 
     def process_sort_command(self, checkbook: CB.Checkbook, *args: str) -> CB.Checkbook:
@@ -268,9 +268,9 @@ class CommandProcessor:
             self.display_processor.display_message("resequence successful!")
 
     def _process_list_input(self, val: str) -> List[str]:
-        return_val = [""]
+        return_val = ["-1"]
 
-        if(val is not None):
+        if(val != ""):
             return_val = [x.strip() for x in val.split(",")]
 
         return return_val

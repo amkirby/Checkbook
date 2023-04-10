@@ -1,16 +1,11 @@
 import locale
 from datetime import datetime
 import textwrap
-from typing import Any, Callable, List, Optional
+from typing import Any, Dict, List, Optional
 
 import CheckbookTransaction as CBT
 import ConfigurationProcessor as Conf
-# from Tools import copyToAnother as CTA
-# from Tools import SaveToCSV as STC
-# from Tools import FindMissingTransactions as COMP
 from Checkbook import Checkbook
-#from CommandProcessor import CommandProcessor
-from Constants import commands
 from Exceptions import *
 
 conf = Conf.ConfigurationProcessor()
@@ -59,15 +54,15 @@ class CLIDisplayProcessor:
         
     #     return needs_wrapped
 
-    def _create_default_row(self):
-        default_row = {}
+    def _create_default_row(self) -> Dict[str, str]:
+        default_row :Dict[str, str] = {}
         for key in CBT.KEYS:
             default_row[key] = ""
 
         return default_row
 
-    def _get_row_for_index(self, rows_to_create, index):
-        row = {}
+    def _get_row_for_index(self, rows_to_create  :List[Dict[str, str]], index :int) -> Dict[str, str]:
+        row :Dict[str, str] = {}
 
         if(len(rows_to_create) == index):
             rows_to_create.append(self._create_default_row())
@@ -76,14 +71,14 @@ class CLIDisplayProcessor:
 
         return row
 
-    def _fill_in_rows(self, rows_to_create, key: str, text_to_wrap: List[str]) -> None:
+    def _fill_in_rows(self, rows_to_create :List[Dict[str, str]], key: str, text_to_wrap: List[str]) -> None:
         for i in range(len(text_to_wrap)):
             current_row = self._get_row_for_index(rows_to_create, i)
             current_row[key] = text_to_wrap[i]
 
-    def _wrap_transaction_text(self, transaction_vals) -> str:
-        wrapped_text = ""
-        rows_to_create = []
+    def _wrap_transaction_text(self, transaction_vals :Dict[str, str]) -> str:
+        wrapped_text :str = ""
+        rows_to_create :List[Dict[str, str]] = []
 
         for i in range(len(CBT.KEYS)):
             text_after_wrap = textwrap.fill(transaction_vals[CBT.KEYS[i]], width=conf.get_property("SIZE_LIST")[i]).split("\n")
@@ -187,7 +182,7 @@ class CLIDisplayProcessor:
 
         print(output)
 
-    def display_checkbook(self, checkbook):
+    def display_checkbook(self, checkbook :Checkbook):
         self.print_checkbook(checkbook)
 
     def display_message(self, message :str):
@@ -200,8 +195,8 @@ class CLIDisplayProcessor:
         header_line = header_text.center(width,fill_char)
         print(header_line)
         for current_trans in list_of_trans:
-            if(current_trans is not None):
-                print(current_trans)
+            # if(current_trans != None):
+            print(current_trans)
         print(fill_char * len(header_line))
 
     def select_from_list(self, text_list: List[str], key: str, def_text: Optional[Any]=None) -> str:
