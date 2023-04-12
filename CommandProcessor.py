@@ -275,7 +275,16 @@ class CommandProcessor:
 
         return return_val
 
+    def process_copy_command(self, from_file :str, to_file :str) -> None:
+        CTA.copy(from_file, to_file)
 
+    def process_csv_command(self, file_name :str) -> None:
+        STC.save_to_csv(file_name)
+
+    def process_compare_command(self) -> CB.Checkbook:
+        checkbook = COMP.process_compare()
+
+        return checkbook
 
 class CLIRun:
 
@@ -342,11 +351,11 @@ class CLIRun:
                         self.command_processor.process_resequence_command(checkbook)
                         needs_to_print = True
                     elif (val[0] == commands.COPY_COMMAND):
-                        CTA.copy(self.checkbook.get_file_name(), conf.get_property("DEFAULT_COPY_TO"))
+                        self.command_processor.process_copy_command(self.checkbook.get_file_name(), conf.get_property("DEFAULT_COPY_TO"))
                     elif(val[0] == commands.CSV_COMMAND):
-                        STC.save_to_csv(self.checkbook.get_file_name())
+                        self.command_processor.process_csv_command(self.checkbook.get_file_name())
                     elif(val[0] == commands.COMPARE_COMMAND):
-                        checkbook = COMP.process_compare()
+                        checkbook = self.command_processor.process_compare_command()
                         needs_to_print = True
                     else:
                         error = InvalidCommandError(val[0], "Invalid command entered : ")
