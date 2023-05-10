@@ -15,11 +15,6 @@ from Tools import FindMissingTransactions as COMP
 conf = Conf.ConfigurationProcessor()
 
 
-def _apply_debit_multiplier(debit_transaction: CBT.CheckbookTransaction) -> None:
-    if((debit_transaction.is_debit() and int(debit_transaction.get_amount()) > 0)
-        or (not debit_transaction.is_debit() and int(debit_transaction.get_amount()) < 0)):
-        debit_transaction.set_value("Amount", debit_transaction.get_amount() * conf.get_property("DEBIT_MULTIPLIER"))
-
 class CommandProcessor:
     """A class to process commands entered by the user. A function should be
     passed to each method to do the actual processing.
@@ -39,6 +34,11 @@ class CommandProcessor:
         self.checkbook = checkbook
         self._trans_selection = ""
         self.display_processor :CDP.CLIDisplayProcessor = display_processor
+
+    def _apply_debit_multiplier(self, debit_transaction: CBT.CheckbookTransaction) -> None:
+        if((debit_transaction.is_debit() and int(debit_transaction.get_amount()) > 0)
+            or (not debit_transaction.is_debit() and int(debit_transaction.get_amount()) < 0)):
+            debit_transaction.set_value("Amount", debit_transaction.get_amount() * conf.get_property("DEBIT_MULTIPLIER"))
 
     def confirm_selection(self, command: str) -> bool:
         confirmed = True
@@ -104,7 +104,7 @@ class CommandProcessor:
             else:
                 raise e
 
-        _apply_debit_multiplier(cbt)
+        self._apply_debit_multiplier(cbt)
         self.checkbook.add_single_trans(cbt)
 
     def process_edit_command(self, *args: str) -> None:
@@ -138,7 +138,7 @@ class CommandProcessor:
                             trans.set_value(key, string.capwords(val))
                             self.checkbook.set_edited(True)
 
-                _apply_debit_multiplier(trans)
+                self._apply_debit_multiplier(trans)
 
     def process_report_command(self):
         """Generate a report"""
