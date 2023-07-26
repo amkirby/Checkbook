@@ -58,7 +58,6 @@ class Checkbook:
         self.file_name = file_name
 
         list_of_paths = conf.get_property("PATH_FOR_REGISTERS").split(";")
-        list_of_paths.append("./") # always check current directory
         full_path = ""
         for path in list_of_paths:
             full_path = path + file_name
