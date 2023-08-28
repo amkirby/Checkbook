@@ -60,7 +60,5 @@ def copy(from_book : str = "", to_book : str = ""):
         to_command_processor.process_save_command(save_function)
 
 
-# COMPARE LOGIC
-# for trans in from_checkbook.get_register():
-#     if(trans not in to_checkbook.get_register()):
-#         print(trans)
+def qt_copy(from_book : str = "", to_book : str = ""):
+    pass
