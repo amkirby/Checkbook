@@ -12,7 +12,6 @@ from Tools import copyToAnother as CTA
 from Tools import SaveToCSV as STC
 from Tools import FindMissingTransactions as COMP
 
-conf = Conf.ConfigurationProcessor()
 
 
 class CommandProcessor:
@@ -31,6 +30,7 @@ class CommandProcessor:
         Args:
             checkbook (Checkbook) : the checkbook to operate on
         """
+        self.conf = Conf.ConfigurationProcessor()
         self.checkbook = checkbook
         self._trans_selection = ""
         self.display_processor :CDP.CLIDisplayProcessor = display_processor
@@ -38,7 +38,7 @@ class CommandProcessor:
     def _apply_debit_multiplier(self, debit_transaction: CBT.CheckbookTransaction) -> None:
         if((debit_transaction.is_debit() and int(debit_transaction.get_amount()) > 0)
             or (not debit_transaction.is_debit() and int(debit_transaction.get_amount()) < 0)):
-            debit_transaction.set_value("Amount", debit_transaction.get_amount() * conf.get_property("DEBIT_MULTIPLIER"))
+            debit_transaction.set_value("Amount", debit_transaction.get_amount() * self.conf.get_property("DEBIT_MULTIPLIER"))
 
     def confirm_selection(self, command: str) -> bool:
         confirmed = True
@@ -85,7 +85,7 @@ class CommandProcessor:
             for key in CBT.KEYS:
                 if key != "Num":
                     if key == "Category":
-                        val = self.display_processor.select_from_list(conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key)
+                        val = self.display_processor.select_from_list(self.conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key)
                     elif key == "Trans":
                         val = self.display_processor.select_from_list(commands.TRANS_TYPES, key)
                         self._trans_selection = val if val in commands.TRANS_TYPES else "all"
@@ -119,14 +119,14 @@ class CommandProcessor:
             transactions_to_edit = self._process_list_input(args[0])
 
         transactions_from_cb = self.checkbook.find_transactions(transactions_to_edit)
-        self.display_processor.print_list_of_trans(" Transaction(s) Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), transactions_from_cb)
+        self.display_processor.print_list_of_trans(" Transaction(s) Being Edited ", self.conf.get_property("MAX_WIDTH"), self.conf.get_property("TRANS_FILL_CHAR"), transactions_from_cb)
         if(transactions_from_cb and self.confirm_selection("edit")):
             for trans in transactions_from_cb:
-                self.display_processor.print_list_of_trans(" Current Transaction Being Edited ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), [trans])
+                self.display_processor.print_list_of_trans(" Current Transaction Being Edited ", self.conf.get_property("MAX_WIDTH"), self.conf.get_property("TRANS_FILL_CHAR"), [trans])
                 for key in CBT.KEYS:
                     if key != "Num":
                         if key == "Category":
-                            val = self.display_processor.select_from_list(conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key, trans.get_value(key))
+                            val = self.display_processor.select_from_list(self.conf.get_property("CATEGORIES_FOR_ADD")[self._trans_selection], key, trans.get_value(key))
                         elif key == "Trans":
                             val = self.display_processor.select_from_list(commands.TRANS_TYPES, key, trans.get_value(key))
                             self._trans_selection = val if val.strip() != "" else trans.get_value(key)
@@ -212,14 +212,14 @@ class CommandProcessor:
             transactions_to_delete = self._process_list_input(args[0])
 
         transactions_from_cb = self.checkbook.find_transactions(transactions_to_delete)
-        self.display_processor.print_list_of_trans(" Transaction Being Deleted ", conf.get_property("MAX_WIDTH"), conf.get_property("TRANS_FILL_CHAR"), transactions_from_cb)
+        self.display_processor.print_list_of_trans(" Transaction Being Deleted ", self.conf.get_property("MAX_WIDTH"), self.conf.get_property("TRANS_FILL_CHAR"), transactions_from_cb)
         if(transactions_from_cb and self.confirm_selection("delete")):
             self.checkbook.delete_transactions(transactions_from_cb)
 
     def process_sort_command(self, checkbook: CB.Checkbook, *args: str) -> CB.Checkbook:
         if not args:
             checkbook.order_by("Num")
-            sort_key = conf.get_property("SORT_BY_KEY")
+            sort_key = self.conf.get_property("SORT_BY_KEY")
         else:
             sort_key = args[0]
 
@@ -351,7 +351,7 @@ class CLIRun:
                         self.command_processor.process_resequence_command(checkbook)
                         needs_to_print = True
                     elif (val[0] == commands.COPY_COMMAND):
-                        self.command_processor.process_copy_command(self.checkbook.get_file_name(), conf.get_property("DEFAULT_COPY_TO"))
+                        self.command_processor.process_copy_command(self.checkbook.get_file_name(), self.command_processor.conf.get_property("DEFAULT_COPY_TO"))
                     elif(val[0] == commands.CSV_COMMAND):
                         self.command_processor.process_csv_command(self.checkbook.get_file_name())
                     elif(val[0] == commands.COMPARE_COMMAND):
