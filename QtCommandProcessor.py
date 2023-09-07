@@ -1,4 +1,5 @@
 
+import string
 import Checkbook as CB
 from Tools import copyToAnother as CTA
 from CommandProcessor import CommandProcessor
@@ -17,7 +18,7 @@ class QtCommandProcessor(CommandProcessor):
         if isinstance(widget, QComboBox):
             text = widget.currentText()
         elif isinstance(widget, QTextEdit):
-            text = widget.toPlainText()
+            text = string.capwords(widget.toPlainText())
         else:
             text = widget.text()
 
