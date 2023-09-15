@@ -65,6 +65,14 @@ class Checkbook:
             if(len(self.check_register) > 0):
                 self.file_name = full_path
                 break
+            else:
+                # try to see if keyed in without extension
+                full_path = path + file_name + ".xml"
+                self.check_register = load_function(full_path)
+                if(len(self.check_register) > 0):
+                    self.file_name = full_path
+                    break
+
         if(len(self.check_register) == 0):
             # file doesn't exist so it will be created
             self.file_name = file_name
