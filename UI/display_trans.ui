@@ -60,6 +60,11 @@
    </column>
    <column>
     <property name="text">
+     <string>User</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
      <string>Trans</string>
     </property>
    </column>

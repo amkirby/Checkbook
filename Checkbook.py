@@ -222,6 +222,17 @@ class Checkbook:
                 return_list.append(cbt)
 
         return return_list
+    
+    def get_user(self, user: str) -> List[CBT.CheckbookTransaction]:
+        return_list: List[CBT.CheckbookTransaction] = []
+        if(type(user) is not str):
+            search_term = str(user)
+        for cbt in self.check_register:
+            transaction_user = str(cbt.get_value("User"))
+            if(user.lower() in transaction_user.lower()):
+                return_list.append(cbt)
+
+        return return_list
 
     def get_total_for_trans(self, trans: str) -> float:
         """Get the total amount for the specified trans type
@@ -441,5 +452,6 @@ class Checkbook:
         "Date": get_month,
         "Trans": get_transaction_type,
         "Category": get_category,
-        "Desc": get_description
+        "Desc": get_description,
+        "User": get_user
     }

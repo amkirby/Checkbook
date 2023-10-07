@@ -38,6 +38,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QComboBox" name="Add_User">
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QComboBox" name="Add_Trans">
        <property name="editable">
         <bool>true</bool>
@@ -138,6 +145,11 @@
     <column>
      <property name="text">
       <string>Date</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>User</string>
      </property>
     </column>
     <column>

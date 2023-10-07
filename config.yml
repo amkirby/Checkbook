@@ -2,9 +2,10 @@
 DATE_SIZE   : 12
 TRANS_SIZE  : 8
 CAT_SIZE    : 15
-DESC_SIZE   : 40
+DESC_SIZE   : 47
 AMOUNT_SIZE : 12
 NUM_SIZE    : 6
+USER_SIZE   : 7
 
 # display separators
 HLINE_CHAR : '='
@@ -15,7 +16,8 @@ REPORT_HEADER_FILL_CHAR : "*"
 # categories for selection
 DEBIT_CATEGORIES  : ["Groceries", "Gas", "Bills", "Entertainment", "Food", "Savings", "Good Time","Vacation","Christmas", "Wedding", "Medical","Whiskey", "Other"]
 CREDIT_CATEGORIES : ["Bills", "Other", "Paycheck"]
-
+USERS : ["Share", "Mine"]
+USE_GUI : False
 
 DATE_FORMAT  : "%m/%d/%Y" # format date must be entered in (default : %m/%d/%Y -> m/d/yyyy)
 THOUSAND_SEP : True # use the thousand separator for the amount

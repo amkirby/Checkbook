@@ -139,7 +139,7 @@ class CLIDisplayProcessor:
         string += format_string.format(locale.currency(total, grouping=conf.get_property("THOUSAND_SEP")))
         # format final bar
         format_string = '{:>' + str((conf.get_property("SIZE_LIST")[-1]) + 2) + '}'
-        string += format_string.format(conf.get_property("VLINE_CHAR"))
+        string += " " + format_string.format(conf.get_property("VLINE_CHAR"))
         return string
 
 

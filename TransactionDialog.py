@@ -28,8 +28,14 @@ class TransactionDialog(QDialog):
         self.Trans.addItems(trans)
         self.Trans.setCurrentIndex(0)
 
+        # populate the User box
+        users = conf.get_property("USERS")
+        self.User.addItems(users)
+        self.User.setCurrentIndex(0)
+
         # populate values from the transaction
         self.Date.setDate(QDate(self.transaction.get_date()))
+        self.User.setCurrentText(self.transaction.get_value("User"))
         self.Trans.setCurrentText(self.transaction.get_value("Trans"))
         self.Category.setCurrentText(self.transaction.get_value("Category"))
         self.Desc.setText(self.transaction.get_value("Desc"))
@@ -39,6 +45,7 @@ class TransactionDialog(QDialog):
     def accept(self) -> None:
         # save the transaction
         self.transaction.set_value("Date", self.Date.date().toPyDate().__format__(conf.get_property("DATE_FORMAT")))
+        self.transaction.set_value("User", self.User.currentText())
         self.transaction.set_value("Trans", self.Trans.currentText())
         self.transaction.set_value("Category", self.Category.currentText())
         self.transaction.set_value("Desc", self.Desc.text())

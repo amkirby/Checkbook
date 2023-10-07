@@ -89,6 +89,8 @@ class CommandProcessor:
                     elif key == "Trans":
                         val = self.display_processor.select_from_list(commands.TRANS_TYPES, key)
                         self._trans_selection = val if val in commands.TRANS_TYPES else "all"
+                    elif key == "User":
+                        val = self.display_processor.select_from_list(self.conf.get_property("USERS"), key)
                     else:
                         val = self.display_processor.handle_single_input(key + " : ")
 
@@ -132,6 +134,8 @@ class CommandProcessor:
                             self._trans_selection = val if val.strip() != "" else trans.get_value(key)
                         elif key == "Desc":
                             val = self._handle_edit_description(trans.get_value("Desc"))
+                        elif key == "User":
+                            val = self.display_processor.select_from_list(self.conf.get_property("USERS"), key, trans.get_value(key))
                         else:
                             val = self.display_processor.handle_single_input(key + " (" + str(trans.get_value(key)) + ")" + " : ")
                         if val.strip() != "":

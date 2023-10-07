@@ -10,7 +10,7 @@ conf = Conf.ConfigurationProcessor()
 locale.setlocale(conf.get_property("LOCALE"), '')  # set the locale for printing the amount
 
 # the Keys used for the Transaction and printing the transaction
-KEYS = ["Date", "Trans", "Category", "Desc", "Amount", "Num"]
+KEYS = ["Date", "User", "Trans", "Category", "Desc", "Amount", "Num"]
 
 def _build_template():
     template = ""

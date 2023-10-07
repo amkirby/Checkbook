@@ -155,6 +155,11 @@ class MainWindow(QMainWindow):
         self.Add_Trans.addItems(trans)
         self.Add_Trans.setCurrentIndex(0)
 
+        # populate the User box
+        users = conf.get_property("USERS")
+        self.Add_User.addItems(users)
+        self.Add_User.setCurrentIndex(0)
+
         # set the Num field to the latest UID
         self.Add_Num.setText(str(CBT.CheckbookTransaction._uid))
 
