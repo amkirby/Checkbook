@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtCore import *
+from PyQt5.QtCore import QDate
 
 from PyQt5.uic import loadUi
 

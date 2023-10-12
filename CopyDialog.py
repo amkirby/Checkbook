@@ -1,7 +1,6 @@
 import typing
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QDialog, QWidget
-from PyQt5.QtCore import *
 
 from PyQt5.uic import loadUi
 

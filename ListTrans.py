@@ -25,7 +25,7 @@ class ListTrans(QDialog):
     def _format(self, value):
         formatted_value = str(value)
         if type(value) is date:
-            formatted_value = datetime.strftime(value, conf.get_property("DATE_FORMAT"))
+            formatted_value = datetime.strftime(datetime.combine(value, datetime.min.time()), conf.get_property("DATE_FORMAT"))
         elif type(value) is float:
             formatted_value = locale.currency(value, grouping=conf.get_property("THOUSAND_SEP"))
 
