@@ -144,7 +144,7 @@ class CommandProcessor:
 
                 self._apply_debit_multiplier(trans)
 
-    def process_report_command(self):
+    def process_report_command(self, checkbook):
         """Generate a report"""
         format_string = "{:<" + str(CR.MAX_REPORT_TYPE) + "}"
         date_range = None
@@ -152,7 +152,7 @@ class CommandProcessor:
         for i in range(len(CR.REPORT_TYPES)):
             self.display_processor.display_message(format_string.format(CR.REPORT_TYPES[i]) + " : " + str(i))
         rep_type = int(self.display_processor.handle_single_input("Enter desired report number : "))
-        cr = CR.CheckbookReport(self.checkbook)
+        cr = CR.CheckbookReport(checkbook)
         rep_method = CR.CheckbookReport.dispatcher[CR.REPORT_TYPES[rep_type]]
         if rep_type == 0:
             date_range = self.display_processor.handle_single_input("Enter desired date criteria : ")
@@ -332,7 +332,8 @@ class CLIRun:
                     elif(val[0] == commands.EDIT_COMMAND):
                         self.command_processor.process_edit_command(*val[1:])
                     elif(val[0] == commands.REPORT_COMMAND):
-                        self.command_processor.process_report_command()
+                        self.command_processor.process_report_command(checkbook)
+                        needs_to_print = False
                     elif(val[0] == commands.LOAD_COMMAND):
                         self.command_processor.process_save_command(self.save_function)
                         self.command_processor.process_load_command(self.load_function, *val[1:])
@@ -367,8 +368,8 @@ class CLIRun:
                         
                 if(needs_to_print):
                     self.display_processor.display_checkbook(checkbook)
-                    needs_to_print = False
-                    checkbook = self.checkbook
+                needs_to_print = False
+                checkbook = self.checkbook
             except InvalidDateError as date_error:
                 print(date_error)
             except InvalidDateRangeError as month_error:
