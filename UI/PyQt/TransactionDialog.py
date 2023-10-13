@@ -11,7 +11,7 @@ conf = Conf.ConfigurationProcessor()
 class TransactionDialog(QDialog):
     def __init__(self, cbt, command_processor):
         super(TransactionDialog, self).__init__()
-        loadUi("UI/transaction.ui", self)
+        loadUi("UI/PyQt/transaction.ui", self)
         self.transaction = cbt
         self.processor = command_processor
 

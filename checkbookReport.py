@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import ConfigurationProcessor as Conf
 from Checkbook import Checkbook
 from CheckbookTransaction import CheckbookTransaction
-from DateProcessor import DateProcessor
+from DataProcessors.DateProcessor import DateProcessor
 
 conf = Conf.ConfigurationProcessor()
 

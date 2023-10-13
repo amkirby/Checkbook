@@ -7,7 +7,7 @@ from PyQt5.uic import loadUi
 class SingleInput(QDialog):
     def __init__(self, input_message):
         super(SingleInput, self).__init__()
-        loadUi("UI/single_input.ui", self)
+        loadUi("UI/PyQt/single_input.ui", self)
         self.input_message = input_message
         self.input_label.setText(input_message)
 

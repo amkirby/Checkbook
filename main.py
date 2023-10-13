@@ -10,8 +10,7 @@ import CommandProcessor as CP
 import ConfigurationProcessor as Conf
 from DataProcessors import SQLProcessor as SCP
 from DataProcessors import XMLProcessor as XML
-from DisplayProcessors import CLIDisplayProcessor
-from QtRun import QtRun
+from DisplayProcessors import CLIDisplayProcessor, QtDisplayProcessor
 
 
 if __name__ == "__main__":
@@ -31,7 +30,7 @@ if __name__ == "__main__":
         ##################
         # Qt GUI
         ##################
-        run = QtRun(save_function, load_function, checkbook)
+        run = QtDisplayProcessor.QtDisplayProcessor(save_function, load_function, checkbook)
         run.main()
     else:
         ##################

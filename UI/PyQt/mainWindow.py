@@ -5,15 +5,15 @@ from PyQt5.uic import loadUi
 from PyQt5 import  QtWidgets
 from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox,QFormLayout
-from CopyDialog import CopyDialog
 from DataProcessors import XMLProcessor as XML
 import Checkbook as CB
 import CheckbookTransaction as CBT
 import ConfigurationProcessor as Conf
-from ListTrans import ListTrans
 from QtCommandProcessor import QtCommandProcessor
-from SingleInput import SingleInput
-from TransactionDialog import TransactionDialog
+from UI.PyQt.CopyDialog import CopyDialog
+from UI.PyQt.ListTrans import ListTrans
+from UI.PyQt.SingleInput import SingleInput
+from UI.PyQt.TransactionDialog import TransactionDialog
 
 
 
@@ -66,7 +66,7 @@ class MainWindow(QMainWindow):
         self.quit_button.clicked.connect(self.close)
 
     def pyqt5_designer_setup(self):
-        loadUi("UI/mainWindow.ui", self)
+        loadUi("UI/PyQt/mainWindow.ui", self)
 
         # set the column widths based around the specified sizes
         for i in range(len(conf.get_property("SIZE_LIST"))):

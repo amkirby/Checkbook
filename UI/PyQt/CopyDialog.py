@@ -12,7 +12,7 @@ conf = Conf.ConfigurationProcessor()
 class CopyDialog(QDialog):
     def __init__(self, from_file, to_file):
         super(CopyDialog, self).__init__()
-        loadUi("UI/copy_input.ui", self)
+        loadUi("UI/PyQt/copy_input.ui", self)
         self.from_file = from_file
         self.to_file = to_file
 

@@ -14,7 +14,7 @@ conf = Conf.ConfigurationProcessor()
 class ListTrans(QDialog):
     def __init__(self, list_of_trans):
         super(ListTrans, self).__init__()
-        loadUi("UI/display_trans.ui", self)
+        loadUi("UI/PyQt/display_trans.ui", self)
 
         self.list_of_trans = list_of_trans
         cb = CB.Checkbook()

@@ -3,7 +3,7 @@ from typing import Any, Callable, List, Optional
 
 import CheckbookTransaction as CBT
 import ConfigurationProcessor as Conf
-from DateProcessor import DateProcessor
+from DataProcessors.DateProcessor import DateProcessor
 
 conf = Conf.ConfigurationProcessor()
 
