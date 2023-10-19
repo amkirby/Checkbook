@@ -75,8 +75,21 @@ class MainWindow(QMainWindow):
         # display processor methods would handle setting fields, calling window creations / creating windows,
         # and sending data back-and-forth.
 
+        # update category dropdown dynamically based on the transaction selected
+        self.Add_Trans.currentIndexChanged.connect(self.update_category)
+
         self.repaint()
 
+    def update_category(self):
+        trans_needed = self.Add_Trans.currentText()
+        if trans_needed != "":
+            trans_needed = trans_needed.upper() + "_"
+
+        # populate the category box based on the transaction chosen
+        cats = conf.get_property(trans_needed + "CATEGORIES")
+        self.Add_Category.clear()
+        self.Add_Category.addItems(cats)
+        self.Add_Category.setCurrentIndex(0)
 
     def edit_command(self, data=None):
         form_layout = QFormLayout()
