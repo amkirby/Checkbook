@@ -144,7 +144,7 @@ class MainWindow(QMainWindow):
                 QMessageBox.No, QMessageBox.No)
 
         if reply == QMessageBox.Yes:
-            self.command_processor.process_save_command(self.save_function)
+            self.command_processor.process_quit_command(self.save_function)
             event.accept()
         else:
             event.ignore()        

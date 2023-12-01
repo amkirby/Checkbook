@@ -184,6 +184,8 @@ class CommandProcessor:
         """
         if self.checkbook.is_edited():
             self._do_save(save_function)
+        else:
+            self.display_processor.display_message("Not Saved... No Data Changed")
 
     def process_help_command(self):
         """Prints the help text"""
@@ -196,7 +198,8 @@ class CommandProcessor:
             save_function (function): function used to save the checkbook
         """
         if self.checkbook.is_edited():
-            self.process_save_command(save_function)
+            # self.process_save_command(save_function)
+            self._do_save(save_function)
 
     # def process_delete_command_old(self, *args: str) -> None:
     #     if not args:
