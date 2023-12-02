@@ -5,6 +5,8 @@
 # Purpose : A checkbook program
 #********************************************************************
 
+import argparse
+
 import Checkbook as CB
 import CommandProcessor as CP
 import ConfigurationProcessor as Conf
@@ -12,8 +14,8 @@ from DataProcessors import SQLProcessor as SCP
 from DataProcessors import XMLProcessor as XML
 from DisplayProcessors import CLIDisplayProcessor, QtDisplayProcessor
 
-
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
     conf = Conf.ConfigurationProcessor()
 
     checkbook = CB.Checkbook()
@@ -26,7 +28,17 @@ if __name__ == "__main__":
 
     checkbook.load(conf.get_property("FILE_NAME"), load_function)
 
-    if conf.get_property("USE_GUI"):
+    parser.add_argument("-t", "--Type",  help="Run GUI or CLI") # choices=['GUI', 'gui', 'CLI', 'cli'],
+    args = parser.parse_args()
+
+    use_gui = conf.get_property("USE_GUI")
+    if args.Type:
+        if args.Type.lower() == "gui":
+            use_gui = True
+        elif args.Type.lower() == "cli":
+            use_gui = False
+        
+    if use_gui:
         ##################
         # Qt GUI
         ##################
