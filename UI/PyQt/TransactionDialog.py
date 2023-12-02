@@ -1,3 +1,4 @@
+import string
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import QDate
 
@@ -48,7 +49,7 @@ class TransactionDialog(QDialog):
         self.transaction.set_value("User", self.User.currentText())
         self.transaction.set_value("Trans", self.Trans.currentText())
         self.transaction.set_value("Category", self.Category.currentText())
-        self.transaction.set_value("Desc", self.Desc.text())
+        self.transaction.set_value("Desc", string.capwords(self.Desc.text()))
         self.transaction.set_value("Amount", float(self.Amount.text()))
         self.processor._apply_debit_multiplier(self.transaction)
         super().accept()
