@@ -133,11 +133,10 @@ class Checkbook:
             list: a list of transactions with the specified category
         """
         return_list: List[CBT.CheckbookTransaction] = []
-        cat_list = [x.strip() for x in cat.split(",")]
-        for category in cat_list:
-            for elem in self.check_register:
-                if str(elem.get_dictionary().get("Category")).lower() == category.lower():
-                    return_list.append(elem)
+        cat_list = [x.strip().lower() for x in cat.split(",")]
+        for elem in self.check_register:
+            if self._check_for_search_terms(str(elem.get_dictionary().get("Category")).lower(), cat_list):
+                return_list.append(elem)
         return return_list
 
     def get_month(self, date_processor: DateProcessor) -> List[CBT.CheckbookTransaction]:
@@ -212,13 +211,27 @@ class Checkbook:
 
         return is_valid
 
+    def _check_for_search_terms(self, value_to_search_in, search_terms) -> bool:
+        value_contains_term = False
+
+        for current_term in search_terms:
+            if(current_term in value_to_search_in):
+                value_contains_term = True
+                break
+        
+        return value_contains_term
+
     def get_description(self, search_term: str) -> List[CBT.CheckbookTransaction]:
         return_list: List[CBT.CheckbookTransaction] = []
         if(type(search_term) is not str):
             search_term = str(search_term)
+
+        all_search_terms = [term.strip().lower() for term in search_term.split(",")]
+        term_in_desc = False
         for cbt in self.check_register:
             transaction_desc = str(cbt.get_value("Desc"))
-            if(search_term.lower() in transaction_desc.lower()):
+            term_in_desc = self._check_for_search_terms(transaction_desc.lower(), all_search_terms)
+            if term_in_desc:
                 return_list.append(cbt)
 
         return return_list
