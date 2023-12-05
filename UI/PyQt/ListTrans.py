@@ -21,6 +21,9 @@ class ListTrans(QDialog):
         cb.create_based_on_list(list_of_trans)
         self._load_checkbook_into_table(self.Register_Table, cb)
 
+        # set the column widths based around the specified sizes
+        for i in range(len(conf.get_property("SIZE_LIST"))):
+            self.Register_Table.setColumnWidth(i, (conf.get_property("SIZE_LIST")[i] * 7))
 
     def _format(self, value):
         formatted_value = str(value)
