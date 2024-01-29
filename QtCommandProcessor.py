@@ -28,7 +28,7 @@ class QtCommandProcessor(CommandProcessor):
         is_confirmed = False
         select = QMessageBox.question(self.main_window, 'Confirmation...',
                 "Do you want to " + selection + "?", QMessageBox.Yes |
-                QMessageBox.No, QMessageBox.No) # to become confirm selection
+                QMessageBox.No, QMessageBox.Yes) # to become confirm selection
         
         if select == QMessageBox.Yes:
             is_confirmed = True
@@ -47,6 +47,8 @@ class QtCommandProcessor(CommandProcessor):
     def process_load_command(self, load_function, *args) -> None:
         super().process_load_command(load_function, *args)
         self.main_window.repaint()
+
+        self.main_window.original_checkbook.create_based_on_list(self.main_window.checkbook.get_register())
     
     def process_edit_command(self, *args: str) -> None:
         transactions_to_edit = self._process_list_input(self.display_processor.handle_single_input("Which transaction(s) do you want to edit? : "))
@@ -71,8 +73,15 @@ class QtCommandProcessor(CommandProcessor):
         # CTA.qt_copy(from_file, to_file)
     
 
-    def process_print_command(self, checkbook, *args):
-        return super().process_print_command(checkbook, *args)
+    def process_print_command(self):
+        filter_criteria = self._process_list_input(self.display_processor.handle_single_input("Enter your filter criteria : "))
+        filtering_cb = CB.Checkbook()
+        filtering_cb.create_based_on_list(self.checkbook.get_register())
+        for filter in filter_criteria:
+            filtering_cb = super().process_print_command(filtering_cb, *filter.strip().split(" ", 2))
+
+        self.main_window.checkbook = filtering_cb
+        self.main_window.repaint()
         
     
     def process_add_command(self) -> None:
@@ -100,3 +109,7 @@ class QtCommandProcessor(CommandProcessor):
         self._apply_debit_multiplier(cbt)
         self.checkbook.add_single_trans(cbt)
         self.main_window.repaint()
+
+    # def process_report_command(self, checkbook):
+    #     transactions_to_edit = self._process_list_input(self.display_processor.handle_single_input("Which transaction(s) do you want to edit? : "))
+        # return super().process_report_command(checkbook)

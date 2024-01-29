@@ -39,7 +39,8 @@ class MainWindow(QMainWindow):
         else:
             self.checkbook.load("Test/test.xml", self.load_function) # Test/test.xml /home/amkirby/Sync/Registers/2023.xml
 
-
+        self.original_checkbook = CB.Checkbook()
+        self.original_checkbook.create_based_on_list(self.checkbook.get_register())
 
         self.command_processor = QtCommandProcessor(self.checkbook, self)
 
@@ -63,6 +64,8 @@ class MainWindow(QMainWindow):
         self.edit_button.clicked.connect(lambda : self.command_processor.process_edit_command())
         self.load_button.clicked.connect(lambda : self.command_processor.process_load_command(self.load_function))
         self.copy_button.clicked.connect(lambda : self.command_processor.process_copy_command("",""))
+        self.filter_button.clicked.connect(lambda : self.command_processor.process_print_command())
+        self.reset_button.clicked.connect(self.reset_filter)
         self.quit_button.clicked.connect(self.close)
 
     def pyqt5_designer_setup(self):
@@ -94,7 +97,9 @@ class MainWindow(QMainWindow):
     def edit_command(self, data=None):
         form_layout = QFormLayout()
 
-
+    def reset_filter(self):
+        self.checkbook.create_based_on_list(self.original_checkbook.get_register())
+        self.repaint()
 
     def repaint(self):
         # load the checkbook data into the table
@@ -116,7 +121,7 @@ class MainWindow(QMainWindow):
 
     def handle_single_input(self, input_message):
         self.single_input.set_text(input_message)
-        self.single_input.exec()
+        exec_val = self.single_input.exec()
         return self.single_input.input_line.text()
     
 
@@ -141,7 +146,7 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event) -> None:
         reply = QMessageBox.question(self, 'Quit',
                 "Are you sure to quit?", QMessageBox.Yes |
-                QMessageBox.No, QMessageBox.No)
+                QMessageBox.No, QMessageBox.Yes)
 
         if reply == QMessageBox.Yes:
             self.command_processor.process_quit_command(self.save_function)
