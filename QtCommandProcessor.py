@@ -78,7 +78,7 @@ class QtCommandProcessor(CommandProcessor):
         filtering_cb = CB.Checkbook()
         filtering_cb.create_based_on_list(self.checkbook.get_register())
         for filter in filter_criteria:
-            filtering_cb = super().process_print_command(filtering_cb, *filter.strip().split(" ", 2))
+            filtering_cb = super().process_print_command(filtering_cb, *filter.strip().split(" ", 1))
 
         self.main_window.checkbook = filtering_cb
         self.main_window.repaint()
